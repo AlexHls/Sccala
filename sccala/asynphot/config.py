@@ -15,11 +15,14 @@ def set_vega_spec(file):
     try:
         wav, flux = np.genfromtxt(file).T
     except:
-        raise AssertionError("Reference spectrum does not have needed format, make sure to use a .ascii file...")
-
+        raise AssertionError(
+            "Reference spectrum does not have needed format, make sure to use a .ascii file..."
+        )
 
     if os.path.exists(get_vega_path()):
-        check = input("WARINING: Vega reference spectrum already exists, continue? y/[n]: ")
+        check = input(
+            "WARINING: Vega reference spectrum already exists, continue? y/[n]: "
+        )
         if check != "y" and check != "yes":
             print("Aborting...")
             return None

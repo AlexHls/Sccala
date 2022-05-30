@@ -18,13 +18,13 @@ def load_transmission_data(filter_id):
     :return:
     """
 
-    facility, instrument, filter_name = re.split('/|\.', filter_id)
+    facility, instrument, filter_name = re.split("/|\.", filter_id)
     transmission_data_loc = os.path.join(
         ASYNPHOT_PATH[0],
         "filters",
         facility,
         instrument,
-        "{:s}.vot".format(filter_name)
+        "{:s}.vot".format(filter_name),
     )
 
     if not os.path.exists(transmission_data_loc):
@@ -48,7 +48,7 @@ def byte_to_literal_strings(dataframe):
 
     if not str_df.empty:
         # Convert all of them into unicode strings
-        str_df = str_df.stack().str.decode('utf-8').unstack()
+        str_df = str_df.stack().str.decode("utf-8").unstack()
         # Swap out converted cols with the original df cols
         for col in str_df:
             dataframe[col] = str_df[col]

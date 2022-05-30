@@ -2,9 +2,7 @@ import os
 
 import asynphot.config as cfg
 
-if not os.path.exists(
-        cfg.get_vega_path()
-):
+if not os.path.exists(cfg.get_vega_path()):
     print(
         "-------------------------------------------\n"
         "WARNING - NO VEGA REFERENCE SPECTRUM FOUND!\n"

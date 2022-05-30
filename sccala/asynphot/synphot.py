@@ -16,13 +16,18 @@ def calculate_vega_zp(filter):
 
     vega_wav, vega_flux = get_vega_spectrum()
 
-    return 2.5 * np.log10(
-        1 / h_erg / c_AA
-        * integrate.simpson(
-            vega_flux * filter.interpolate(vega_wav) * vega_wav,
-            vega_wav
+    return (
+        2.5
+        * np.log10(
+            1
+            / h_erg
+            / c_AA
+            * integrate.simpson(
+                vega_flux * filter.interpolate(vega_wav) * vega_wav, vega_wav
+            )
         )
-    ) + 0.03
+        + 0.03
+    )
 
 
 def calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None):
@@ -50,24 +55,32 @@ def calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None):
 
     vega_zp = calculate_vega_zp(filter)
 
-    vega_magnitude = -2.5 * np.log10(
-        1 / h_erg / c_AA
-        * integrate.simpson(
-            spec_flux * filter.interpolate(spec_wav) * spec_wav,
-            spec_wav
+    vega_magnitude = (
+        -2.5
+        * np.log10(
+            1
+            / h_erg
+            / c_AA
+            * integrate.simpson(
+                spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav
+            )
         )
-    ) + vega_zp
+        + vega_zp
+    )
 
     if spec_err is None:
         return vega_magnitude
     else:
-        vega_magnitude_error = 2.5 / np.log(10) / integrate.simpson(
-            spec_flux * filter.interpolate(spec_wav) * spec_wav,
-            spec_wav
-        ) * np.sqrt(
-            err_integrate.mod_simpson(
-                (spec_err * filter.interpolate(spec_wav) * spec_wav) ** 2,
-                spec_wav
+        vega_magnitude_error = (
+            2.5
+            / np.log(10)
+            / integrate.simpson(
+                spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav
+            )
+            * np.sqrt(
+                err_integrate.mod_simpson(
+                    (spec_err * filter.interpolate(spec_wav) * spec_wav) ** 2, spec_wav
+                )
             )
         )
         return [vega_magnitude, vega_magnitude_error]
@@ -82,14 +95,20 @@ class BaseFilterCurve(object):
             filter = load_transmission_data(filter_id)
             wav, trans = filter["Wavelength"], filter["Transmission"]
 
-        return cls(wav, trans, interpolation_kind=interpolation_kind, filter_id=filter_id)
+        return cls(
+            wav, trans, interpolation_kind=interpolation_kind, filter_id=filter_id
+        )
 
     def __init__(self, wav, trans, interpolation_kind="linear", filter_id=None):
         self.wav = wav
         self.trans = trans
 
         self.interpolation_object = interpolate.interp1d(
-            self.wav, self.trans, kind=interpolation_kind, bounds_error=False, fill_value=0.0,
+            self.wav,
+            self.trans,
+            kind=interpolation_kind,
+            bounds_error=False,
+            fill_value=0.0,
         )
         self.filter_id = filter_id
 
@@ -111,15 +130,17 @@ class FilterCurve(BaseFilterCurve):
 
 
 class FilterSet(object):
-    def __init__(self, filter_set, interpolation_kind='linear'):
+    def __init__(self, filter_set, interpolation_kind="linear"):
 
-        if hasattr(filter_set[0], 'wavelength'):
+        if hasattr(filter_set[0], "wavelength"):
             self.filter_set = filter_set
         else:
-            self.filter_set = [FilterCurve.load_filter(filter_id,
-                                              interpolation_kind=
-                                              interpolation_kind)
-                      for filter_id in filter_set]
+            self.filter_set = [
+                FilterCurve.load_filter(
+                    filter_id, interpolation_kind=interpolation_kind
+                )
+                for filter_id in filter_set
+            ]
 
     def __iter__(self):
         self.current_filter_idx = 0
@@ -133,35 +154,48 @@ class FilterSet(object):
 
         self.current_filter_idx += 1
         return item
+
     next = __next__
 
     def __getitem__(self, item):
         return self.filter_set.__getitem__(item)
 
     def __repr__(self):
-        return "<{0} \n{1}>".format(self.__class__.__name__,
-                                    "\n".join(
-                                        [item.filter_id
-                                         for item in self.filter_set]
-                                    ))
+        return "<{0} \n{1}>".format(
+            self.__class__.__name__,
+            "\n".join([item.filter_id for item in self.filter_set]),
+        )
 
     def calculate_vega_magnitudes(self, spec_wav, spec_flux, spec_err=None):
         if spec_err is None:
-            mags = [item.calculate_vega_magnitude(spec_wav, spec_flux, spec_err=spec_err)
-                    for item in self.filter_set]
+            mags = [
+                item.calculate_vega_magnitude(spec_wav, spec_flux, spec_err=spec_err)
+                for item in self.filter_set
+            ]
             return mags
         else:
-            mags, mags_err = np.array([item.calculate_vega_magnitude(spec_wav, spec_flux, spec_err=spec_err)
-                              for item in self.filter_set]).T
+            mags, mags_err = np.array(
+                [
+                    item.calculate_vega_magnitude(
+                        spec_wav, spec_flux, spec_err=spec_err
+                    )
+                    for item in self.filter_set
+                ]
+            ).T
             return mags, mags_err
 
 
 class MagnitudeSet(FilterSet):
-    def __init__(self, filter_set, magnitudes, magnitude_uncertainties=None,
-                 interpolation_kind='linear'):
-        super(MagnitudeSet, self).__init__(filter_set,
-                                           interpolation_kind=
-                                           interpolation_kind)
+    def __init__(
+        self,
+        filter_set,
+        magnitudes,
+        magnitude_uncertainties=None,
+        interpolation_kind="linear",
+    ):
+        super(MagnitudeSet, self).__init__(
+            filter_set, interpolation_kind=interpolation_kind
+        )
         self.magnitudes = np.array(magnitudes)
         if magnitude_uncertainties is not None:
             self.magnitude_uncertainties = np.array(magnitude_uncertainties)
@@ -169,13 +203,14 @@ class MagnitudeSet(FilterSet):
             self.magnitude_uncertainties = None
 
     def __repr__(self):
-        mag_str = '{0} {1:.4f} +/- {2:.4f}'
+        mag_str = "{0} {1:.4f} +/- {2:.4f}"
         mag_data = []
         for i, filter in enumerate(self.filter_set):
-            unc = (np.nan if self.magnitude_uncertainties is None
-                   else self.magnitude_uncertainties[i])
-            mag_data.append(mag_str.format(filter.filter_id,
-                                           self.magnitudes[i], unc))
+            unc = (
+                np.nan
+                if self.magnitude_uncertainties is None
+                else self.magnitude_uncertainties[i]
+            )
+            mag_data.append(mag_str.format(filter.filter_id, self.magnitudes[i], unc))
 
-        return "<{0} \n{1}>".format(self.__class__.__name__,
-                                    '\n'.join(mag_data))
+        return "<{0} \n{1}>".format(self.__class__.__name__, "\n".join(mag_data))
