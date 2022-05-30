@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Produced with astropy.io.votable version 4.0.dev26845
+     http://www.astropy.org/ -->
+<VOTABLE version="1.4" xmlns="http://www.ivoa.net/xml/VOTable/v1.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.4">
+ <RESOURCE type="results">
+  <TABLE utype="photdm:PhotometryFilter.transmissionCurve.spectrum">
+   <FIELD ID="Wavelength" datatype="float" name="Wavelength" ucd="em.wl" unit="AA" utype="spec:Data.SpectralAxis.Value"/>
+   <FIELD ID="Transmission" datatype="float" name="Transmission" ucd="phys.transmission" utype="spec:Data.FluxAxis.Value"/>
+   <DATA>
+    <TABLEDATA>
+     <TR>
+      <TD>3999</TD>
+      <TD>0</TD>
+     </TR>
+     <TR>
+      <TD>4000</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4100</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4200</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4300</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4400</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4500</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4600</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4700</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4800</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4900</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>5000</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>5100</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>5200</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>5201</TD>
+      <TD>0</TD>
+     </TR>
+    </TABLEDATA>
+   </DATA>
+  </TABLE>
+ </RESOURCE>
+</VOTABLE>

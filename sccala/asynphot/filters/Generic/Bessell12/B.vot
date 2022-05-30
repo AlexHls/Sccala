@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Produced with astropy.io.votable version 4.0.dev26845
+     http://www.astropy.org/ -->
+<VOTABLE version="1.4" xmlns="http://www.ivoa.net/xml/VOTable/v1.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ivoa.net/xml/VOTable/v1.4">
+ <RESOURCE type="results">
+  <TABLE utype="photdm:PhotometryFilter.transmissionCurve.spectrum">
+   <FIELD ID="Wavelength" datatype="float" name="Wavelength" ucd="em.wl" unit="AA" utype="spec:Data.SpectralAxis.Value"/>
+   <FIELD ID="Transmission" datatype="float" name="Transmission" ucd="phys.transmission" utype="spec:Data.FluxAxis.Value"/>
+   <DATA>
+    <TABLEDATA>
+     <TR>
+      <TD>3600</TD>
+      <TD>0</TD>
+     </TR>
+     <TR>
+      <TD>3700</TD>
+      <TD>0.031</TD>
+     </TR>
+     <TR>
+      <TD>3800</TD>
+      <TD>0.137</TD>
+     </TR>
+     <TR>
+      <TD>3900</TD>
+      <TD>0.584</TD>
+     </TR>
+     <TR>
+      <TD>4000</TD>
+      <TD>0.947</TD>
+     </TR>
+     <TR>
+      <TD>4100</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4200</TD>
+      <TD>1</TD>
+     </TR>
+     <TR>
+      <TD>4300</TD>
+      <TD>0.957</TD>
+     </TR>
+     <TR>
+      <TD>4400</TD>
+      <TD>0.895</TD>
+     </TR>
+     <TR>
+      <TD>4500</TD>
+      <TD>0.802</TD>
+     </TR>
+     <TR>
+      <TD>4600</TD>
+      <TD>0.682</TD>
+     </TR>
+     <TR>
+      <TD>4700</TD>
+      <TD>0.577</TD>
+     </TR>
+     <TR>
+      <TD>4800</TD>
+      <TD>0.474</TD>
+     </TR>
+     <TR>
+      <TD>4900</TD>
+      <TD>0.369</TD>
+     </TR>
+     <TR>
+      <TD>5000</TD>
+      <TD>0.278</TD>
+     </TR>
+     <TR>
+      <TD>5100</TD>
+      <TD>0.198</TD>
+     </TR>
+     <TR>
+      <TD>5200</TD>
+      <TD>0.125</TD>
+     </TR>
+     <TR>
+      <TD>5300</TD>
+      <TD>0.078</TD>
+     </TR>
+     <TR>
+      <TD>5400</TD>
+      <TD>0.036</TD>
+     </TR>
+     <TR>
+      <TD>5500</TD>
+      <TD>0.008</TD>
+     </TR>
+     <TR>
+      <TD>5600</TD>
+      <TD>0</TD>
+     </TR>
+    </TABLEDATA>
+   </DATA>
+  </TABLE>
+ </RESOURCE>
+</VOTABLE>
