@@ -40,21 +40,7 @@ def get_synthetic_photometry(i, sid, sn, spec_id):
     return mjd, mags, mags_err
 
 
-def main():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "speclist",
-        help="Path to list with spectra",
-    )
-    parser.add_argument(
-        "filter_list",
-        nargs="+",
-        help="Filters for which to calculate photometry. Filters match installed filters.",
-    )
-
-    args = parser.parse_args()
-
+def main(args):
     # TODO Implement check that filters actually exist
     filter_name_list = []
 
@@ -162,3 +148,29 @@ def main():
     print(
         "Finished calculating synthetic photometry for spectra from %s file" % speclist
     )
+
+    return
+
+
+def cli():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "speclist",
+        help="Path to list with spectra",
+    )
+    parser.add_argument(
+        "filter_list",
+        nargs="+",
+        help="Filters for which to calculate photometry. Filters match installed filters.",
+    )
+
+    args = parser.parse_args()
+
+    main(args)
+
+    return
+
+
+if __name__ == "__main__":
+    cli()
