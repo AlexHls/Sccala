@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+from sccala import spectral_line_fit
+
+spectral_line_fit.cli()
