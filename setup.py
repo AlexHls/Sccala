@@ -19,6 +19,10 @@ setup(
     package_dir={"": "sccala"},
     packages=setuptools.find_packages(where="sccala"),
     python_requires=">=3.6",
-    scripts=['bin/sccala-photometry'],
+    scripts=[
+        'bin/sccala-photometry',
+        'bin/sccala-linefit',
+        'bin/sccala-velocity-interpolation',
+    ],
 )
 
