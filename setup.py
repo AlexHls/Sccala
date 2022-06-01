@@ -23,6 +23,7 @@ setup(
         'bin/sccala-photometry',
         'bin/sccala-linefit',
         'bin/sccala-velocity-interpolation',
+        'bin/sccala-photometry-interpolation',
     ],
 )
 

@@ -13,8 +13,12 @@ from libio import get_paths as pa
 def main(args):
     # TODO Make script more flexible/ accept more arguments
     snname = args.snname
-    line = args.line
+    instrument = args.instrument
+    bands = args.bands
     rules = args.rules
+
+    if not isinstance(bands, list):
+        bands = [bands]
 
     diag_path = os.path.join(pa.get_diag_path(), snname)
     if not os.path.exists(diag_path):
@@ -22,14 +26,12 @@ def main(args):
 
     # Load data
     data = pd.read_csv(
-        os.path.join(pa.get_res_path(), "{:s}_PeakFits.csv".format(snname)),
-        index_col=[0, 1],
+        os.path.join(
+            pa.get_res_path(), "{:s}_{:s}_PeakFits.csv".format(snname, instrument)
+        ),
+        index_col=[0],
     )
     dataframe = data.loc[line]
-    vel = dataframe["PeakLoc"].to_numpy()
-    vel_error_lower = dataframe["PeakErrorLower"].to_numpy()
-    vel_error_upper = dataframe["PeakErrorUpper"].to_numpy()
-    vel_error = np.maximum(vel_error_lower, vel_error_upper)
     mjd = dataframe["MJD"].to_numpy()
 
     # Import Gaussian KDE for time-prior
@@ -57,47 +59,53 @@ def main(args):
         reg_max = 60
         extrapolate = 5
 
-    vel_set = EpochDataSet(
-        vel,
-        vel_error,
-        tkde,
-        red,
-        mjd,
-        snname=snname,
-        errorfloor=errorfloor,
-        errorscale=errorscale,
-        reg_min=reg_min,
-        reg_max=reg_max,
-        extrapolate=extrapolate,
-    )
+    for band in bands:
+        mag = dataframe[band].to_numpy()
+        mag_error = dataframe["%s_err" % band].to_numpy()
 
-    vel_int, vel_int_error_lower, vel_int_error_upper, dates = vel_set.data_interp(
-        line,
-        diagnostic=diag_path,
-    )
+        mag_set = EpochDataSet(
+            mag,
+            mag_error,
+            tkde,
+            red,
+            mjd,
+            snname=snname,
+            errorfloor=errorfloor,
+            errorscale=errorscale,
+            reg_min=reg_min,
+            reg_max=reg_max,
+            extrapolate=extrapolate,
+        )
 
-    expname = os.path.join(
-        pa.get_res_path(), "%s_%s_InterpolationResults.csv" % (snname, line)
-    )
-    ext = 1
-    while os.path.exists(expname):
-        warning.warn("Results file already exists...")
+        mag_int, mag_int_error_lower, mag_int_error_upper, dates = mag_set.data_interp(
+            "{:s}_{:s}_phot".format(instrument, band),
+            diagnostic=diag_path,
+        )
+
         expname = os.path.join(
             pa.get_res_path(),
-            "%s_%s_InterpolationResults(%d).csv" % (snname, line, ext),
+            "%s_%s_%s_InterpolationResults.csv" % (snname, instrument, band),
         )
-        ext += 1
+        ext = 1
+        while os.path.exists(expname):
+            warning.warn("Results file already exists...")
+            expname = os.path.join(
+                pa.get_res_path(),
+                "%s_%s_%s_InterpolationResults(%d).csv"
+                % (snname, istrument, band, ext),
+            )
+            ext += 1
 
-    expdf = pd.DataFrame(
-        {
-            "Date": dates,
-            "VelInt": vel_int,
-            "ErrorLower": vel_int_err_lower,
-            "ErrorUpper": vel_int_err_upper,
-        }
-    )
+        expdf = pd.DataFrame(
+            {
+                "Date": dates,
+                "{:s}".format(band): mag_int,
+                "{:s}_err_lower".format(band): mag_int_err_lower,
+                "{:s}_err_upper".format(band): mag_int_err_upper,
+            }
+        )
 
-    expdf.to_csv(expname, index=False)
+        expdf.to_csv(expname, index=False)
 
     return expname
 
@@ -110,9 +118,10 @@ def cli():
         help="Path/ name of the SN in the datadirectory",
     )
     parser.add_argument(
-        "line",
-        help="Line velocity to be fit",
+        "instrument",
+        help="Instrument name of data to be fit",
     )
+    parser.add_argument("bands", nargs="+", help="Photometric band(s) to be fit")
     parser.add_argument(
         "-r", "--rules", help="File containing velocity interpolation rules"
     )
