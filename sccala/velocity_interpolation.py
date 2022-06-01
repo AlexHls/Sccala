@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import cloudpickle
 
-from interplib import vel_interp
+from interplib import epoch_interp
 from libio import get_paths as pa
 
 
@@ -57,7 +57,7 @@ def main(args):
         reg_max = 60
         extrapolate = 5
 
-    vel_set = VelocitySet(
+    vel_set = EpochDataSet(
         vel,
         vel_error,
         tkde,
@@ -71,7 +71,7 @@ def main(args):
         extrapolate=extrapolate,
     )
 
-    vel_int, vel_int_error_lower, vel_int_error_upper, dates = vel_set.vel_interp(
+    vel_int, vel_int_error_lower, vel_int_error_upper, dates = vel_set.data_interp(
         line,
         diagnostic=diag_path,
     )

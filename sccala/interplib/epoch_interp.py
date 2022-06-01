@@ -11,15 +11,15 @@ import george
 from george import kernels
 
 
-class VelocitySet:
+class EpochDataSet:
     """
-    Class wrapping velocity time series and providing
+    Class wrapping data time series and providing
     interpolation functionality
     """
 
     def __init__(
-        vel,
-        vel_error,
+        data,
+        data_error,
         tkde,
         red,
         mjd,
@@ -31,14 +31,14 @@ class VelocitySet:
         extrapolate=5.0,
     ):
         """
-        Initialize VelocitySet
+        Initialize EpochDataSet
 
         Parameters
         ----------
-        vel : float
-            List or array of velocities in m/s
-        vel_error : float
-            List or array of velocity uncertainties in m/s
+        data : float
+            List or array of data
+        data_error : float
+            List or array of data uncertainties
         tkde : float
             (Resampled) time of explosion KDE
         red : float
@@ -46,20 +46,20 @@ class VelocitySet:
         mjd : float
             List or array of observation times (NOT in restframe!) in days.
         snname : str
-            Name of the SN for which velocitys should be interpolated.
+            Name of the SN for which data should be interpolated.
             Default: ""
         errorfloor : float
             Minimum error for velocities. All uncertainties smaller than this
             value will be increased to this value. Default: 0.0
         errorscale : float
-            Scales all velocity uncertainties will be scaled by this factor.
+            Scales all data uncertainties will be scaled by this factor.
             Default: 1.0
         reg_min : float
-            Lower boundary for the velocity interpolation in days. Data points
+            Lower boundary for the data interpolation in days. Data points
             earlier than this value will be excluded from the interpolation
             procedure. Default: 20.0
         reg_max : float
-            Upper boundary for the velocity interpolation in days. Data points
+            Upper boundary for the data interpolation in days. Data points
             later than this value will be excluded from the interpolation
             procedure. Default: 60.0
         extrapolate : float
@@ -67,12 +67,12 @@ class VelocitySet:
 
         """
 
-        assert np.shape(vel) == np.shape(vel_error) and np.shape(vel) == np.shape(
+        assert np.shape(data) == np.shape(data_error) and np.shape(data) == np.shape(
             mjd
         ), "Input data needs to have the same shape"
 
-        self.vel = np.array(vel)
-        self.vel_error = np.array(vel_error)
+        self.data = np.array(data)
+        self.data_error = np.array(data_error)
         self.tkde = np.array(tkde)
         self.mjd = np.array(mjd)
 
@@ -90,46 +90,46 @@ class VelocitySet:
         self.time = (mjd - self.toe) / (1 + red)
 
         # Apply some rules
-        for i in range(len(self.vel_error)):
-            if self.vel_error[i] < self.errorfloor:
-                self.vel_error[i] = self.errorfloor
+        for i in range(len(self.data_error)):
+            if self.data_error[i] < self.errorfloor:
+                self.data_error[i] = self.errorfloor
 
         if not np.isnan(self.errorscale):
-            self.vel_error *= self.errorscale
+            self.data_error *= self.errorscale
 
         mask = np.logical_and(self.time > self.reg_min, self.time < self.reg_max)
 
-        self.vel_ex = self.vel[np.logical_not[mask]]
-        self.vel_error_ex = self.vel_error[np.logical_not[mask]]
+        self.data_ex = self.data[np.logical_not[mask]]
+        self.data_error_ex = self.data_error[np.logical_not[mask]]
         self.time_ex = self.time[np.logical_not[mask]]
         self.mjd_ex = self.mjd_ex[np.logical_not[mask]]
 
-        self.vel = self.vel[mask]
-        self.vel_error = self.vel_error[mask]
+        self.data = self.data[mask]
+        self.data_error = self.data_error[mask]
         self.time = self.time[mask]
         self.mjd = self.mjd[mask]
 
         # results
-        self.vel_pred = None
-        self.vel_int = None
+        self.data_pred = None
+        self.data_int = None
 
         return
 
     def get_results():
 
-        if self.vel_int is None:
+        if self.data_int is None:
             raise ValueError("No interpolated values found")
 
-        self.median = np.percentile(vel_int, 50, axis=0)
-        self.minustwosigma = np.percentile(vel_int, 2.28, axis=0)
-        self.minusonesigma = np.percentile(vel_int, 15.87, axis=0)
-        self.plusonesigma = np.percentile(vel_int, 84.13, axis=0)
-        self.plustwosigma = np.percentile(vel_int, 97.72, axis=0)
+        self.median = np.percentile(data_int, 50, axis=0)
+        self.minustwosigma = np.percentile(data_int, 2.28, axis=0)
+        self.minusonesigma = np.percentile(data_int, 15.87, axis=0)
+        self.plusonesigma = np.percentile(data_int, 84.13, axis=0)
+        self.plustwosigma = np.percentile(data_int, 97.72, axis=0)
 
-        self.vel_int_error_lower = self.median - self.minusonesigma
-        self.vel_int_error_upper = self.plusonesigma - self.median
+        self.data_int_error_lower = self.median - self.minusonesigma
+        self.data_int_error_upper = self.plusonesigma - self.median
 
-        return self.median, self.vel_int_error_lower, self.vel_int_error_upper
+        return self.median, self.data_int_error_lower, self.data_int_error_upper
 
     def exclude_data(beginning=True):
         """
@@ -140,14 +140,14 @@ class VelocitySet:
             ind = 0
         else:
             ind = 1
-        ex_vel = self.vel[-1 * ind]
-        self.vel = np.delete(self.vel, -1 * ind, 0)
-        self.vel_ex = np.insert(self.vel_ex, ind * len(self.vel_ex), 0)
+        ex_data = self.data[-1 * ind]
+        self.data = np.delete(self.data, -1 * ind, 0)
+        self.data_ex = np.insert(self.data_ex, ind * len(self.data_ex), 0)
 
-        ex_vel_err = self.vel_error[-1 * ind]
-        self.vel_error = np.delete(self.vel_error, -1 * ind, 0)
-        self.vel_error_ex = np.insert(
-            self.vel_error_ex, ind * len(self.vel_error_ex), 0
+        ex_data_err = self.data_error[-1 * ind]
+        self.data_error = np.delete(self.data_error, -1 * ind, 0)
+        self.data_error_ex = np.insert(
+            self.data_error_ex, ind * len(self.data_error_ex), 0
         )
 
         ex_time = self.time[-1 * ind]
@@ -160,22 +160,22 @@ class VelocitySet:
 
         return
 
-    def diagnostic_plot(diagnostic, line):
+    def diagnostic_plot(diagnostic, target):
         """
         Plots the output of the interpolation
         """
 
         fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=[6, 6])
 
-        if line == "halpha-ae":
+        if target == "halpha-ae" or "phot" in target:
             conv = 1
         else:
             conv = 1000  # Conversion factor from m/s to km/s
 
-        if self.vel_int is not None:
+        if self.data_int is not None:
             plotind = int(len(self.dates) / 2)
-            vel_int = self.vel_int / conv
-            ax1.hist(vel_int[:, plotind], label="Interpolated")
+            data_int = self.data_int / conv
+            ax1.hist(data_int[:, plotind], label="Interpolated")
             ax1.axvspan(
                 self.minustwosigma[plotind] / conv,
                 self.plustwosigma[plotind] / conv,
@@ -200,9 +200,9 @@ class VelocitySet:
                 r"v({:.1f}) = {:.2f} +{:.2f}/ -{:.2f} km/s | {:s}".format(
                     self.dates[plotind],
                     self.median[plotind] / conv,
-                    self.vel_int_error_upper[plotind] / conv,
-                    self.vel_int_error_lower[plotind] / conv,
-                    line,
+                    self.data_int_error_upper[plotind] / conv,
+                    self.data_int_error_lower[plotind] / conv,
+                    target,
                 )
             )
             ax1.legend()
@@ -232,13 +232,13 @@ class VelocitySet:
                 label="{:.1f} days".format(self.dates[plotind]),
             )
 
-            for v in self.vel_pred[:100]:
+            for v in self.data_pred[:100]:
                 ax2.plot(self.x_pred, np.array(v) / conv, color="")
 
         ax2.errorbar(
             x=self.time,
-            y=self.vel / conv,
-            yerr=self.vel_error / conv,
+            y=self.data / conv,
+            yerr=self.data_error / conv,
             marker="o",
             ls=" ",
             capsize=0,
@@ -247,8 +247,8 @@ class VelocitySet:
         )
         ax2.errorbar(
             x=self.time_ex,
-            y=self.vel_ex / conv,
-            yerr=self.vel_error_ex / conv,
+            y=self.data_ex / conv,
+            yerr=self.data_error_ex / conv,
             marker=".",
             ls=" ",
             capsize=0,
@@ -256,7 +256,10 @@ class VelocitySet:
             label="Excluded",
         )
         ax2.set_xlabel("Time (days)")
-        ax2.set_ylabel("Velocity (km s$^{-1}$)")
+        if "phot" in target:
+            ax2.sety_label("{:s} (mag)".format(target))
+        else:
+            ax2.set_ylabel("Velocity (km s$^{-1}$)")
         ax2.legend()
         ax2.minorticks_on()
         ax2.grid(which="major", axis="both", linestyle="-")
@@ -268,7 +271,7 @@ class VelocitySet:
 
         fig.savefig(
             os.path.join(
-                diagnostic, "{:s}_VelocityInterpolation_{:s}".format(self.snname, line)
+                diagnostic, "{:s}_Interpolation_{:s}".format(self.snname, target)
             ),
             bbox_inches="tight",
             dpi=100,
@@ -276,21 +279,22 @@ class VelocitySet:
 
         return fig
 
-    def vel_interp(
-        line,
+    def data_interp(
+        target,
         step=0.1,
         date_low=self.reg_min,
         date_high=self.reg_max,
         diagnostic=None,
     ):
         """
-        Interpolate velocities using Gaussian Process regression
+        Interpolate dataocities using Gaussian Process regression
 
         Parameters
         ----------
-        line : str
-            Specifies which line velocity is to be interpolated. Determines
-            Gaussian Process kernel.
+        target : str
+            Specifies as what the data is to be interpolated. Determines
+            Gaussian Process kernel. Photometry has to contain 'phot' in
+            target name.
         step : float
             Resolution of the interpolated data. Default: 0.1
         date_low : int or float
@@ -303,18 +307,18 @@ class VelocitySet:
         Returns
         -------
         median : float
-            median velocity at date days
-        vel_int_error_lower : float
-        vel_int_error_upper : float
+            median data value at date days
+        data_int_error_lower : float
+        data_int_error_upper : float
             return values are in m/s
         date : float
             date to which the magnitudes have been interpolated
         """
 
-        if len(self.vel) < 2:
+        if len(self.data) < 2:
             warnings.warn("Insufficient datapoints for interpolation, skipping...")
             if diagnostic:
-                self.diagnostic_plot(diagnostic, line)
+                self.diagnostic_plot(diagnostic, target)
 
             return None
 
@@ -327,27 +331,27 @@ class VelocitySet:
 
         self.dates = date
 
-        if line == "halpha-ae":
-            kernel = np.var(vel) * kernels.PolynomialKernel(
-                log_sigma2=np.var(self.vel), order=3
+        if target == "halpha-ae":
+            kernel = np.var(data) * kernels.PolynomialKernel(
+                log_sigma2=np.var(self.data), order=3
             )
         else:
-            kernel = np.var(self.vel) * kernels.ExpSquaredKernel(1000)
+            kernel = np.var(self.data) * kernels.ExpSquaredKernel(1000)
 
         model = george.GP(
             kernel=kernel,
         )
 
         try:
-            model.compute(self.time, self.vel_err)
+            model.compute(self.time, self.data_err)
         except np.linalg.LinAlgError as err:
-            warnings.warn("LinAlgError occured, modifying vel_error...")
-            model.compute(self.time, self.vel_err * 2)
+            warnings.warn("LinAlgError occured, modifying data_error...")
+            model.compute(self.time, self.data_err * 2)
 
         # Emcee sampling
         def lnprob(p):
             model.set_parameter_vector(p)
-            return model.log_likelihood(velocity, quiet=True) + model.log_prior()
+            return model.log_likelihood(self.data, quiet=True) + model.log_prior()
 
         initial = model.get_parameter_vector()
         ndim, nwalkers = len(initial), 32
@@ -386,35 +390,39 @@ class VelocitySet:
         rng = default_rng()
         uni_rng = rng.uniform(size=size)
 
-        vel_int = []
-        vel_pred = []
+        data_int = []
+        data_pred = []
         for s in samples[np.random.randint(len(samples), size=size)]:
             model.set_parameter_vector(s)
-            v = model.predict(self.vel, x_pred, return_cov=False)
+            d = model.predict(self.data, x_pred, return_cov=False)
 
             # Rule to skip "0-fits"
-            if np.mean(v) < 1 and line != "halpha-ae":
+            if np.mean(d) < 1 and target != "halpha-ae" and "phot" not in target:
                 continue
             # Reject curve if values increase
-            if any(np.sign(np.diff(v)) == 1) and line != "halpha-ae":
+            if (
+                any(np.sign(np.diff(d)) == 1)
+                and target != "halpha-ae"
+                and "phot" not in target
+            ):
                 continue
 
-            vel_pred.append(v)
+            data_pred.append(d)
             for num in uni_rng:
                 toe_rnd = np.percentile(self.tkde, num * 100)
                 t = date + (self.toe - toe_rnd)
-                vint = model.predict(self.vel, t, return_cov=False)
-                vel_int.append(vint)
+                dint = model.predict(self.data, t, return_cov=False)
+                data_int.append(dint)
 
             # If no matching curves are found, start excluding data
             # until interpolation is successful
-        if len(vel_int) <= 3:
+        if len(data_int) <= 3:
             warnings.warn("No valid parameters found, excluding datapoints...")
             self.reg_min = self.time[0] + 0.1
             self.mask_data()
 
-            return self.interp_velocity(
-                line,
+            return self.data_interp(
+                target,
                 step=step,
                 date_low=date_low,
                 date_high=date_high,
@@ -424,11 +432,11 @@ class VelocitySet:
         self.get_results()
 
         if diagnostic:
-            self.diagnostic_plot(diagnostic, line)
+            self.diagnostic_plot(diagnostic, target)
 
         return (
             self.median,
-            self.vel_int_error_lower,
-            self.vel_int_error_upper,
+            self.data_int_error_lower,
+            self.data_int_error_upper,
             self.dates,
         )
