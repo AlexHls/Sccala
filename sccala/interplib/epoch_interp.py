@@ -18,6 +18,7 @@ class EpochDataSet:
     """
 
     def __init__(
+        self,
         data,
         data_error,
         tkde,
@@ -115,23 +116,23 @@ class EpochDataSet:
 
         return
 
-    def get_results():
+    def get_results(self):
 
         if self.data_int is None:
             raise ValueError("No interpolated values found")
 
-        self.median = np.percentile(data_int, 50, axis=0)
-        self.minustwosigma = np.percentile(data_int, 2.28, axis=0)
-        self.minusonesigma = np.percentile(data_int, 15.87, axis=0)
-        self.plusonesigma = np.percentile(data_int, 84.13, axis=0)
-        self.plustwosigma = np.percentile(data_int, 97.72, axis=0)
+        self.median = np.percentile(self.data_int, 50, axis=0)
+        self.minustwosigma = np.percentile(self.data_int, 2.28, axis=0)
+        self.minusonesigma = np.percentile(self.data_int, 15.87, axis=0)
+        self.plusonesigma = np.percentile(self.data_int, 84.13, axis=0)
+        self.plustwosigma = np.percentile(self.data_int, 97.72, axis=0)
 
         self.data_int_error_lower = self.median - self.minusonesigma
         self.data_int_error_upper = self.plusonesigma - self.median
 
         return self.median, self.data_int_error_lower, self.data_int_error_upper
 
-    def exclude_data(beginning=True):
+    def exclude_data(self, beginning=True):
         """
         Removes one datapoint from the data set.
         If beginning is True, first element is removed, otherwise last.
@@ -160,7 +161,7 @@ class EpochDataSet:
 
         return
 
-    def diagnostic_plot(diagnostic, target):
+    def diagnostic_plot(self, diagnostic, target):
         """
         Plots the output of the interpolation
         """
@@ -280,10 +281,11 @@ class EpochDataSet:
         return fig
 
     def data_interp(
+        self,
         target,
         step=0.1,
-        date_low=self.reg_min,
-        date_high=self.reg_max,
+        date_low=None,
+        date_high=None,
         diagnostic=None,
     ):
         """
@@ -314,6 +316,11 @@ class EpochDataSet:
         date : float
             date to which the magnitudes have been interpolated
         """
+
+        if date_low is None:
+            date_low = self.reg_min
+        if date_high is None:
+            date_high = self.reg_max
 
         if len(self.data) < 2:
             warnings.warn("Insufficient datapoints for interpolation, skipping...")

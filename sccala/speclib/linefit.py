@@ -33,7 +33,7 @@ class LineFit:
     Base class encapsulating line fits of a spectrum
     """
 
-    def __init__(wav, flux, error, numcode=100):
+    def __init__(self, wav, flux, error, numcode=100):
         """
         Initializes line fit object.
 
@@ -70,7 +70,7 @@ class LineFit:
             "hbeta": [4550, 4900, 4861, False],
         }
 
-    def __get_builtin_lines__():
+    def __get_builtin_lines__(self):
         for key in list(self.lines.keys()):
             print(
                 "%s: %e | %e | %e | %r \n"
@@ -84,7 +84,7 @@ class LineFit:
             )
         return
 
-    def __reset_builtin_lines__():
+    def __reset_builtin_lines__(self):
         """
         Resets builtin lines in case their properties have
         been overwritten
@@ -96,6 +96,7 @@ class LineFit:
         return
 
     def fit_line(
+        self,
         line,
         cr_low=None,
         cr_high=None,
@@ -308,7 +309,7 @@ class LineFit:
 
         return results
 
-    def diagnostic_plot(line, save):
+    def diagnostic_plot(self, line, save):
         """
         Creates a diagnostic plot of a line fit.
 
@@ -548,7 +549,7 @@ class LineFit:
 
         return fig
 
-    def get_results(line):
+    def get_results(self, line):
         """
         Function that returns either the velocities or a/e values for a specific lines
 
