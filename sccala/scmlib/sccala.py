@@ -1,5 +1,4 @@
 import os
-import warnings
 
 import numpy as np
 import pandas as pd
@@ -176,7 +175,7 @@ class SccalaSCM:
         ).T
 
         # Fill model data
-        model.data["sn_idx"] = len(self.sne)
+        model.data["sn_idx"] = len(self.sn)
         model.data["obs"] = obs
         model.data["errors"] = errors
         model.data["vel_avg"] = np.mean(self.vel)
@@ -184,7 +183,7 @@ class SccalaSCM:
         model.data["ae_avg"] = np.mean(self.ae)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
 
-        model.set_initial_conditions()
+        model.set_initial_conditions(init)
 
         # Setup/ build STAN model
         fit = stan.build(model.code, data=model.data)

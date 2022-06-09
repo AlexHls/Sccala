@@ -102,12 +102,15 @@ class HubbleFreeSCM(SCM_Model):
 
         return
 
-    def set_initial_conditions(self):
-        self.init = {
-            "vs": [7500e3],
-            "rv": [1000e3],
-            "v_true": [7500e3] * len(self.data["sn_idxs"]),
-        }
+    def set_initial_conditions(self, init=None):
+        if init is None:
+            self.init = {
+                "vs": [7500e3],
+                "rv": [1000e3],
+                "v_true": [7500e3] * len(self.data["sn_idxs"]),
+            }
+        else:
+            self.init = init
         return
 
     def print_results(self, df):
