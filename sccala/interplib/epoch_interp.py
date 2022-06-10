@@ -4,7 +4,6 @@ import warnings
 import numpy as np
 from numpy.random import default_rng
 import matplotlib.pyplot as plt
-import pandas as pd
 
 import emcee
 import george
@@ -143,21 +142,21 @@ class EpochDataSet:
             ind = 1
         ex_data = self.data[-1 * ind]
         self.data = np.delete(self.data, -1 * ind, 0)
-        self.data_ex = np.insert(self.data_ex, ind * len(self.data_ex), 0)
+        self.data_ex = np.insert(ex_data, ind * len(self.data_ex), 0)
 
         ex_data_err = self.data_error[-1 * ind]
         self.data_error = np.delete(self.data_error, -1 * ind, 0)
         self.data_error_ex = np.insert(
-            self.data_error_ex, ind * len(self.data_error_ex), 0
+            ex_data_err, ind * len(self.data_error_ex), 0
         )
 
         ex_time = self.time[-1 * ind]
         self.time = np.delete(self.time, -1 * ind, 0)
-        self.time_ex = np.insert(self.time_ex, ind * len(self.time_ex), 0)
+        self.time_ex = np.insert(ex_time, ind * len(self.time_ex), 0)
 
         ex_mjd = self.mjd[-1 * ind]
         self.mjd = np.delete(self.mjd, -1 * ind, 0)
-        self.mjd_ex = np.insert(self.mjd_ex, ind * len(self.mjd_ex), 0)
+        self.mjd_ex = np.insert(ex_mjd, ind * len(self.mjd_ex), 0)
 
         return
 
@@ -221,7 +220,7 @@ class EpochDataSet:
                 alpha=0.3,
                 color="red",
             )
-            ax2.axhline(median[plotind] / conv, color="red")
+            ax2.axhline(self.median[plotind] / conv, color="red")
             lower = self.dates[plotind] + self.toe - np.percentile(self.tkde, 15.87)
             upper = self.dates[plotind] + self.toe - np.percentile(self.tkde, 84.13)
             ax2.axvspan(
@@ -339,7 +338,7 @@ class EpochDataSet:
         self.dates = date
 
         if target == "halpha-ae":
-            kernel = np.var(data) * kernels.PolynomialKernel(
+            kernel = np.var(self.data) * kernels.PolynomialKernel(
                 log_sigma2=np.var(self.data), order=3
             )
         else:
@@ -351,7 +350,7 @@ class EpochDataSet:
 
         try:
             model.compute(self.time, self.data_err)
-        except np.linalg.LinAlgError as err:
+        except np.linalg.LinAlgError:
             warnings.warn("LinAlgError occured, modifying data_error...")
             model.compute(self.time, self.data_err * 2)
 
@@ -426,7 +425,7 @@ class EpochDataSet:
         if len(data_int) <= 3:
             warnings.warn("No valid parameters found, excluding datapoints...")
             self.reg_min = self.time[0] + 0.1
-            self.mask_data()
+            self.exclude_data()
 
             return self.data_interp(
                 target,
