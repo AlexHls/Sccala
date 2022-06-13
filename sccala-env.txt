@@ -6,3 +6,4 @@ emcee
 astropy
 specutils
 pystan
+corner
