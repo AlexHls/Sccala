@@ -34,6 +34,10 @@ class HubbleFreeSCM(SCM_Model):
             "sn_idx": None,
             "obs": None,
             "errors": None,
+            "mag_sys": None,
+            "v_sys": None,
+            "c_sys": None,
+            "ae_sys": None,
             "vel_avg": None,
             "col_avg": None,
             "ae_avg": None,
@@ -45,6 +49,10 @@ class HubbleFreeSCM(SCM_Model):
                 int<lower=0> sn_idx;
                 vector[4] obs[sn_idx]; // Observed SN properties
                 vector[4] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
+                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
+                real v_sys[sn_idx]; // Systematic velocity uncertainties
+                real c_sys[sn_idx]; // Systematic color uncertainties
+                real ae_sys[sn_idx]; // Systematic ae uncertainties
                 real vel_avg; // Normalisation constans
                 real col_avg;
                 real ae_avg;
@@ -71,7 +79,7 @@ class HubbleFreeSCM(SCM_Model):
                 real sigma_int;
                 sigma_int = 10 ^ log_sigma;
                 for (i in 1:sn_idx) {
-                    mag_true[i] = Mi - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + gamma *             (a_true[i] - ae_avg) + 5 * log_dist_mod[i];
+                    mag_true[i] = Mi - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + gamma * (a_true[i] - ae_avg) + 5 * log_dist_mod[i];
                 }
             }
             model {
@@ -94,7 +102,7 @@ class HubbleFreeSCM(SCM_Model):
                 a_true ~ normal(as,ra);
 
                 for (i in 1:sn_idx) {
-                    target +=  normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', sqrt(errors[i] +          [sigma_int^2, 0, 0, 0]'));
+                    target +=  normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + c_sys[i], a_true[i] + ae_sys[i]]', sqrt(errors[i] + [sigma_int^2, 0, 0, 0]'));
                 }
             }
             """
@@ -107,7 +115,7 @@ class HubbleFreeSCM(SCM_Model):
             self.init = {
                 "vs": [7500e3],
                 "rv": [1000e3],
-                "v_true": [7500e3] * len(self.data["sn_idxs"]),
+                "v_true": [7500e3] * len(self.data["sn_idx"]),
             }
         else:
             self.init = init

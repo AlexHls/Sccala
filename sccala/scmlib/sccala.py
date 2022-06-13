@@ -37,6 +37,8 @@ class SccalaSCM:
         if calib:
             calib_datasets = [x for x in datasets if calib in x]
             datasets = [x for x in datasets if calib not in x]
+        else:
+            calib_datasets = []
 
         self.sn = df[df["dataset"].isin(datasets)]["SN"].to_numpy()
 
@@ -55,10 +57,15 @@ class SccalaSCM:
         self.red = df[df["dataset"].isin(datasets)]["red"].to_numpy()
         self.red_err = df[df["dataset"].isin(datasets)]["red_err"].to_numpy()
 
+        self.mag_sys = df[df["dataset"].isin(datasets)]["mag_sys"].to_numpy()
+        self.v_sys = df[df["dataset"].isin(datasets)]["v_sys"].to_numpy()
+        self.c_sys = df[df["dataset"].isin(datasets)]["c_sys"].to_numpy()
+        self.ae_sys = df[df["dataset"].isin(datasets)]["ae_sys"].to_numpy()
+
         self.epoch = df[df["dataset"].isin(datasets)]["epoch"].to_numpy()
 
         if calib:
-            self.calib_sn = df[df["dataset"].isin(calbi_datasets)]["SN"].to_numpy()
+            self.calib_sn = df[df["dataset"].isin(calib_datasets)]["SN"].to_numpy()
 
             self.calib_mag = df[df["dataset"].isin(calib_datasets)]["mag"].to_numpy()
             self.calib_mag_err = df[df["dataset"].isin(calib_datasets)][
@@ -85,6 +92,19 @@ class SccalaSCM:
                 "red_err"
             ].to_numpy()
 
+            self.calib_mag_sys = df[df["dataset"].isin(calib_datasets)][
+                "mag_sys"
+            ].to_numpy()
+            self.calib_v_sys = df[df["dataset"].isin(calib_datasets)][
+                "v_sys"
+            ].to_numpy()
+            self.calib_c_sys = df[df["dataset"].isin(calib_datasets)][
+                "c_sys"
+            ].to_numpy()
+            self.calib_ae_sys = df[df["dataset"].isin(calib_datasets)][
+                "ae_sys"
+            ].to_numpy()
+
             self.calib_epoch = df[df["dataset"].isin(calib_datasets)][
                 "epoch"
             ].to_numpy()
@@ -105,6 +125,11 @@ class SccalaSCM:
 
             self.calib_red = None
             self.calib_red_err = None
+
+            self.calib_mag_sys = None
+            self.calib_v_sys = None
+            self.calib_c_sys = None
+            self.calib_ae_sys = None
 
             self.calib_epoch = None
 
@@ -178,10 +203,16 @@ class SccalaSCM:
         model.data["sn_idx"] = len(self.sn)
         model.data["obs"] = obs
         model.data["errors"] = errors
+        model.data["mag_sys"] = self.mag_sys
+        model.data["v_sys"] = self.v_sys
+        model.data["c_sys"] = self.c_sys
+        model.data["ae_sys"] = self.ae_sys
         model.data["vel_avg"] = np.mean(self.vel)
         model.data["col_avg"] = np.mean(self.col)
         model.data["ae_avg"] = np.mean(self.ae)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
+
+        # TODO Fill calib model data
 
         model.set_initial_conditions(init)
 

@@ -61,8 +61,7 @@ def cli():
     )
     parser.add_argument(
         "--calib_identifier",
-        help="Identifier used for calibrator SNe. Default: CALIB",
-        default="CALIB",
+        help="Identifier used for calibrator SNe. Default: None",
     )
 
     args = parser.parse_args()

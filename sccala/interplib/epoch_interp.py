@@ -146,9 +146,7 @@ class EpochDataSet:
 
         ex_data_err = self.data_error[-1 * ind]
         self.data_error = np.delete(self.data_error, -1 * ind, 0)
-        self.data_error_ex = np.insert(
-            ex_data_err, ind * len(self.data_error_ex), 0
-        )
+        self.data_error_ex = np.insert(ex_data_err, ind * len(self.data_error_ex), 0)
 
         ex_time = self.time[-1 * ind]
         self.time = np.delete(self.time, -1 * ind, 0)
