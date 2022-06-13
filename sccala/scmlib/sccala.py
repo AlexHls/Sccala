@@ -1,8 +1,10 @@
 import os
+import warnings
 
 import numpy as np
 import pandas as pd
 import stan
+import matplotlib.pyplot as plt
 
 from models import *
 
@@ -14,6 +16,53 @@ def distmod_kin(z, q0=-0.55, j0=1):
     # Hubble constant free distance modulus d = d_L * H0 in kinematic expansion
     c = 299792.458  # c in km/s
     return (c * z) * (1 + (1 - q0) * z / 2 - (1 - q0 - 3 * q0**2 + j0) * z**2 / 6)
+
+
+def quantile(x, q, weights=None):
+    """
+    Compute sample quantiles with support for weighted samples.
+    Note
+    ----
+    When ``weights`` is ``None``, this method simply calls numpy's percentile
+    function with the values of ``q`` multiplied by 100.
+    Parameters
+    ----------
+    x : array_like[nsamples,]
+       The samples.
+    q : array_like[nquantiles,]
+       The list of quantiles to compute. These should all be in the range
+       ``[0, 1]``.
+    weights : Optional[array_like[nsamples,]]
+        An optional weight corresponding to each sample. These
+    Returns
+    -------
+    quantiles : array_like[nquantiles,]
+        The sample quantiles computed at ``q``.
+    Raises
+    ------
+    ValueError
+        For invalid quantiles; ``q`` not in ``[0, 1]`` or dimension mismatch
+        between ``x`` and ``weights``.
+    """
+    x = np.atleast_1d(x)
+    q = np.atleast_1d(q)
+
+    if np.any(q < 0.0) or np.any(q > 1.0):
+        raise ValueError("Quantiles must be between 0 and 1")
+
+    if weights is None:
+        return np.percentile(x, list(100.0 * q))
+    else:
+        weights = np.atleast_1d(weights)
+        if len(x) != len(weights):
+            print(len(x), len(weights))
+            raise ValueError("Dimension mismatch: len(weights) != len(x)")
+        idx = np.argsort(x)
+        sw = weights[idx]
+        cdf = np.cumsum(sw)[:-1]
+        cdf /= cdf[-1]
+        cdf = np.append(0, cdf)
+        return np.array(np.interp(q, cdf, x[idx]).tolist())
 
 
 class SccalaSCM:
@@ -133,6 +182,13 @@ class SccalaSCM:
 
             self.calib_epoch = None
 
+        self.datasets = datasets
+        if calib:
+            self.calib_datasets = calib_datasets
+        else:
+            self.calib_datasets = None
+        self.posterior = None
+
         return
 
     # TODO various methods to modify (add/ delete SNe) and display loaded data
@@ -222,15 +278,15 @@ class SccalaSCM:
             num_chains=chains, num_samples=iters, init=[model.init] * chains
         )
 
-        posterior = samples.to_frame()
+        self.posterior = samples.to_frame()
 
         if log_dir is not None:
-            self.__save_samples__(posterior, log_dir=log_dir)
+            self.__save_samples__(self.posterior, log_dir=log_dir)
 
         if not quiet:
-            model.print_results(posterior)
+            model.print_results(self.posterior)
 
-        return posterior
+        return self.posterior
 
     def __save_samples__(self, df, log_dir="log_dir"):
         """Exports sample data"""
@@ -249,3 +305,72 @@ class SccalaSCM:
         df.to_csv(os.path.join(log_dir, savename))
 
         return os.path.join(log_dir, savename)
+
+    def cornerplot(self, save=None):
+        """
+        Plots the cornerplot of the posterior
+
+        Parameters
+        ----------
+        save : str
+            Specified where the generated cornerplot will be saved.
+
+        Returns
+        -------
+        None
+        """
+
+        if self.posterior is None:
+            warnings.warn("Please run sampling before generating cornerplots")
+            return
+
+        try:
+            import corner
+        except ImportError:
+            warnings.warn("corner package not installed, skipping...")
+            return
+
+        paramnames = [
+            r"$\mathcal{M}_I$",
+            r"$\alpha$",
+            r"$\beta$",
+            r"$\gamma$",
+            r"$\sigma_{int}$",
+        ]
+        ndim = len(paramnames)
+
+        figure = corner.corner(
+            self.posterior[:, 8 : 8 + ndim],
+            labels=paramnames,
+            show_titles=True,
+        )
+
+        # This is the empirical mean of the sample:
+        value = np.mean(self.posterior[:, 8 : 8 + ndim], axis=0)
+
+        # Extract the axes
+        axes = np.array(figure.axes).reshape((ndim, ndim))
+
+        # Loop over the diagonal
+        for i in range(ndim):
+            ax = axes[i, i]
+            ax.axvline(value[i], color="g")
+
+        # Loop over the histograms
+        for yi in range(ndim):
+            for xi in range(yi):
+                ax = axes[yi, xi]
+                ax.axvline(value[xi], color="g")
+                ax.axhline(value[yi], color="g")
+                ax.plot(value[xi], value[yi], "sg")
+
+        if isinstance(save, str):
+            plt.savefig(
+                save,
+                bbox_inches="tight",
+                dpi=300,
+            )
+
+        plt.close()
+
+        return
