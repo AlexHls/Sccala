@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-from asynphot import __path__ as ASYNPHOT_PATH
+from sccala.asynphot import __path__ as ASYNPHOT_PATH
 
 
 def set_vega_spec(file):

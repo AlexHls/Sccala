@@ -1,17 +1,16 @@
 import os
 import re
-import sys
 import argparse
 
 import numpy as np
 import pandas as pd
 
-import libio.get_paths as pa
-import asynphot.synphot as base
-from speclib import spectools as spc
+import sccala.libio.get_paths as pa
+import sccala.asynphot.synphot as base
+from sccala.speclib import spectools as spc
 
 
-def get_synthetic_photometry(i, sid, sn, spec_id):
+def get_synthetic_photometry(i, sid, sn, spec_id, filters):
     """
     Helper function calculating synthetic photometry for given SN
     """
@@ -54,11 +53,16 @@ def main(args):
         # Check if filter_list refers to file or a single filter
         if os.path.exists(args.filter_list):
             try:
-                filter_list = np.genfromtxt(args.filter_list)
+                filter_list = np.genfromtxt(args.filter_list, dtype=str)
             except ValueError:
                 raise ValueError("Invalid filter list file")
         else:
             filter_list = [args.filter_list]
+    elif len(args.filter_list) == 1 and os.path.exists(args.filter_list[0]):
+        try:
+            filter_list = np.genfromtxt(args.filter_list[0], dtype=str)
+        except ValueError:
+            raise ValueError("Invalid filter list file")
     else:
         filter_list = args.filter_list
 
@@ -89,7 +93,7 @@ def main(args):
         except:
             raise ValueError("Invalid speclist format")
 
-    filters = base.FilterSet(filterlist)
+    filters = base.FilterSet(filter_list)
 
     for i, sid in enumerate(spec_id):
         print("[ %d/%d ]" % (i + 1, len(spec_id)))
@@ -104,7 +108,7 @@ def main(args):
 
         # Print magnitudes
         magnitudes = base.MagnitudeSet(
-            filterlist, mags, magnitude_uncertainties=mags_err
+            filter_list, mags, magnitude_uncertainties=mags_err
         )
         print(magnitudes.__repr__)
 
@@ -125,7 +129,7 @@ def main(args):
                 expdict[f] = mags[j]
                 expdict["%s_err" % f] = mags_err[j]
 
-            expdf = pd.DataFrame(expdict, index=np.array(sid))
+            expdf = pd.DataFrame(expdict, index=np.array([sid]))
 
             # Check if results already exist
             if os.path.exists(exp_name):
@@ -140,13 +144,14 @@ def main(args):
                         ]["filter"].to_list()
                     ):
                         data.loc[sid][f] = mags[j]
-                        data.loc[sid]["%s_err" % f] = mags[j]
+                        data.loc[sid]["%s_err" % f] = mags_err[j]
                 data.to_csv(exp_name)
             else:
+                data = pd.DataFrame(expdf)
                 data.to_csv(exp_name)
 
     print(
-        "Finished calculating synthetic photometry for spectra from %s file" % speclist
+        "Finished calculating synthetic photometry for spectra from %s file" % args.filter_list
     )
 
     return

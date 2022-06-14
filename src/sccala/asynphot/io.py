@@ -4,7 +4,7 @@ import re
 from astropy.io.votable import parse_single_table
 import numpy as np
 
-from asynphot import __path__ as ASYNPHOT_PATH
+from sccala.asynphot import __path__ as ASYNPHOT_PATH
 
 
 def load_transmission_data(filter_id):

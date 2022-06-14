@@ -1,6 +1,6 @@
 import os
 
-import asynphot.config as cfg
+import sccala.asynphot.config as cfg
 
 if not os.path.exists(cfg.get_vega_path()):
     print(

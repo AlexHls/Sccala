@@ -4,9 +4,9 @@ import numpy as np
 from scipy import interpolate
 from scipy import integrate
 
-from asynphot.calibration import get_vega_spectrum
-from asynphot.io import load_transmission_data
-from asynphot import integrate as err_integrate
+from sccala.asynphot.calibration import get_vega_spectrum
+from sccala.asynphot.io import load_transmission_data
+from sccala.asynphot import integrate as err_integrate
 
 
 def calculate_vega_zp(filter):

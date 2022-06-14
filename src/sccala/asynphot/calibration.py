@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-import asynphot.config as cfg
+import sccala.asynphot.config as cfg
 
 
 def get_vega_spectrum(vega_file=None):
