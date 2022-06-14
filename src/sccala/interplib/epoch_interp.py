@@ -99,10 +99,10 @@ class EpochDataSet:
 
         mask = np.logical_and(self.time > self.reg_min, self.time < self.reg_max)
 
-        self.data_ex = self.data[np.logical_not[mask]]
-        self.data_error_ex = self.data_error[np.logical_not[mask]]
-        self.time_ex = self.time[np.logical_not[mask]]
-        self.mjd_ex = self.mjd_ex[np.logical_not[mask]]
+        self.data_ex = self.data[np.logical_not(mask)]
+        self.data_error_ex = self.data_error[np.logical_not(mask)]
+        self.time_ex = self.time[np.logical_not(mask)]
+        self.mjd_ex = self.mjd[np.logical_not(mask)]
 
         self.data = self.data[mask]
         self.data_error = self.data_error[mask]
@@ -231,7 +231,7 @@ class EpochDataSet:
             )
 
             for v in self.data_pred[:100]:
-                ax2.plot(self.x_pred, np.array(v) / conv, color="")
+                ax2.plot(self.x_pred, np.array(v) / conv, color="k")
 
         ax2.errorbar(
             x=self.time,
@@ -255,7 +255,7 @@ class EpochDataSet:
         )
         ax2.set_xlabel("Time (days)")
         if "phot" in target:
-            ax2.sety_label("{:s} (mag)".format(target))
+            ax2.set_ylabel("{:s} (mag)".format(target))
         else:
             ax2.set_ylabel("Velocity (km s$^{-1}$)")
         ax2.legend()
@@ -264,6 +264,9 @@ class EpochDataSet:
         ax2.grid(which="minor", axis="both", linestyle="--")
 
         ax2.set_xlim([max([ax2.get_xlim()[0], 0]), max([65.0, max(self.time)])])
+
+        if "phot" in target:
+            ax2.invert_yaxis()
 
         plt.tight_layout()
 
@@ -347,10 +350,10 @@ class EpochDataSet:
         )
 
         try:
-            model.compute(self.time, self.data_err)
+            model.compute(self.time, self.data_error)
         except np.linalg.LinAlgError:
             warnings.warn("LinAlgError occured, modifying data_error...")
-            model.compute(self.time, self.data_err * 2)
+            model.compute(self.time, self.data_error * 2)
 
         # Emcee sampling
         def lnprob(p):
@@ -433,6 +436,8 @@ class EpochDataSet:
                 diagnostic=diagnostic,
             )
 
+        self.data_int = np.array(data_int)
+        self.data_pred = np.array(data_pred)
         self.get_results()
 
         if diagnostic:

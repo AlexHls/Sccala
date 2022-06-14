@@ -1,13 +1,14 @@
 import os
 import argparse
+import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import cloudpickle
 
-from interplib import epoch_interp
-from libio import get_paths as pa
+from sccala.interplib import epoch_interp
+from sccala.libio import get_paths as pa
 
 
 def main(args):
@@ -25,23 +26,22 @@ def main(args):
         os.makedirs(diag_path)
 
     # Load data
-    data = pd.read_csv(
+    dataframe = pd.read_csv(
         os.path.join(
-            pa.get_res_path(), "{:s}_{:s}_PeakFits.csv".format(snname, instrument)
+            pa.get_res_path(), "{:s}_{:s}_Photometry.csv".format(snname, instrument)
         ),
         index_col=[0],
     )
-    dataframe = data.loc[line]
     mjd = dataframe["MJD"].to_numpy()
 
     # Import Gaussian KDE for time-prior
     data_path = os.path.join(pa.get_data_path(), snname)
-    with open(os.path.join(directory, "{:s}_TimeKDE.pkl".format(snname)), "rb") as f:
+    with open(os.path.join(data_path, "{:s}_TimeKDE.pkl".format(snname)), "rb") as f:
         time_kde = cloudpickle.load(f)
     tkde = time_kde.resample(size=10000)
 
     # Load redshift from info file
-    info = pd.read_csv(os.path.join(directory, "{:s}_info.csv".format(snname)))
+    info = pd.read_csv(os.path.join(data_path, "{:s}_info.csv".format(snname)))
     red = np.mean(info["Redshift"].to_numpy())
 
     # Unpack rules
@@ -63,7 +63,7 @@ def main(args):
         mag = dataframe[band].to_numpy()
         mag_error = dataframe["%s_err" % band].to_numpy()
 
-        mag_set = EpochDataSet(
+        mag_set = epoch_interp.EpochDataSet(
             mag,
             mag_error,
             tkde,
@@ -88,11 +88,11 @@ def main(args):
         )
         ext = 1
         while os.path.exists(expname):
-            warning.warn("Results file already exists...")
+            warnings.warn("Results file already exists...")
             expname = os.path.join(
                 pa.get_res_path(),
                 "%s_%s_%s_InterpolationResults(%d).csv"
-                % (snname, istrument, band, ext),
+                % (snname, instrument, band, ext),
             )
             ext += 1
 
@@ -100,8 +100,8 @@ def main(args):
             {
                 "Date": dates,
                 "{:s}".format(band): mag_int,
-                "{:s}_err_lower".format(band): mag_int_err_lower,
-                "{:s}_err_upper".format(band): mag_int_err_upper,
+                "{:s}_err_lower".format(band): mag_int_error_lower,
+                "{:s}_err_upper".format(band): mag_int_error_upper,
             }
         )
 

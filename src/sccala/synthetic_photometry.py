@@ -151,7 +151,8 @@ def main(args):
                 data.to_csv(exp_name)
 
     print(
-        "Finished calculating synthetic photometry for spectra from %s file" % args.filter_list
+        "Finished calculating synthetic photometry for spectra from %s file"
+        % args.filter_list
     )
 
     return

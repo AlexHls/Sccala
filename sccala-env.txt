@@ -7,3 +7,4 @@ astropy
 specutils
 pystan
 corner
+cloudpickle
