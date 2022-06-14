@@ -17,8 +17,9 @@ setup(
         "License :: OSI Approved :: GPLv2",
         "Operating System :: OS Independent",
     ],
-    package_dir={"": "./"},
-    packages=["sccala"],#setuptools.find_packages(where="sccala"),
+    package_dir={"": "src"},
+    packages=setuptools.find_packages(where="src"),
+#    packages=['sccala'],
     python_requires=">=3.6",
     scripts=[
         'bin/sccala-photometry',

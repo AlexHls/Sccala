@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: sccala-sniip
+Version: 0.1
+Summary: Standardisation Framework for Core-Collapse Supernovae and Line Analysis Toolkit
+Home-page: http://github.com/AlexHls/Sccala
+Author: Alexander Holas
+Author-email: alexander.holas@h-its.org
+License: GPLv2
+Project-URL: Bug Tracker, https://github.com/AlexHls/Sccala/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GPLv2
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+License-File: LICENSE
