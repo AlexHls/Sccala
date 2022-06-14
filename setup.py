@@ -25,6 +25,9 @@ setup(
         'bin/sccala-linefit',
         'bin/sccala-velocity-interpolation',
         'bin/sccala-photometry-interpolation',
+        'bin/sccala-gen-testdata',
+        'bin/sccala-scm',
+        'bin/sccala-project-init',
     ],
 )
 
