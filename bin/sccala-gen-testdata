@@ -1,0 +1,4 @@
+#!/usr/bin/env python
+from sccala import gen_testdata
+
+gen_testdata.cli()

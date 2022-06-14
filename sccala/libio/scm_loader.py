@@ -1,5 +1,6 @@
 import os
 import warnings
+import glob
 
 import pandas as pd
 import numpy as np
@@ -66,12 +67,16 @@ def load_data(
         "dataset": [],
         "mag": [],
         "mag_err": [],
+        "mag_sys": [],
         "col": [],
         "col_err": [],
+        "col_sys": [],
         "vel": [],
         "vel_err": [],
+        "vel_sys": [],
         "ae": [],
         "ae_err": [],
+        "ae_sys": [],
         "red": [],
         "red_err": [],
         "epoch": [],
@@ -110,7 +115,7 @@ def load_data(
             date = [date]
             dataset = None
     elif sne == "all":
-        sne = glob(os.path.join(pa.get_data_path(), "*/"))
+        sne = glob.glob(os.path.join(pa.get_data_path(), "*/"))
         mag = [mag] * len(sne)
         col = [col] * len(sne)
         date = [date] * len(sne)
@@ -399,6 +404,12 @@ def load_data(
 
             # Epoch
             datadict["epoch"].append(calib_date[i])
+
+    # TODO implement proper systematics import treatment
+    datadict["mag_sys"] = np.zeros_like(datadict["SN"])
+    datadict["vel_sys"] = np.zeros_like(datadict["SN"])
+    datadict["col_sys"] = np.zeros_like(datadict["SN"])
+    datadict["ae_sys"] = np.zeros_like(datadict["SN"])
 
     scm_data = pd.DataFrame(datadict)
 
