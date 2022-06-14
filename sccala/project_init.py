@@ -62,3 +62,12 @@ def main():
         "Finished initializing project!\n"
         "******************************"
     )
+
+
+def cli():
+    main()
+    return
+
+
+if __name__ == "__main__":
+    cli()

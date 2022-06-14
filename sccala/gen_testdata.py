@@ -212,9 +212,7 @@ def cli():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "zrange",
-        nargs="2",
-        help="Redshift range in which testdata is to be generated."
+        "zrange", nargs="2", help="Redshift range in which testdata is to be generated."
     )
     parser.add_argument(
         "save",
@@ -231,7 +229,7 @@ def cli():
         "-p",
         "--plots",
         action="store_true",
-        help="Flag to activate plots. WARNING: Will overwrite existing plots."
+        help="Flag to activate plots. WARNING: Will overwrite existing plots.",
     )
 
     args = parser.parse_args()
