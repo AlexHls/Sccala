@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from utillib.aux import *
+from sccala.utillib.aux import *
 
 
 def gen_testdata(zrange, save, size=250, plots=False):
@@ -33,7 +33,7 @@ def gen_testdata(zrange, save, size=250, plots=False):
     """
 
     # Check if zrange is a valid tuple or list
-    if not isinstance(zrange, tuple) or not (
+    if not isinstance(zrange, tuple) and not (
         isinstance(zrange, list) and len(zrange) == 2
     ):
         raise ValueError("zrange is not a valid tuple or list of length two")
@@ -212,7 +212,10 @@ def cli():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "zrange", nargs="2", help="Redshift range in which testdata is to be generated."
+        "zrange",
+        nargs=2,
+        help="Redshift range in which testdata is to be generated.",
+        type=float,
     )
     parser.add_argument(
         "save",
