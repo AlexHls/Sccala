@@ -1,11 +1,11 @@
 import argparse
 
-import scmlib.sccala as sc
-import scmlib.models as models
+import sccala.scmlib.sccala as sc
+import sccala.scmlib.models as models
 
 
 def main(args):
-    sccala_scm = sc.SccalaSCM(args.file, calib=args.calib_identifier)
+    sccala_scm = sc.SccalaSCM(args.data, calib=args.calib_identifier)
 
     model = args.model
     if model == "hubble":

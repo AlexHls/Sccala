@@ -6,9 +6,9 @@ import pandas as pd
 import stan
 import matplotlib.pyplot as plt
 
-from models import *
-from utillib.aux import *
-from utillib.const import *
+from sccala.scmlib.models import *
+from sccala.utillib.aux import *
+from sccala.utillib.const import *
 
 
 class SccalaSCM:
@@ -27,7 +27,7 @@ class SccalaSCM:
 
         df = pd.read_csv(file)
 
-        datasets = list(df["dataset"].unique)
+        datasets = list(df["dataset"].unique())
 
         if calib:
             calib_datasets = [x for x in datasets if calib in x]
@@ -53,8 +53,8 @@ class SccalaSCM:
         self.red_err = df[df["dataset"].isin(datasets)]["red_err"].to_numpy()
 
         self.mag_sys = df[df["dataset"].isin(datasets)]["mag_sys"].to_numpy()
-        self.v_sys = df[df["dataset"].isin(datasets)]["v_sys"].to_numpy()
-        self.c_sys = df[df["dataset"].isin(datasets)]["c_sys"].to_numpy()
+        self.v_sys = df[df["dataset"].isin(datasets)]["vel_sys"].to_numpy()
+        self.c_sys = df[df["dataset"].isin(datasets)]["col_sys"].to_numpy()
         self.ae_sys = df[df["dataset"].isin(datasets)]["ae_sys"].to_numpy()
 
         self.epoch = df[df["dataset"].isin(datasets)]["epoch"].to_numpy()
@@ -91,10 +91,10 @@ class SccalaSCM:
                 "mag_sys"
             ].to_numpy()
             self.calib_v_sys = df[df["dataset"].isin(calib_datasets)][
-                "v_sys"
+                "vel_sys"
             ].to_numpy()
             self.calib_c_sys = df[df["dataset"].isin(calib_datasets)][
-                "c_sys"
+                "col_sys"
             ].to_numpy()
             self.calib_ae_sys = df[df["dataset"].isin(calib_datasets)][
                 "ae_sys"
@@ -206,8 +206,8 @@ class SccalaSCM:
         model.data["obs"] = obs
         model.data["errors"] = errors
         model.data["mag_sys"] = self.mag_sys
-        model.data["v_sys"] = self.v_sys
-        model.data["c_sys"] = self.c_sys
+        model.data["vel_sys"] = self.v_sys
+        model.data["col_sys"] = self.c_sys
         model.data["ae_sys"] = self.ae_sys
         model.data["vel_avg"] = np.mean(self.vel)
         model.data["col_avg"] = np.mean(self.col)
@@ -219,7 +219,7 @@ class SccalaSCM:
         model.set_initial_conditions(init)
 
         # Setup/ build STAN model
-        fit = stan.build(model.code, data=model.data)
+        fit = stan.build(model.model, data=model.data)
         samples = fit.sample(
             num_chains=chains, num_samples=iters, init=[model.init] * chains
         )
