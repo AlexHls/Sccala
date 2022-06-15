@@ -599,7 +599,7 @@ class LineFit:
             ae_avg = self.fits[line]["ae_avg"]
             ae = np.percentile(ae_avg, 50)
             ae_err_lower = ae - np.percentile(ae_avg, 15.87)
-            ae_err_upper = np.percentile(ae_avg, 84.13)
+            ae_err_upper = np.percentile(ae_avg, 84.13) - ae
 
             return ae, ae_err_lower, ae_err_upper
         else:
