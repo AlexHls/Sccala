@@ -5,7 +5,7 @@ import glob
 import pandas as pd
 import numpy as np
 
-from libio import get_paths as pa
+from sccala.libio import get_paths as pa
 
 
 def load_data(

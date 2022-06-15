@@ -1,7 +1,7 @@
 import os
 import argparse
 
-from libio import scm_loader as sl
+from sccala.libio import scm_loader as sl
 
 
 def main(args):
