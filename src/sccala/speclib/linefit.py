@@ -157,7 +157,7 @@ class LineFit:
                 # Add user defined line to line dict
                 self.lines[line] = [cr_low, cr_high, rest, ae_feature]
 
-        print("Fitting %s line...")
+        print("Fitting %s line..." % line)
 
         # Cut off any additional secondary feature (particularly for hbeta features)
         while True:
@@ -166,7 +166,7 @@ class LineFit:
             flux = self.flux[cutting_range]
             if self.error is not None:
                 error = self.error[cutting_range]
-            if wavelength[np.argmin(flux)] < rest:
+            if wav[np.argmin(flux)] < rest:
                 break
             cr_high -= 20
 
@@ -204,7 +204,7 @@ class LineFit:
 
         initial = gp.get_parameter_vector()
         ndim, nwalkers = len(initial), 32
-        sampler = emcee.EnsambleSampler(nwalkers, ndim, lnprob)
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
         sampler.reset()
 
         try:
@@ -261,7 +261,7 @@ class LineFit:
             try:
                 minind = np.argmin(mu[mask])
                 # Calculate absorption to emission line ratio
-                if ae - feature:
+                if ae_feature:
                     mi = np.min(mu[mask])
                     ma = np.max(mu[np.logical_and(x > min(wav) + lowcut, x < cr_high)])
                     mins.append(mi)
@@ -335,14 +335,11 @@ class LineFit:
             rest = self.lines[line][2]
             ae_feature = self.lines[line][3]
         else:
-            if cr_low is None or cr_high is None or rest is None:
-                raise ValueError(
-                    "Line not found in built in set and no range specifications given..."
-                )
-            else:
-                # Add user defined line to line dict
-                self.lines[line] = [cr_low, cr_high, rest, ae_feature]
+            raise ValueError(
+                "Line not found in built in set..."
+            )
 
+        lowcut = 30
         cutting_range = np.logical_and(self.wav > cr_low, self.wav < cr_high)
 
         # Unpack results
@@ -423,8 +420,8 @@ class LineFit:
 
             ax2.errorbar(
                 self.wav[cutting_range],
-                self.flux[cutting_range] - avg_noise,
-                yerr=self.error,
+                self.flux[cutting_range] - np.mean(avg_noise, axis=0),
+                yerr=self.error[cutting_range],
                 fmt=".k",
                 capsize=0,
                 label="Noise subtracted data",
@@ -437,13 +434,12 @@ class LineFit:
             ax2.set_xlabel("Wavelength ($\AA$)")
             ax2.set_ylabel("Flux (arb. unit)")
             ax2.legend()
-            ax2.tight_layout()
-            ax2.xlim([min(x), max(x)])
+            ax2.set_xlim([min(x), max(x)])
             ax2.grid(which="major")
 
             ax3.plot(
                 self.wav[cutting_range],
-                avg_noise,
+                np.mean(avg_noise, axis=0),
                 "k",
                 label="Average Subtracted Noise",
             )
@@ -503,7 +499,7 @@ class LineFit:
                 ax2.axvline(minima[ind], color="red", alpha=0.1)
             ax2.errorbar(
                 self.wav[cutting_range],
-                self.flux[cutting_range] - avg_noise,
+                self.flux[cutting_range] - np.mean(avg_noise, axis=0),
                 yerr=self.error[cutting_range],
                 fmt=".k",
                 capsize=0,
@@ -518,19 +514,33 @@ class LineFit:
             ax2.set_xlim([min(x), max(x)])
             ax2.grid(which="major")
 
-            ax2.set_title(
-                "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n Velocity: {:.2f} +{:.2f}/ -{:.2f} km/s".format(
-                    median,
-                    min_error_upper,
-                    min_error_lower,
-                    velocity / 1000,
-                    vel_err_upper / 1000,
-                    vel_err_lower / 1000,
+            velocity, vel_err_lower, vel_err_upper = self.get_results(line)
+
+            if ae_feature:
+                ax2.set_title(
+                    "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n a/e: {:.2e} +{:.2e}/ -{:.2e}".format(
+                        median,
+                        min_error_upper,
+                        min_error_lower,
+                        velocity,
+                        vel_err_upper,
+                        vel_err_lower,
+                    )
                 )
-            )
+            else:
+                ax2.set_title(
+                    "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n Velocity: {:.2f} +{:.2f}/ -{:.2f} km/s".format(
+                        median,
+                        min_error_upper,
+                        min_error_lower,
+                        velocity / 1000,
+                        vel_err_upper / 1000,
+                        vel_err_lower / 1000,
+                    )
+                )
 
             ax3 = plt.subplot(133)
-            ax3.plot(wavelength, avg_noise, "k", label="Average Subtracted Noise")
+            ax3.plot(self.wav, np.mean(avg_noise, axis=0), "k", label="Average Subtracted Noise")
             ax3.legend()
             ax3.set_xlabel(r"Wavelength($\AA$)")
             ax3.set_ylabel("Flux (arb. unit)")
@@ -538,6 +548,8 @@ class LineFit:
         plt.tight_layout()
 
         # Save figure
+        if not os.path.exists(save):
+            os.makedirs(save)
         if save:
             plt.savefig(
                 os.path.join(save, "Fit_{:s}_{:s}.pdf".format(line, str(self.numcode))),
@@ -571,9 +583,17 @@ class LineFit:
         ae_err_lower : float
         ae_err_upper : float
         """
-        assert line in list(self.fist.keys()), "Specified line not found in results"
+        assert line in list(self.lines.keys()), "Specified line not found in results"
 
-        ae_feature = self.lines[line][3]
+        if line in list(self.lines.keys()):
+            cr_low = self.lines[line][0]
+            cr_high = self.lines[line][1]
+            rest = self.lines[line][2]
+            ae_feature = self.lines[line][3]
+        else:
+            raise ValueError(
+                "Line not found in built in set..."
+            )
 
         if ae_feature:
             ae_avg = self.fits[line]["ae_avg"]

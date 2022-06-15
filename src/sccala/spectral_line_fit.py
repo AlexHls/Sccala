@@ -5,9 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from speclib import linefit as lft
-from speclib import spectools as spc
-from libio import get_paths as pa
+from sccala.speclib import linefit as lft
+from sccala.speclib import spectools as spc
+from sccala.libio import get_paths as pa
 
 
 def main(args):
@@ -57,7 +57,7 @@ def main(args):
         # Fit lines
         diag_path = os.path.join(pa.get_diag_path(), sn[i])
 
-        fit = linefit.LineFit(
+        fit = lft.LineFit(
             wav,
             flux,
             error,
