@@ -1,15 +1,14 @@
-import os
 import argparse
 
 from sccala.libio import scm_loader as sl
 
 
 def main(args):
-    sne = args.sne
+    sne_list = args.sne
     date = args.date
     mag = args.mag
     col = tuple(args.col)
-    calib_sne = args.calib_sne
+    calib_sne_list = args.calib_sne
     calib_mag = args.calib_mag
     calib_col = tuple(args.calib_mag)
     instrument = args.instrument
@@ -21,11 +20,11 @@ def main(args):
         export = args.export
 
     df = sl.load_data(
-        sne,
+        sne_list,
         date,
         mag=mag,
         col=col,
-        calib_sne=calib_sne,
+        calib_sne_list=calib_sne_list,
         calib_mag=calib_mag,
         calib_col=calib_col,
         instrument=instrument,

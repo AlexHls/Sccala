@@ -141,20 +141,22 @@ class EpochDataSet:
         else:
             ind = 1
         ex_data = self.data[-1 * ind]
-        self.data = np.delete(self.data, -1 * ind, 0)
-        self.data_ex = np.insert(ex_data, ind * len(self.data_ex), 0)
+        self.data = np.delete(self.data, -1 * ind, axis=0)
+        self.data_ex = np.insert(self.data_ex, ind * len(self.data_ex), ex_data)
 
         ex_data_err = self.data_error[-1 * ind]
-        self.data_error = np.delete(self.data_error, -1 * ind, 0)
-        self.data_error_ex = np.insert(ex_data_err, ind * len(self.data_error_ex), 0)
+        self.data_error = np.delete(self.data_error, -1 * ind, axis=0)
+        self.data_error_ex = np.insert(
+            self.data_error_ex, ind * len(self.data_error_ex), ex_data_err
+        )
 
         ex_time = self.time[-1 * ind]
-        self.time = np.delete(self.time, -1 * ind, 0)
-        self.time_ex = np.insert(ex_time, ind * len(self.time_ex), 0)
+        self.time = np.delete(self.time, -1 * ind, axis=0)
+        self.time_ex = np.insert(self.time_ex, ind * len(self.time_ex), ex_time)
 
         ex_mjd = self.mjd[-1 * ind]
-        self.mjd = np.delete(self.mjd, -1 * ind, 0)
-        self.mjd_ex = np.insert(ex_mjd, ind * len(self.mjd_ex), 0)
+        self.mjd = np.delete(self.mjd, -1 * ind, axis=0)
+        self.mjd_ex = np.insert(self.mjd_ex, ind * len(self.mjd_ex), ex_mjd)
 
         return
 

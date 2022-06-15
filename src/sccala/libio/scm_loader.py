@@ -9,11 +9,11 @@ from sccala.libio import get_paths as pa
 
 
 def load_data(
-    sne,
+    sne_list,
     date,
     mag="I",
     col=("V", "I"),
-    calib_sne=None,
+    calib_sne_list=None,
     calib_date=None,
     calib_mag="I",
     calib_col=("V", "I"),
@@ -26,7 +26,7 @@ def load_data(
 
     Parameters
     ----------
-    sne : str or list
+    sne_list : str or list
         Which SNe to load. Can either be a string, list of string or
         a filename where a detailed list is stored. If 'all' is passed,
         all SNe found in the data directory will be loaded.
@@ -40,7 +40,7 @@ def load_data(
     date : float
         Epoch at which data is loaded. If date column exists in sne file,
         input will be ignored.
-    calib_sne : str or list
+    calib_sne_list : str or list
         Same as sne, but for calibrators (optional).
     calib_mag : str
         Same as sne, but for calibrators (optional).
@@ -83,16 +83,18 @@ def load_data(
     }
 
     # Check format of sne input
-    if not isinstance(sne, list):
-        if os.path.exists(sne):
-            df = pd.read_csv(sne)
+    if not isinstance(sne_list, list) or len(sne_list) == 1:
+        if isinstance(sne_list, list):
+            sne_list = sne_list[0]
+        if os.path.exists(sne_list):
+            df = pd.read_csv(sne_list)
             sne = df["SN"].tolist()
             if "mag" in df.columns:
                 mag = df["mag"].tolist()
             else:
                 mag = [mag] * len(sne)
             if "col0" in df.columns and "col1" in df.columns:
-                col = zip(df["col0"].tolist(), df["col1"].tolist())
+                col = list(zip(df["col0"].tolist(), df["col1"].tolist()))
             else:
                 col = [col] * len(sne)
             if "date" in df.columns:
@@ -129,17 +131,19 @@ def load_data(
         dataset = None
 
     # Check format of calib_sne input
-    if calib_sne is not None:
-        if not isinstance(calib_sne, list):
-            if os.path.exists(calib_sne):
-                df = pd.read_csv(calib_sne)
+    if calib_sne_list is not None:
+        if not isinstance(calib_sne_list, list) or len(calib_sne_list) == 1:
+            if isinstance(calib_sne_list, list):
+                calib_sne_list = calib_sne_list[0]
+            if os.path.exists(calib_sne_list):
+                df = pd.read_csv(calib_sne_list)
                 calib_sne = df["SN"].tolist()
                 if "mag" in df.columns:
                     calib_mag = df["mag"].tolist()
                 else:
                     calib_mag = [calib_mag] * len(calib_sne)
                 if "col0" in df.columns and "col1" in df.columns:
-                    calib_col = zip(df["col0"].tolist(), df["col1"].tolist())
+                    calib_col = list(zip(df["col0"].tolist(), df["col1"].tolist()))
                 else:
                     calib_col = [calib_col] * len(calib_sne)
                 if "date" in df.columns:
@@ -156,20 +160,20 @@ def load_data(
                     calib_instrument = [instrument] * len(calib_sne)
             else:
                 # Turn input into list of only SN name was passed
-                calib_sne = [calib_sne]
+                calib_sne = [calib_sne_list]
                 calib_mag = [calib_mag]
                 calib_col = [calib_col]
                 calib_date = [calib_date]
                 calib_instrument = [instrument]
                 calib_dataset = None
-        elif calib_sne == "all":
+        elif calib_sne_list == "all":
             raise ValueError("Calibrators need to be specified manually")
         else:
             calib_dataset = None
-            calib_mag = [calib_mag] * len(calib_sne)
-            calib_col = [calib_col] * len(calib_sne)
-            calib_date = [calib_date] * len(calib_sne)
-            calib_instrument = [instrument] * len(calib_sne)
+            calib_mag = [calib_mag] * len(calib_sne_list)
+            calib_col = [calib_col] * len(calib_sne_list)
+            calib_date = [calib_date] * len(calib_sne_list)
+            calib_instrument = [instrument] * len(calib_sne_list)
 
     for i, sn in enumerate(sne):
         # Check if sn refers is a path to a SN or just a SN name
@@ -181,7 +185,7 @@ def load_data(
             datadict["SN"].append(sn)
 
         # Load info file
-        info = pd.read_csv(os.path.join(datapath, "{:s}_info.csv".format(sn[i])))
+        info = pd.read_csv(os.path.join(datapath, "{:s}_info.csv".format(sn)))
         red = np.mean(info["Redshift"].to_numpy())
         red_err = np.mean(info["Redshift_Error"])
         datadict["red"].append(red)
@@ -207,7 +211,7 @@ def load_data(
         df = pd.read_csv(
             os.path.join(
                 respath,
-                "%s_%s_%s_InterpolationResults.csv" % s(sn, instrument[i], mag[i]),
+                "%s_%s_%s_InterpolationResults.csv" % (sn, instrument[i], mag[i]),
             )
         )
         mags = df[df["Date"] == date[i]][mag[i]].to_numpy()[0]
@@ -224,7 +228,7 @@ def load_data(
         df = pd.read_csv(
             os.path.join(
                 respath,
-                "%s_%s_%s_InterpolationResults.csv" % s(sn, instrument[i], col[i][0]),
+                "%s_%s_%s_InterpolationResults.csv" % (sn, instrument[i], col[i][0]),
             )
         )
         col0 = df[df["Date"] == date[i]][col[i][0]].to_numpy()[0]
@@ -240,10 +244,10 @@ def load_data(
         df = pd.read_csv(
             os.path.join(
                 respath,
-                "%s_%s_%s_InterpolationResults.csv" % s(sn, instrument[i], col[i][1]),
+                "%s_%s_%s_InterpolationResults.csv" % (sn, instrument[i], col[i][1]),
             )
         )
-        col1 = df[df["Date"] == date[i]][col[i][0]].to_numpy()[0]
+        col1 = df[df["Date"] == date[i]][col[i][1]].to_numpy()[0]
         col1_err_lower = df[df["Date"] == date[i]][
             "%s_err_lower" % col[i][1]
         ].to_numpy()[0]
@@ -253,14 +257,15 @@ def load_data(
         col1_err = max(col1_err_lower, col1_err_upper)
 
         # Color
-        datadict["mag"].append(col0 - col1)
-        datadict["mag_err"].append(np.sqrt(col0_err**2 + col1_err**2))
+        datadict["col"].append(col0 - col1)
+        datadict["col_err"].append(np.sqrt(col0_err**2 + col1_err**2))
 
         # Velocity
         df = pd.read_csv(
             os.path.join(
                 respath,
-                "%s_hbeta_InterpolationResults.csv",  # TODO Allow for other lines
+                "%s_hbeta_InterpolationResults.csv"
+                % (sn),  # TODO Allow for other lines
             )
         )
         vel = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
@@ -273,7 +278,8 @@ def load_data(
         df = pd.read_csv(
             os.path.join(
                 respath,
-                "%s_halpha-ae_InterpolationResults.csv",  # TODO Allow for other lines
+                "%s_halpha-ae_InterpolationResults.csv"
+                % (sn),  # TODO Allow for other lines
             )
         )
         ae = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
@@ -286,7 +292,7 @@ def load_data(
         # Epoch
         datadict["epoch"].append(date[i])
 
-    if calib_sne is not None:
+    if calib_sne_list is not None:
         for i, sn in enumerate(calib_sne):
             # Check if sn refers is a path to a SN or just a SN name
             if os.path.exists(sn):
@@ -297,7 +303,7 @@ def load_data(
                 datadict["SN"].append(sn)
 
             # Load info file
-            info = pd.read_csv(os.path.join(datapath, "{:s}_info.csv".format(sn[i])))
+            info = pd.read_csv(os.path.join(datapath, "{:s}_info.csv".format(sn)))
             red = np.mean(info["Redshift"].to_numpy())
             red_err = np.mean(info["Redshift_Error"])
             datadict["red"].append(red)
@@ -324,7 +330,7 @@ def load_data(
                 os.path.join(
                     respath,
                     "%s_%s_%s_InterpolationResults.csv"
-                    % s(sn, calib_instrument[i], calib_mag[i]),
+                    % (sn, calib_instrument[i], calib_mag[i]),
                 )
             )
             mags = df[df["Date"] == date[i]][calib_mag[i]].to_numpy()[0]
@@ -342,7 +348,7 @@ def load_data(
                 os.path.join(
                     respath,
                     "%s_%s_%s_InterpolationResults.csv"
-                    % s(sn, calib_instrument[i], calib_col[i][0]),
+                    % (sn, calib_instrument[i], calib_col[i][0]),
                 )
             )
             col0 = df[df["Date"] == date[i]][calib_col[i][0]].to_numpy()[0]
@@ -359,7 +365,7 @@ def load_data(
                 os.path.join(
                     respath,
                     "%s_%s_%s_InterpolationResults.csv"
-                    % s(sn, calib_instrument[i], calib_col[i][1]),
+                    % (sn, calib_instrument[i], calib_col[i][1]),
                 )
             )
             col1 = df[df["Date"] == date[i]][calib_col[i][0]].to_numpy()[0]
@@ -372,8 +378,8 @@ def load_data(
             col1_err = max(col1_err_lower, col1_err_upper)
 
             # Color
-            datadict["mag"].append(col0 - col1)
-            datadict["mag_err"].append(np.sqrt(col0_err**2 + col1_err**2))
+            datadict["col"].append(col0 - col1)
+            datadict["col_err"].append(np.sqrt(col0_err**2 + col1_err**2))
 
             # Velocity
             df = pd.read_csv(
@@ -406,18 +412,18 @@ def load_data(
             datadict["epoch"].append(calib_date[i])
 
     # TODO implement proper systematics import treatment
-    datadict["mag_sys"] = np.zeros_like(datadict["SN"])
-    datadict["vel_sys"] = np.zeros_like(datadict["SN"])
-    datadict["col_sys"] = np.zeros_like(datadict["SN"])
-    datadict["ae_sys"] = np.zeros_like(datadict["SN"])
+    datadict["mag_sys"] = [0] * len(datadict["SN"])
+    datadict["vel_sys"] = [0] * len(datadict["SN"])
+    datadict["col_sys"] = [0] * len(datadict["SN"])
+    datadict["ae_sys"] = [0] * len(datadict["SN"])
 
     scm_data = pd.DataFrame(datadict)
 
     if export:
         if isinstance(export, bool):
             scm_data.to_csv(
-                os.join.path(
-                    pa.get_res_path(), "SCM_Data_%s_%d" % (instrument[0], date[0])
+                os.path.join(
+                    pa.get_res_path(), "SCM_Data_%s_%d.csv" % (instrument[0], date[0])
                 )
             )
         else:

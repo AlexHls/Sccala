@@ -335,9 +335,7 @@ class LineFit:
             rest = self.lines[line][2]
             ae_feature = self.lines[line][3]
         else:
-            raise ValueError(
-                "Line not found in built in set..."
-            )
+            raise ValueError("Line not found in built in set...")
 
         lowcut = 30
         cutting_range = np.logical_and(self.wav > cr_low, self.wav < cr_high)
@@ -510,7 +508,6 @@ class LineFit:
             ax2.set_xlabel(r"Wavelength ($\AA$)")
             ax2.set_ylabel("Flux (arb. unit)")
             ax2.legend()
-            ax2.tight_layout()
             ax2.set_xlim([min(x), max(x)])
             ax2.grid(which="major")
 
@@ -540,7 +537,12 @@ class LineFit:
                 )
 
             ax3 = plt.subplot(133)
-            ax3.plot(self.wav, np.mean(avg_noise, axis=0), "k", label="Average Subtracted Noise")
+            ax3.plot(
+                self.wav[cutting_range],
+                np.mean(avg_noise, axis=0),
+                "k",
+                label="Average Subtracted Noise",
+            )
             ax3.legend()
             ax3.set_xlabel(r"Wavelength($\AA$)")
             ax3.set_ylabel("Flux (arb. unit)")
@@ -591,9 +593,7 @@ class LineFit:
             rest = self.lines[line][2]
             ae_feature = self.lines[line][3]
         else:
-            raise ValueError(
-                "Line not found in built in set..."
-            )
+            raise ValueError("Line not found in built in set...")
 
         if ae_feature:
             ae_avg = self.fits[line]["ae_avg"]

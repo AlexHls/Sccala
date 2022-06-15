@@ -29,6 +29,7 @@ setup(
         'bin/sccala-gen-testdata',
         'bin/sccala-scm',
         'bin/sccala-project-init',
+        'bin/collect-scm-data',
     ],
 )
 

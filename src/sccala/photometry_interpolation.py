@@ -98,7 +98,9 @@ def main(args):
 
         expdf = pd.DataFrame(
             {
-                "Date": dates,
+                "Date": np.around(
+                    dates, 3
+                ),  # TODO Find better solution to deal with floating point error
                 "{:s}".format(band): mag_int,
                 "{:s}_err_lower".format(band): mag_int_error_lower,
                 "{:s}_err_upper".format(band): mag_int_error_upper,
