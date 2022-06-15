@@ -1,13 +1,13 @@
 import os
 import argparse
+import warnings
 
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import cloudpickle
 
-from interplib import epoch_interp
-from libio import get_paths as pa
+from sccala.interplib import epoch_interp
+from sccala.libio import get_paths as pa
 
 
 def main(args):
@@ -34,12 +34,12 @@ def main(args):
 
     # Import Gaussian KDE for time-prior
     data_path = os.path.join(pa.get_data_path(), snname)
-    with open(os.path.join(directory, "{:s}_TimeKDE.pkl".format(snname)), "rb") as f:
+    with open(os.path.join(data_path, "{:s}_TimeKDE.pkl".format(snname)), "rb") as f:
         time_kde = cloudpickle.load(f)
     tkde = time_kde.resample(size=10000)
 
     # Load redshift from info file
-    info = pd.read_csv(os.path.join(directory, "{:s}_info.csv".format(snname)))
+    info = pd.read_csv(os.path.join(data_path, "{:s}_info.csv".format(snname)))
     red = np.mean(info["Redshift"].to_numpy())
 
     # Unpack rules
@@ -57,7 +57,7 @@ def main(args):
         reg_max = 60
         extrapolate = 5
 
-    vel_set = EpochDataSet(
+    vel_set = epoch_interp.EpochDataSet(
         vel,
         vel_error,
         tkde,
@@ -81,7 +81,7 @@ def main(args):
     )
     ext = 1
     while os.path.exists(expname):
-        warning.warn("Results file already exists...")
+        warnings.warn("Results file already exists...")
         expname = os.path.join(
             pa.get_res_path(),
             "%s_%s_InterpolationResults(%d).csv" % (snname, line, ext),
@@ -92,12 +92,14 @@ def main(args):
         {
             "Date": dates,
             "VelInt": vel_int,
-            "ErrorLower": vel_int_err_lower,
-            "ErrorUpper": vel_int_err_upper,
+            "ErrorLower": vel_int_error_lower,
+            "ErrorUpper": vel_int_error_upper,
         }
     )
 
     expdf.to_csv(expname, index=False)
+
+    print("Finished fitting %s velocity fit for %s" % (line, snname))
 
     return expname
 
