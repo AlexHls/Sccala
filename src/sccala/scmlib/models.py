@@ -35,8 +35,8 @@ class HubbleFreeSCM(SCM_Model):
             "obs": None,
             "errors": None,
             "mag_sys": None,
-            "v_sys": None,
-            "c_sys": None,
+            "vel_sys": None,
+            "col_sys": None,
             "ae_sys": None,
             "vel_avg": None,
             "col_avg": None,
@@ -124,5 +124,5 @@ class HubbleFreeSCM(SCM_Model):
     def print_results(self, df):
         keys = ["alpha", "beta", "gamma", "sigma_int", "Mi"]
         for key in keys:
-            print("%s = %.2e +/- %.2e" % (np.mean(df[key][0]), np.std(df[key][0])))
+            print("%s = %.2g +/- %.2g" % (key, np.mean(df[key]), np.std(df[key])))
         return

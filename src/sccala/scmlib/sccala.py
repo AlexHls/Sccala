@@ -219,6 +219,7 @@ class SccalaSCM:
         model.set_initial_conditions(init)
 
         # Setup/ build STAN model
+        print(model.data)
         fit = stan.build(model.model, data=model.data)
         samples = fit.sample(
             num_chains=chains, num_samples=iters, init=[model.init] * chains
@@ -285,14 +286,18 @@ class SccalaSCM:
         ]
         ndim = len(paramnames)
 
+        # Get relevant parameters
+        keys = ["Mi", "alpha", "beta", "gamma", "sigma_int"]
+        posterior = self.posterior[keys].to_numpy()
+
         figure = corner.corner(
-            self.posterior[:, 8 : 8 + ndim],
+            posterior,
             labels=paramnames,
             show_titles=True,
         )
 
         # This is the empirical mean of the sample:
-        value = np.mean(self.posterior[:, 8 : 8 + ndim], axis=0)
+        value = np.mean(posterior, axis=0)
 
         # Extract the axes
         axes = np.array(figure.axes).reshape((ndim, ndim))

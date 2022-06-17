@@ -1,3 +1,4 @@
+import os
 import argparse
 
 import sccala.scmlib.sccala as sc
@@ -26,6 +27,12 @@ def main(args):
         iters=args.iters,
         quiet=False,
     )
+
+    print("Finished sampling")
+    if args.plot is not None:
+        print("Saving cornerplot...")
+        save = os.path.join(args.log_dir, args.plot)
+        sccala_scm.cornerplot(save)
 
     return posterior
 
@@ -58,6 +65,11 @@ def cli():
         "--log_dir",
         help="Directory used for storing sampling results. Default: 'log_dir'",
         default="log_dir",
+    )
+    parser.add_argument(
+        "-p",
+        "--plot",
+        help="Specifies name of cornerplot to be saved to log_dir. Should end with file type.",
     )
     parser.add_argument(
         "--calib_identifier",
