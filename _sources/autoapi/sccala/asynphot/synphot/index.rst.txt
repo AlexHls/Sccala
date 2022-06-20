@@ -1,0 +1,116 @@
+:py:mod:`sccala.asynphot.synphot`
+=================================
+
+.. py:module:: sccala.asynphot.synphot
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   sccala.asynphot.synphot.BaseFilterCurve
+   sccala.asynphot.synphot.FilterCurve
+   sccala.asynphot.synphot.FilterSet
+   sccala.asynphot.synphot.MagnitudeSet
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.asynphot.synphot.calculate_vega_zp
+   sccala.asynphot.synphot.calculate_vega_magnitude
+
+
+
+.. py:function:: calculate_vega_zp(filter)
+
+
+.. py:function:: calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None)
+
+   Calculate Vega magnitudes from spectral flux. If spectral uncertainties are
+   supplied, a magnitude uncertainty will be calculated by propagating the
+   uncertainty through the numerical integration (Simpson's rule).
+
+   :param spec_wav: np.array of floats
+       wavelength values of spectrum
+   :param spec_flux: np.array of floats
+       spectral flux
+   :param filter: BaseFilter
+       filter object on which the magnitude is to be calculated
+   :param spec_err: np.array of floats or None
+       spectral uncertainty. Default=None
+   :return vega_magnitude: np.array of floats
+       calculated vega_magnitude
+   :return vega_magnitude_error: np.array of floats, optional
+       calculated magnitude uncertainty
+
+
+.. py:class:: BaseFilterCurve(wav, trans, interpolation_kind='linear', filter_id=None)
+
+   Bases: :py:obj:`object`
+
+   .. py:method:: load_filter(cls, filter_id=None, interpolation_kind='linear')
+      :classmethod:
+
+
+   .. py:method:: interpolate(self, wavelength)
+
+
+   .. py:method:: calculate_vega_magnitude(self, spec_wav, spec_flux, spec_err=None)
+
+
+
+.. py:class:: FilterCurve(wav, trans, interpolation_kind='linear', filter_id=None)
+
+   Bases: :py:obj:`BaseFilterCurve`
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
+
+
+
+.. py:class:: FilterSet(filter_set, interpolation_kind='linear')
+
+   Bases: :py:obj:`object`
+
+   .. py:attribute:: next
+      
+
+      
+
+   .. py:method:: __iter__(self)
+
+
+   .. py:method:: __next__(self)
+
+
+   .. py:method:: __getitem__(self, item)
+
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
+
+
+   .. py:method:: calculate_vega_magnitudes(self, spec_wav, spec_flux, spec_err=None)
+
+
+
+.. py:class:: MagnitudeSet(filter_set, magnitudes, magnitude_uncertainties=None, interpolation_kind='linear')
+
+   Bases: :py:obj:`FilterSet`
+
+   .. py:method:: __repr__(self)
+
+      Return repr(self).
+
+
+

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sccala.libio.scm_loader &mdash; Sccala 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Sccala
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Sccala</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">sccala.libio.scm_loader</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/sccala/libio/scm_loader/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-sccala.libio.scm_loader">
+<span id="sccala-libio-scm-loader"></span><h1><a class="reference internal" href="#module-sccala.libio.scm_loader" title="sccala.libio.scm_loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">sccala.libio.scm_loader</span></code></a><a class="headerlink" href="#module-sccala.libio.scm_loader" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.libio.scm_loader.load_data" title="sccala.libio.scm_loader.load_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_data</span></code></a>(sne_list, date, mag='I', col=('V', 'I'), calib_sne_list=None, calib_date=None, calib_mag='I', calib_col=('V', 'I'), instrument='Bessell12', export=False)</p></td>
+<td><p>Loads all the necessary data for the scm and bundles it</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.libio.scm_loader.load_data">
+<span class="sig-prename descclassname"><span class="pre">sccala.libio.scm_loader.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sne_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'I'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('V',</span> <span class="pre">'I')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_sne_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_mag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'I'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('V',</span> <span class="pre">'I')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Bessell12'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.libio.scm_loader.load_data" title="Permalink to this definition"></a></dt>
+<dd><p>Loads all the necessary data for the scm and bundles it
+into a pandas DataFrame</p>
+<dl class="simple">
+<dt>sne_list<span class="classifier">str or list</span></dt><dd><p>Which SNe to load. Can either be a string, list of string or
+a filename where a detailed list is stored. If ‘all’ is passed,
+all SNe found in the data directory will be loaded.</p>
+</dd>
+<dt>mag<span class="classifier">str</span></dt><dd><p>Filterband which is used as magnitude. Will be ignored for input if
+found in sne file and only used for export. Default: “I”</p>
+</dd>
+<dt>col<span class="classifier">tuple</span></dt><dd><p>Filterbands to be used for colors. Needs to be given as (a, b) where
+the color is calculated as ‘a-b’. Will be ignored for input if
+found in sne file and only used for export. Default: (“V”, “I”)</p>
+</dd>
+<dt>date<span class="classifier">float</span></dt><dd><p>Epoch at which data is loaded. If date column exists in sne file,
+input will be ignored.</p>
+</dd>
+<dt>calib_sne_list<span class="classifier">str or list</span></dt><dd><p>Same as sne, but for calibrators (optional).</p>
+</dd>
+<dt>calib_mag<span class="classifier">str</span></dt><dd><p>Same as sne, but for calibrators (optional).</p>
+</dd>
+<dt>calib_col<span class="classifier">tuple</span></dt><dd><p>Same as sne, but for calibrators (optional).</p>
+</dd>
+<dt>calib_date<span class="classifier">float</span></dt><dd><p>Same as sne, but for calibrators (optional).</p>
+</dd>
+<dt>instrument<span class="classifier">str</span></dt><dd><p>Instrument system of the photometry. If multiple systems are used, this
+has to be specified via the sne and calib_sne file</p>
+</dd>
+<dt>export<span class="classifier">bool or str</span></dt><dd><p>Specifies if DataFrame is to be exported. If True is passed,
+exported file will be stored in results directory. If str is passed,
+file will be stored in specified location. Default: False</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>scm_data<span class="classifier">pd.DataFrame</span></dt><dd><p>DataFrame containing all the data necessary for the standardisation</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Alexander Holas.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

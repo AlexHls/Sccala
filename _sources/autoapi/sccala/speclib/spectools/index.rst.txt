@@ -1,0 +1,42 @@
+:py:mod:`sccala.speclib.spectools`
+==================================
+
+.. py:module:: sccala.speclib.spectools
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.speclib.spectools.calculate_flux_error
+
+
+
+.. py:function:: calculate_flux_error(datfile, stdev=4, size=1000, loc=75, scale=50)
+
+   Estimate Error of spectrum based on Savitzky-Golay filtering over large area and subtracting form original data
+
+   Parameters
+   ----------
+   datfile : str
+       Path to spectral file of which to calculate flux error
+   stdev : int
+       Bins over which spectrum is smoothed. Standarddeviation in Gaussian kernel. Default: 4
+   size : int
+       Number of windowlengths to be drawn randomly. Default: 1000
+   loc : int or float
+       Mean of Gaussian distribution from which windowlengths are drawn. Default: 75
+   scale : int or float
+       Stdev of Gaussian distribution from which windowlengths are drawn. Default: 50
+
+   Returns
+   -------
+   data_err : np.ndarray
+   unnormalized error
+
+

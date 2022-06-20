@@ -1,0 +1,30 @@
+:py:mod:`sccala.libio.get_paths`
+================================
+
+.. py:module:: sccala.libio.get_paths
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.libio.get_paths.get_data_path
+   sccala.libio.get_paths.get_diag_path
+   sccala.libio.get_paths.get_res_path
+
+
+
+.. py:function:: get_data_path()
+
+
+.. py:function:: get_diag_path()
+
+
+.. py:function:: get_res_path()
+
+

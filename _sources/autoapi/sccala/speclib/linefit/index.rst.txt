@@ -1,0 +1,137 @@
+:py:mod:`sccala.speclib.linefit`
+================================
+
+.. py:module:: sccala.speclib.linefit
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   sccala.speclib.linefit.LineFit
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.speclib.linefit.velocity_conversion
+
+
+
+.. py:function:: velocity_conversion(x, rest=4861)
+
+   Converts wavelength into velocity with relativistic
+   Doppler formula
+
+   Parameters
+   ----------
+   x : float
+       wavelength to convert
+   rest : float
+       restwavelength w.r.t to which to convert
+
+   Returns
+   -------
+   vel : float
+       velocity in m/s
+
+
+.. py:class:: LineFit(wav, flux, error, numcode=100)
+
+   Base class encapsulating line fits of a spectrum
+
+   .. py:method:: __get_builtin_lines__(self)
+
+
+   .. py:method:: __reset_builtin_lines__(self)
+
+      Resets builtin lines in case their properties have
+      been overwritten
+
+
+   .. py:method:: fit_line(self, line, cr_low=None, cr_high=None, rest=None, ae_feature=False, noisefit=True, hodlrsolver=True, size=10000, diagnostic=None)
+
+      Fits a specific line to the spectrum. Lines can either be
+      choosen from the predefined set or specified manually
+
+      Parameters
+      ----------
+      line : str
+          Specifies the name of the line. Has to match the predefined
+          line names, unless cr_low, cr_high and rest are specified.
+      cr_low : float or None
+          Lower boundary of the line feature. Default: None
+      cr_high : float or None
+          Upper boundary of the line feature. Default: None
+      rest : float or None
+          Rest wavelength of the feature. Default: None
+      ae_feature : bool
+          Specifies if absorption to emission ratio is to be fit.
+          Default: False
+      noisefit : bool
+          Determines if correlated noise is to be fit. If false, only one
+          kernel is used, otherwise two will be used. Default: True
+      hodlrsolver : bool
+          Determines if george.HODLRSolver is to be used. Default: True
+      size : int
+          Number of flux predictions to be drawn. Default: 10000
+      diagnostic : str
+          Determines if diagnostic plots are to be saved in specified
+          directory. Default: False
+
+      Returns
+      -------
+      results : dict
+          Dictonary containing all the different fit quantities
+
+
+   .. py:method:: diagnostic_plot(self, line, save)
+
+      Creates a diagnostic plot of a line fit.
+
+      Parameters
+      ----------
+      line : str
+          Specifies the name of the line. Has to match the predefined
+          line names, unless cr_low, cr_high and rest are specified.
+      save : str or None
+          Directory in which the figure is saved. If figure should not be saved,
+          None or False can be passed.
+
+      Returns
+      -------
+      fig : matplotlib figure object
+          Diagnostic figure
+
+
+   .. py:method:: get_results(self, line)
+
+      Function that returns either the velocities or a/e values for a specific lines
+
+      Parameters
+      ----------
+      line : str
+          Specifies the name of the line. Has to match the predefined
+          line names, unless cr_low, cr_high and rest are specified.
+
+      Returns
+      -------
+      velocity : float
+      vel_err_lower : float
+      vel_err_upper : float
+
+          or
+
+      ae : float
+      ae_err_lower : float
+      ae_err_upper : float
+
+
+

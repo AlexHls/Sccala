@@ -1,0 +1,30 @@
+:py:mod:`sccala.asynphot.config`
+================================
+
+.. py:module:: sccala.asynphot.config
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.asynphot.config.set_vega_spec
+   sccala.asynphot.config.get_vega_path
+
+
+
+.. py:function:: set_vega_spec(file)
+
+   Set a Vega reference spectrum.
+   :param file: Path to Vega reference spectrum
+   :return: None
+
+
+.. py:function:: get_vega_path()
+
+

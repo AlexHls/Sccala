@@ -1,0 +1,66 @@
+:py:mod:`sccala.scmlib.sccala`
+==============================
+
+.. py:module:: sccala.scmlib.sccala
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   sccala.scmlib.sccala.SccalaSCM
+
+
+
+
+.. py:class:: SccalaSCM(file, calib='CALIB')
+
+   .. py:method:: sample(self, model, log_dir='log_dir', chains=4, iters=1000, quiet=False, init=None)
+
+      Samples the posterior for the given data and model
+
+      Parameters
+      ----------
+      model : SCM_Model
+          Model for which to fit the data
+      log_dir : str
+          Directory in which to save sampling output. If None is passed,
+          result will not be saved. Default: log_dir
+      chains : int
+          Number of chains used in STAN fit. Default: 4
+      iters : int
+          Number of iterations used in STAN fit. Default: 1000
+      quiet : bool
+          Enables/ disables output statements after sampling has
+          finished. Default: False
+
+      Returns
+      -------
+      posterior : pandas DataFrame
+          Result of the STAN sampling
+
+
+   .. py:method:: __save_samples__(self, df, log_dir='log_dir')
+
+      Exports sample data
+
+
+   .. py:method:: cornerplot(self, save=None)
+
+      Plots the cornerplot of the posterior
+
+      Parameters
+      ----------
+      save : str
+          Specified where the generated cornerplot will be saved.
+
+      Returns
+      -------
+      None
+
+
+

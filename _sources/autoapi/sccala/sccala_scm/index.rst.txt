@@ -1,0 +1,26 @@
+:py:mod:`sccala.sccala_scm`
+===========================
+
+.. py:module:: sccala.sccala_scm
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.sccala_scm.main
+   sccala.sccala_scm.cli
+
+
+
+.. py:function:: main(args)
+
+
+.. py:function:: cli()
+
+

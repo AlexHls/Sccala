@@ -1,0 +1,62 @@
+:py:mod:`sccala.libio.scm_loader`
+=================================
+
+.. py:module:: sccala.libio.scm_loader
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.libio.scm_loader.load_data
+
+
+
+.. py:function:: load_data(sne_list, date, mag='I', col=('V', 'I'), calib_sne_list=None, calib_date=None, calib_mag='I', calib_col=('V', 'I'), instrument='Bessell12', export=False)
+
+   Loads all the necessary data for the scm and bundles it
+   into a pandas DataFrame
+
+   Parameters
+   ----------
+   sne_list : str or list
+       Which SNe to load. Can either be a string, list of string or
+       a filename where a detailed list is stored. If 'all' is passed,
+       all SNe found in the data directory will be loaded.
+   mag : str
+       Filterband which is used as magnitude. Will be ignored for input if
+       found in sne file and only used for export. Default: "I"
+   col : tuple
+       Filterbands to be used for colors. Needs to be given as (a, b) where
+       the color is calculated as 'a-b'. Will be ignored for input if
+       found in sne file and only used for export. Default: ("V", "I")
+   date : float
+       Epoch at which data is loaded. If date column exists in sne file,
+       input will be ignored.
+   calib_sne_list : str or list
+       Same as sne, but for calibrators (optional).
+   calib_mag : str
+       Same as sne, but for calibrators (optional).
+   calib_col : tuple
+       Same as sne, but for calibrators (optional).
+   calib_date : float
+       Same as sne, but for calibrators (optional).
+   instrument : str
+       Instrument system of the photometry. If multiple systems are used, this
+       has to be specified via the sne and calib_sne file
+   export : bool or str
+       Specifies if DataFrame is to be exported. If True is passed,
+       exported file will be stored in results directory. If str is passed,
+       file will be stored in specified location. Default: False
+
+   Returns
+   -------
+   scm_data : pd.DataFrame
+       DataFrame containing all the data necessary for the standardisation
+
+

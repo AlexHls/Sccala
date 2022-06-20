@@ -1,0 +1,70 @@
+:py:mod:`sccala.asynphot.integrate`
+===================================
+
+.. py:module:: sccala.asynphot.integrate
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.asynphot.integrate._basic_mod_simpson
+   sccala.asynphot.integrate.mod_simpson
+
+
+
+.. py:function:: _basic_mod_simpson(y, start, stop, x, dx, axis)
+
+
+.. py:function:: mod_simpson(y, x=None, dx=1.0, axis=-1, even='avg')
+
+   Integrate y(x) using samples along the given axis and a modified composite
+   Simpson's rule. Equal to Gaussian error propagation of regular Simpson's rule.
+   If x is None, spacing of dx is assumed.
+   If there are an even number of samples, N, then there are an odd
+   number of intervals (N-1), but Simpson's rule requires an even number
+   of intervals. The parameter 'even' controls how this is handled.
+   Parameters
+   ----------
+   y : array_like
+       Array to be integrated.
+   x : array_like, optional
+       If given, the points at which `y` is sampled.
+   dx : float, optional
+       Spacing of integration points along axis of `x`. Only used when
+       `x` is None. Default is 1.
+   axis : int, optional
+       Axis along which to integrate. Default is the last axis.
+   even : str {'avg', 'first', 'last'}, optional
+       'avg' : Average two results:1) use the first N-2 intervals with
+                 a trapezoidal rule on the last interval and 2) use the last
+                 N-2 intervals with a trapezoidal rule on the first interval.
+       'first' : Use Simpson's rule for the first N-2 intervals with
+               a trapezoidal rule on the last interval.
+       'last' : Use Simpson's rule for the last N-2 intervals with a
+              trapezoidal rule on the first interval.
+   See Also
+   --------
+   quad: adaptive quadrature using QUADPACK
+   romberg: adaptive Romberg quadrature
+   quadrature: adaptive Gaussian quadrature
+   fixed_quad: fixed-order Gaussian quadrature
+   dblquad: double integrals
+   tplquad: triple integrals
+   romb: integrators for sampled data
+   cumulative_trapezoid: cumulative integration for sampled data
+   ode: ODE integrators
+   odeint: ODE integrators
+   Notes
+   -----
+   For an odd number of samples that are equally spaced the result is
+   exact if the function is a polynomial of order 3 or less. If
+   the samples are not equally spaced, then the result is exact only
+   if the function is a polynomial of order 2 or less.
+
+

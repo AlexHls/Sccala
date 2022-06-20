@@ -1,0 +1,26 @@
+:py:mod:`sccala.project_init`
+=============================
+
+.. py:module:: sccala.project_init
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.project_init.main
+   sccala.project_init.cli
+
+
+
+.. py:function:: main()
+
+
+.. py:function:: cli()
+
+

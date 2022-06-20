@@ -1,0 +1,52 @@
+:py:mod:`sccala.gen_testdata`
+=============================
+
+.. py:module:: sccala.gen_testdata
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.gen_testdata.gen_testdata
+   sccala.gen_testdata.main
+   sccala.gen_testdata.cli
+
+
+
+.. py:function:: gen_testdata(zrange, save, size=250, plots=False)
+
+   Function generating simulated datasets for standardisation
+
+   Parameters
+   ----------
+   zrange : list or tuple
+       Lower and upper limit of redshift interval for which
+       testdata is to be generated.
+   save : str
+       Filename under which data will be saved
+   size : int
+       Number of simulated SNe to generate. Default: 250
+   plots : bool
+       Specified is diagnostic plots are to be generated.
+       WARNING: Will output plot to current working directory.
+       Any existing plots with the same names will be overwritten.
+       Default: False
+
+   Returns
+   -------
+   data : pd.DataFrame
+       DataFrame containing the simulated testdata
+
+
+.. py:function:: main(args)
+
+
+.. py:function:: cli()
+
+

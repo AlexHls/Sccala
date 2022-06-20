@@ -1,0 +1,44 @@
+:py:mod:`sccala`
+================
+
+.. py:module:: sccala
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   asynphot/index.rst
+   interplib/index.rst
+   libio/index.rst
+   scmlib/index.rst
+   speclib/index.rst
+   utillib/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   collect_scm_data/index.rst
+   gen_testdata/index.rst
+   photometry_interpolation/index.rst
+   project_init/index.rst
+   sccala_scm/index.rst
+   spectral_line_fit/index.rst
+   synthetic_photometry/index.rst
+   velocity_interpolation/index.rst
+
+
+Package Contents
+----------------
+
+.. py:data:: cwd
+   
+
+   
+

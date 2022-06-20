@@ -1,0 +1,26 @@
+:py:mod:`sccala.photometry_interpolation`
+=========================================
+
+.. py:module:: sccala.photometry_interpolation
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.photometry_interpolation.main
+   sccala.photometry_interpolation.cli
+
+
+
+.. py:function:: main(args)
+
+
+.. py:function:: cli()
+
+

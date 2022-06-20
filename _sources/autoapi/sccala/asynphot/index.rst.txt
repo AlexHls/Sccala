@@ -1,0 +1,27 @@
+:py:mod:`sccala.asynphot`
+=========================
+
+.. py:module:: sccala.asynphot
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   calibration/index.rst
+   config/index.rst
+   integrate/index.rst
+   io/index.rst
+   synphot/index.rst
+
+
+Package Contents
+----------------
+
+.. py:data:: file
+   
+
+   
+

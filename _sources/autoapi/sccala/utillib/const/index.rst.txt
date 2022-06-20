@@ -1,0 +1,14 @@
+:py:mod:`sccala.utillib.const`
+==============================
+
+.. py:module:: sccala.utillib.const
+
+
+Module Contents
+---------------
+
+.. py:data:: C_LIGHT
+   :annotation: = 299792.458
+
+   
+

@@ -1,0 +1,27 @@
+:py:mod:`sccala.asynphot.calibration`
+=====================================
+
+.. py:module:: sccala.asynphot.calibration
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.asynphot.calibration.get_vega_spectrum
+
+
+
+.. py:function:: get_vega_spectrum(vega_file=None)
+
+   Get vega spectrum from reference file
+   :param vega_file: str, optional
+       Path of vega reference spectrum
+   :return:
+
+

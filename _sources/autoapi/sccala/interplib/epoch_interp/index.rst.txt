@@ -1,0 +1,69 @@
+:py:mod:`sccala.interplib.epoch_interp`
+=======================================
+
+.. py:module:: sccala.interplib.epoch_interp
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   sccala.interplib.epoch_interp.EpochDataSet
+
+
+
+
+.. py:class:: EpochDataSet(data, data_error, tkde, red, mjd, snname='', errorfloor=0.0, errorscale=1.0, reg_min=20.0, reg_max=60.0, extrapolate=5.0)
+
+   Class wrapping data time series and providing
+   interpolation functionality
+
+   .. py:method:: get_results(self)
+
+
+   .. py:method:: exclude_data(self, beginning=True)
+
+      Removes one datapoint from the data set.
+      If beginning is True, first element is removed, otherwise last.
+
+
+   .. py:method:: diagnostic_plot(self, diagnostic, target)
+
+      Plots the output of the interpolation
+
+
+   .. py:method:: data_interp(self, target, step=0.1, date_low=None, date_high=None, diagnostic=None)
+
+      Interpolate dataocities using Gaussian Process regression
+
+      Parameters
+      ----------
+      target : str
+          Specifies as what the data is to be interpolated. Determines
+          Gaussian Process kernel. Photometry has to contain 'phot' in
+          target name.
+      step : float
+          Resolution of the interpolated data. Default: 0.1
+      date_low : int or float
+          Lower epoch limit of interpolation.
+      date_up : int or float
+          Upper epoch limit of interpolation.
+      diagnostic : str or None
+          Path to directory where diagnostic plots are to be saved.
+
+      Returns
+      -------
+      median : float
+          median data value at date days
+      data_int_error_lower : float
+      data_int_error_upper : float
+          return values are in m/s
+      date : float
+          date to which the magnitudes have been interpolated
+
+
+

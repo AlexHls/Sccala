@@ -1,0 +1,49 @@
+:py:mod:`sccala.scmlib.models`
+==============================
+
+.. py:module:: sccala.scmlib.models
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   sccala.scmlib.models.SCM_Model
+   sccala.scmlib.models.HubbleFreeSCM
+
+
+
+
+.. py:class:: SCM_Model
+
+   .. py:method:: get_data(self)
+
+
+   .. py:method:: print_data(self)
+
+
+   .. py:method:: print_model(self)
+
+
+   .. py:method:: set_initial_conditions(self)
+
+
+   .. py:method:: print_results(self, df)
+
+
+
+.. py:class:: HubbleFreeSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: set_initial_conditions(self, init=None)
+
+
+   .. py:method:: print_results(self, df)
+
+
+

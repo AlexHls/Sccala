@@ -1,0 +1,26 @@
+:py:mod:`sccala.spectral_line_fit`
+==================================
+
+.. py:module:: sccala.spectral_line_fit
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.spectral_line_fit.main
+   sccala.spectral_line_fit.cli
+
+
+
+.. py:function:: main(args)
+
+
+.. py:function:: cli()
+
+

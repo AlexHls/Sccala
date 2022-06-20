@@ -1,0 +1,26 @@
+:py:mod:`sccala.collect_scm_data`
+=================================
+
+.. py:module:: sccala.collect_scm_data
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.collect_scm_data.main
+   sccala.collect_scm_data.cli
+
+
+
+.. py:function:: main(args)
+
+
+.. py:function:: cli()
+
+

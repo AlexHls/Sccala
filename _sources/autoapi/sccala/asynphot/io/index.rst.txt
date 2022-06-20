@@ -1,0 +1,41 @@
+:py:mod:`sccala.asynphot.io`
+============================
+
+.. py:module:: sccala.asynphot.io
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   sccala.asynphot.io.load_transmission_data
+   sccala.asynphot.io.df_from_votable
+   sccala.asynphot.io.byte_to_literal_strings
+
+
+
+.. py:function:: load_transmission_data(filter_id)
+
+   Loads transmission data for requested filter_id from filter directory
+
+   :param filter_id: str
+       Filter ID in either 'facility/instrument/filter' or
+       'facility/instrument.filter' format (can use'/' and '.' interchangeably as delimiters
+
+   :return:
+
+
+.. py:function:: df_from_votable(votable_path)
+
+
+.. py:function:: byte_to_literal_strings(dataframe)
+
+   Converts byte strings (if any) present in passed dataframe to literal
+   strings and returns an improved dataframe.
+
+

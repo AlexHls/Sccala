@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sccala.asynphot.integrate &mdash; Sccala 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Sccala
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Sccala</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">sccala.asynphot.integrate</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/sccala/asynphot/integrate/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-sccala.asynphot.integrate">
+<span id="sccala-asynphot-integrate"></span><h1><a class="reference internal" href="#module-sccala.asynphot.integrate" title="sccala.asynphot.integrate"><code class="xref py py-mod docutils literal notranslate"><span class="pre">sccala.asynphot.integrate</span></code></a><a class="headerlink" href="#module-sccala.asynphot.integrate" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.asynphot.integrate._basic_mod_simpson" title="sccala.asynphot.integrate._basic_mod_simpson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_basic_mod_simpson</span></code></a>(y, start, stop, x, dx, axis)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#sccala.asynphot.integrate.mod_simpson" title="sccala.asynphot.integrate.mod_simpson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mod_simpson</span></code></a>(y, x=None, dx=1.0, axis=-1, even='avg')</p></td>
+<td><p>Integrate y(x) using samples along the given axis and a modified composite</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.asynphot.integrate._basic_mod_simpson">
+<span class="sig-prename descclassname"><span class="pre">sccala.asynphot.integrate.</span></span><span class="sig-name descname"><span class="pre">_basic_mod_simpson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.asynphot.integrate._basic_mod_simpson" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.asynphot.integrate.mod_simpson">
+<span class="sig-prename descclassname"><span class="pre">sccala.asynphot.integrate.</span></span><span class="sig-name descname"><span class="pre">mod_simpson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">even</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'avg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.asynphot.integrate.mod_simpson" title="Permalink to this definition"></a></dt>
+<dd><p>Integrate y(x) using samples along the given axis and a modified composite
+Simpson’s rule. Equal to Gaussian error propagation of regular Simpson’s rule.
+If x is None, spacing of dx is assumed.
+If there are an even number of samples, N, then there are an odd
+number of intervals (N-1), but Simpson’s rule requires an even number
+of intervals. The parameter ‘even’ controls how this is handled.
+Parameters
+———-
+y : array_like</p>
+<blockquote>
+<div><p>Array to be integrated.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>x<span class="classifier">array_like, optional</span></dt><dd><p>If given, the points at which <cite>y</cite> is sampled.</p>
+</dd>
+<dt>dx<span class="classifier">float, optional</span></dt><dd><p>Spacing of integration points along axis of <cite>x</cite>. Only used when
+<cite>x</cite> is None. Default is 1.</p>
+</dd>
+<dt>axis<span class="classifier">int, optional</span></dt><dd><p>Axis along which to integrate. Default is the last axis.</p>
+</dd>
+<dt>even<span class="classifier">str {‘avg’, ‘first’, ‘last’}, optional</span></dt><dd><dl class="simple">
+<dt>‘avg’<span class="classifier">Average two results:1) use the first N-2 intervals with</span></dt><dd><p>a trapezoidal rule on the last interval and 2) use the last
+N-2 intervals with a trapezoidal rule on the first interval.</p>
+</dd>
+<dt>‘first’<span class="classifier">Use Simpson’s rule for the first N-2 intervals with</span></dt><dd><p>a trapezoidal rule on the last interval.</p>
+</dd>
+<dt>‘last’<span class="classifier">Use Simpson’s rule for the last N-2 intervals with a</span></dt><dd><p>trapezoidal rule on the first interval.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>quad: adaptive quadrature using QUADPACK
+romberg: adaptive Romberg quadrature
+quadrature: adaptive Gaussian quadrature
+fixed_quad: fixed-order Gaussian quadrature
+dblquad: double integrals
+tplquad: triple integrals
+romb: integrators for sampled data
+cumulative_trapezoid: cumulative integration for sampled data
+ode: ODE integrators
+odeint: ODE integrators
+Notes
+—–
+For an odd number of samples that are equally spaced the result is
+exact if the function is a polynomial of order 3 or less. If
+the samples are not equally spaced, then the result is exact only
+if the function is a polynomial of order 2 or less.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Alexander Holas.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
