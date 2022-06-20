@@ -6,9 +6,20 @@
 Welcome to Sccala's documentation!
 ==================================
 
+Sccala is a toolkit for standardising Type II-P Supernovae and analysing features in their spectra.
+
+Tutorials
+*********
+
+The following pages contain some tutorials to help you get started:
+
+* :doc:`installation`
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :hidden:
+
+   installation
 
 
 
