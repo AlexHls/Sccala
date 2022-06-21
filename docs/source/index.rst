@@ -6,6 +6,9 @@
 Welcome to Sccala's documentation!
 ==================================
 
+
+.. image:: sccala_logo.svg
+
 Sccala is a toolkit for standardising Type II-P Supernovae and analysing features in their spectra.
 
 Tutorials
@@ -14,12 +17,16 @@ Tutorials
 The following pages contain some tutorials to help you get started:
 
 * :doc:`installation`
+* :doc:`project_setup`
+* :doc:`fileformats`
 
 .. toctree::
    :maxdepth: 2
    :hidden:
 
    installation
+   project_setup
+   fileformats
 
 
 
