@@ -43,3 +43,49 @@ There are some optional columns which can be added, but are not essential for th
 | `MJD Explosion Error` | Uncertainty of the time of explosion.             |
 +-----------------------+---------------------------------------------------+
 
+=============
+ToE KDE files
+=============
+
+Although the Time of Explosion (ToE) could be stored as a plain number, Sccala uses a kernel density estimate (KDE) of the ToE as prior for inferring, e.g., the velocity at a certain phase. For this, the ToE KDE needs to be stored in each SN directory. This has the additional benefit that in cases where the ToE is obtained through statistical inference, the posterior can be directly stored and used as a prior for Sccala.
+
+Here, Sccala expects a `scipy.stats.gaussian_kde` object stored with `cloudpickle` adhering to the following naming scheme:
+::
+
+    <snname>TimeKDE.pkl
+
+In case you only have the ToE date without any probability, you can manually create the KDE using e.g. the following function:
+::
+
+    import numpy as np
+    from scipy import stats
+    import cloudpickle
+
+    def manual_toe(snname, toe, toeerr):
+    """Function to manually create *TimeKDE.pkl if e.g. phase matching fails
+
+    Parameters
+    ----------
+    snname : String
+        Name of SN to be analyzed
+    toe : float
+        Time of explosion in MJD
+    toeerr : float
+        Uncertainty of time of explosion
+
+    Returns
+    -------
+    none
+    """
+    minima = np.random.normal(toe, toeerr, 100000)
+    kernel = stats.gaussian_kde(minima, bw_method="silverman")
+
+    # Adapt the path if needed
+    with open("Data/" + snname + "/" + snname + "TimeKDE.pkl", "wb") as f:
+        cloudpickle.dump(kernel, f)
+
+    return None
+
+.. note::
+   The ToE has to be stored as the MJD in the observer frame. The ToE will be subtracted, e.g., from the stored MJD of the spectra.
+
