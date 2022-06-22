@@ -98,7 +98,7 @@ Spectra are should be stored as plain text files (ending with `.dat`), consistin
 
     import numpy as np
 
-    wavelength, flux = np.genfromtxt("<fluxfile.dat>").T
+    wavelength, flux = np.genfromtxt("<fluxfile>.dat").T
 
 is acceptable.
 
@@ -109,6 +109,85 @@ In case there does not exist a `<fluxfile>_error.dat` file, Sccala will automati
 
     from sccala.speclib import spectools
 
-    spectools.calculate_flux_error("<fluxfile.dat>")
+    spectools.calculate_flux_error("<fluxfile>.dat")
 
 This function call will automatically save the appropriate uncertainty file. For more details, see the API documentation.
+
+==========
+Photometry
+==========
+
+<TBD>
+
+============
+Runner files
+============
+
+Line fit
+========
+
+::
+
+    SN ID line noisefit
+    1999em 1 hbeta True
+    1999em 2 hbeta True
+    1999em 2 halpha-ae False
+    1999gi 1 hbeta True
+    1999gi 2 halpha-ae True
+    ...
+
+<TBD>
+
+Synthetic photometry
+====================
+
+::
+
+    SN  ID  CalibErr  AddErr
+    1999em  1  0.00  0.03
+    1999em  2  0.00  0.03
+    1999em  3  0.04  0.03
+    1999gi  1  0.30  0.02
+    1999gi  2  0.00  0.02
+    ...
+
+<TBD>
+
+Filter lists
+============
+
+::
+ 
+    Generic/Bessell12.U
+    Generic/Bessell12.B
+    Generic/Bessell12.V
+    Generic/Bessell12.R
+    Generic/Bessell12.I
+
+<TBD>
+
+Interpolation rules
+===================
+
+::
+
+    SN,errorfloor,errorscale,region_min,region_max,extrapolate
+    1999em,0.0,1.0,20.0,60.0,5.0
+    1999gi,0.0,1.0,15.0,60.0,2.0
+    ...
+
+<TBD>
+
+SN lists
+========
+
+::
+
+    SN,mag,col0,col1,date,dataset,instrument
+    1999em,I,V,I,35.0,KAIT,Bessell12
+    1999em,I,V,I,35.0,KAIT,Bessell12
+    1999gi,I,V,I,35.0,KAIT_CALIB,Bessell12
+    1999gi,I,V,I,35.0,KAIT_CALIB,Bessell12
+    ...
+
+<TBD>
