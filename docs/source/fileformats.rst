@@ -89,3 +89,26 @@ In case you only have the ToE date without any probability, you can manually cre
 .. note::
    The ToE has to be stored as the MJD in the observer frame. The ToE will be subtracted, e.g., from the stored MJD of the spectra.
 
+=======
+Spectra
+=======
+
+Spectra are should be stored as plain text files (ending with `.dat`), consisting of two columns separated by two white spaces. The first column corresponds to the **wavelength** and the second column to the **flux**. The flux units do not matter, unless you intend to do synthetic photometry, in which case the flux needs to be given in `cgs` units. The spectral file must not contain any header. Generally speaking, any file which is readable by
+::
+
+    import numpy as np
+
+    wavelength, flux = np.genfromtxt("<fluxfile.dat>").T
+
+is acceptable.
+
+The flux uncertainty needs to be stored in a separate file, which has the same filename as the corresponding spectral flux file but appended by `_error` (e.g.: `fluxfile.dat` `->` `fluxfile_error.dat`). It should have the same format as the flux file, i.e. to columns containing **wavelength** and **flux_uncertainty**, respectively.
+
+In case there does not exist a `<fluxfile>_error.dat` file, Sccala will automatically calculate a standard deviation spectrum. It is also possible to manually generate the error spectrum by running
+::
+
+    from sccala.speclib import spectools
+
+    spectools.calculate_flux_error("<fluxfile.dat>")
+
+This function call will automatically save the appropriate uncertainty file. For more details, see the API documentation.
