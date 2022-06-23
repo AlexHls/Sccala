@@ -123,8 +123,12 @@ Photometry
 Runner files
 ============
 
+Runner files can be used as inputs for the various Sccala tools. Although it is possible to pass most of the inputs individually via the command line, it is recommended to use runner files provide somewhat more verbosity and persistence (e.g. in case you need to re-run certain steps).
+
 Line fit
 ========
+
+The line fit runner files can be used with the `sccala-linefit` command. They should contain for plain text columns separated by two white spaces, see the example below.
 
 ::
 
@@ -135,11 +139,21 @@ Line fit
     1999gi 1 hbeta True
     1999gi 2 halpha-ae True
     ...
-
-<TBD>
+    
++------------+---------------------------------------------------------------------------------+
+| `SN`       | Internal name of the SN, i.e. name of the SN directory in the `Data` directory. |
++------------+---------------------------------------------------------------------------------+
+| `ID`       | ID of the spectrum to be fit.                                                   |
++------------+---------------------------------------------------------------------------------+
+| `line`     | Specifies which line/feature is to be fit.                                      |
++------------+---------------------------------------------------------------------------------+
+| `noisefit` | Specifies if noise is to be included in the fitting procedure.                  |
++------------+---------------------------------------------------------------------------------+
 
 Synthetic photometry
 ====================
+
+The synthetic photometry runner files can be used with the `sccala-photometry` command. They should contain for plain text columns separated by two white spaces, see the example below.
 
 ::
 
@@ -151,10 +165,20 @@ Synthetic photometry
     1999gi  2  0.00  0.02
     ...
 
-<TBD>
++------------+---------------------------------------------------------------------------------+
+| `SN`       | Internal name of the SN, i.e. name of the SN directory in the `Data` directory. |
++------------+---------------------------------------------------------------------------------+
+| `ID`       | ID of the spectrum to be fit.                                                   |
++------------+---------------------------------------------------------------------------------+
+| `CalibErr` | Calibration error of absolute flux. Added linearly to integration uncertainty.  |
++------------+---------------------------------------------------------------------------------+
+| `AddErr`   | Additional errors. Added quadratically to integration uncertainty.              |
++------------+---------------------------------------------------------------------------------+
 
 Filter lists
 ============
+
+The filter runner files can be used with the `sccala-photometry` command in addition to the synthetic photometry files. Each line should contain the path to a filter (following the naming scheme of the `SVO filter service <http://svo2.cab.inta-csic.es/theory/fps/>`_) see the example below. Several filters are already built into Sccala and can be found in `asynphot/filters/`.
 
 ::
  
@@ -164,10 +188,10 @@ Filter lists
     Generic/Bessell12.R
     Generic/Bessell12.I
 
-<TBD>
-
 Interpolation rules
 ===================
+
+The interpolation rules file is to be used with `sccala-photometry-Interpolation` and `sccala-velocity-interpolation`. Here, the idea is to have one persistent file per interpolation target. In this file, all the possible interpolation rules are collected. The file itself is a regular CSV file, see the example below.
 
 ::
 
@@ -176,18 +200,45 @@ Interpolation rules
     1999gi,0.0,1.0,15.0,60.0,2.0
     ...
 
-<TBD>
++---------------+------------------------------------------------------------------------------------------------------------------------------------+
+| `SN`          | Internal name of the SN, i.e. name of the SN directory in the `Data` directory.                                                    |
++---------------+------------------------------------------------------------------------------------------------------------------------------------+
+| `errorfloor`  | Minimum uncertainty for all datapoints. All datapoints with an uncertainty smaller than this will have it increased to this value. |
++---------------+------------------------------------------------------------------------------------------------------------------------------------+
+| `errorscale`  | Scales the uncertainty of all datapoints by this value.                                                                            |
++---------------+------------------------------------------------------------------------------------------------------------------------------------+
+| `region_min`  | Minimum epoch for interpolation. Datapoints earlier than this value will not be considered for the interpolation.                  |
++---------------+------------------------------------------------------------------------------------------------------------------------------------+
+| `region_max`  | Maximum epoch for interpolation. Datapoints later than this value will not be considered for the interpolation.                    |
++---------------+------------------------------------------------------------------------------------------------------------------------------------+
+| `extrapolate` | Number of days after the last valid datapoint until which the fit will extrapolate, even if a later date is specified as target.   |
++---------------+------------------------------------------------------------------------------------------------------------------------------------+
 
 SN lists
 ========
+
+The SN list file is to be used with `collect-scm-data`. It lists all the SNe you want to collect, as well as some specifics about which data to collect, see the example below. It should be given as a regular CSV file.
 
 ::
 
     SN,mag,col0,col1,date,dataset,instrument
     1999em,I,V,I,35.0,KAIT,Bessell12
-    1999em,I,V,I,35.0,KAIT,Bessell12
-    1999gi,I,V,I,35.0,KAIT_CALIB,Bessell12
+    2004ay,I,V,I,35.0,KAIT,Bessell12
+    2005cs,I,V,I,35.0,KAIT_CALIB,Bessell12
     1999gi,I,V,I,35.0,KAIT_CALIB,Bessell12
     ...
 
-<TBD>
++-----------------+--------------------------------------------------------------------------------------------+
+| `SN`            | Internal name of the SN, i.e. name of the SN directory in the `Data` directory.            |
++-----------------+--------------------------------------------------------------------------------------------+
+| `mag`           | Filter which is to be used for magnitudes.                                                 |
++-----------------+--------------------------------------------------------------------------------------------+
+| `col0` & `col1` | Filters which are to be used as colors. Color is calculated as `col0 - col1`.              |
++-----------------+--------------------------------------------------------------------------------------------+
+| `date`          | Epoch from which data is to be taken.                                                      |
++-----------------+--------------------------------------------------------------------------------------------+
+| `dataset`       | Dataset to which the SN is to be assigned to. Calibrators should have the `_CALIB` suffix .|
++-----------------+--------------------------------------------------------------------------------------------+
+| `instrument`    | Instrument from which the photometry is to be taken.                                       |
++-----------------+--------------------------------------------------------------------------------------------+
+
