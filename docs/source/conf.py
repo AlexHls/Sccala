@@ -32,6 +32,7 @@ release = '0.1'
 # ones.
 extensions = [
     'autoapi.extension',
+    'nbsphinx',
 ]
 
 # Document Python Code
