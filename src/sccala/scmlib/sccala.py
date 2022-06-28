@@ -219,7 +219,6 @@ class SccalaSCM:
         model.set_initial_conditions(init)
 
         # Setup/ build STAN model
-        print(model.data)
         fit = stan.build(model.model, data=model.data)
         samples = fit.sample(
             num_chains=chains, num_samples=iters, init=[model.init] * chains

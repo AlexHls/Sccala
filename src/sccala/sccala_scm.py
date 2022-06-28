@@ -16,7 +16,7 @@ def main(args):
     elif model == "hubble-nh":
         raise ValueError("Model not yet implemented")
     elif model == "hubble-free-nh":
-        raise ValueError("Model not yet implemented")
+        model = models.NHHubbleFreeSCM()
     else:
         raise ValueError("Model not regognized")
 
