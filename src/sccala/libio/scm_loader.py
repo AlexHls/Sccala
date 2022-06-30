@@ -210,7 +210,7 @@ def load_data(
         # Magnitudes
         df = pd.read_csv(
             os.path.join(
-                respath,
+                datapath,
                 "%s_%s_%s_InterpolationResults.csv" % (sn, instrument[i], mag[i]),
             )
         )
@@ -227,7 +227,7 @@ def load_data(
         # Color 0
         df = pd.read_csv(
             os.path.join(
-                respath,
+                datapath,
                 "%s_%s_%s_InterpolationResults.csv" % (sn, instrument[i], col[i][0]),
             )
         )
@@ -243,7 +243,7 @@ def load_data(
         # Color 1
         df = pd.read_csv(
             os.path.join(
-                respath,
+                datapath,
                 "%s_%s_%s_InterpolationResults.csv" % (sn, instrument[i], col[i][1]),
             )
         )
@@ -328,7 +328,7 @@ def load_data(
             # Magnitudes
             df = pd.read_csv(
                 os.path.join(
-                    respath,
+                    datapath,
                     "%s_%s_%s_InterpolationResults.csv"
                     % (sn, calib_instrument[i], calib_mag[i]),
                 )
@@ -346,7 +346,7 @@ def load_data(
             # Color 0
             df = pd.read_csv(
                 os.path.join(
-                    respath,
+                    datapath,
                     "%s_%s_%s_InterpolationResults.csv"
                     % (sn, calib_instrument[i], calib_col[i][0]),
                 )
@@ -363,7 +363,7 @@ def load_data(
             # Color 1
             df = pd.read_csv(
                 os.path.join(
-                    respath,
+                    datapath,
                     "%s_%s_%s_InterpolationResults.csv"
                     % (sn, calib_instrument[i], calib_col[i][1]),
                 )
