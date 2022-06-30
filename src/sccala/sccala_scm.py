@@ -9,16 +9,28 @@ def main(args):
     sccala_scm = sc.SccalaSCM(args.data, calib=args.calib_identifier)
 
     model = args.model
-    if model == "hubble":
-        raise ValueError("Model not yet implemented")
-    elif model == "hubble-free":
-        model = models.HubbleFreeSCM()
-    elif model == "hubble-nh":
-        raise ValueError("Model not yet implemented")
-    elif model == "hubble-free-nh":
-        raise ValueError("Model not yet implemented")
+    if not args.classic:
+        if model == "hubble":
+            raise ValueError("Model not yet implemented")
+        elif model == "hubble-free":
+            model = models.HubbleFreeSCM()
+        elif model == "hubble-nh":
+            raise ValueError("Model not yet implemented")
+        elif model == "hubble-free-nh":
+            model = models.NHHubbleFreeSCM()
+        else:
+            raise ValueError("Model not regognized")
     else:
-        raise ValueError("Model not regognized")
+        if model == "hubble":
+            raise ValueError("Model not yet implemented")
+        elif model == "hubble-free":
+            model = models.ClassicHubbleFreeSCM()
+        elif model == "hubble-nh":
+            raise ValueError("Model not yet implemented")
+        elif model == "hubble-free-nh":
+            model = models.ClassicNHHubbleFreeSCM()
+        else:
+            raise ValueError("Model not regognized")
 
     posterior = sccala_scm.sample(
         model,
@@ -26,13 +38,14 @@ def main(args):
         chains=args.chains,
         iters=args.iters,
         quiet=False,
+        classic=args.classic,
     )
 
     print("Finished sampling")
     if args.plot is not None:
         print("Saving cornerplot...")
         save = os.path.join(args.log_dir, args.plot)
-        sccala_scm.cornerplot(save)
+        sccala_scm.cornerplot(save, args.classic)
 
     return posterior
 
@@ -74,6 +87,11 @@ def cli():
     parser.add_argument(
         "--calib_identifier",
         help="Identifier used for calibrator SNe. Default: None",
+    )
+    parser.add_argument(
+        "--classic",
+        action="store_true",
+        help="If flag is given, classical SCM is used instead of extended SCM",
     )
 
     args = parser.parse_args()

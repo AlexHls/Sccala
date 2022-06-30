@@ -19,7 +19,7 @@ class SCM_Model:
         print(self.model)
         return
 
-    def set_initial_conditions(self):
+    def set_initial_conditions(self, init):
         pass
 
     def print_results(self, df):
@@ -27,6 +27,76 @@ class SCM_Model:
             print("%s = %.2e +/- %.2e" % (np.mean(df[key][0]), np.std(df[key][0])))
         return
 
+
+class NHHubbleFreeSCM(SCM_Model):
+    def __init__(self):
+        self.data = {
+            "sn_idx": None,
+            "obs": None,
+            "errors": None,
+            "mag_sys": None,
+            "vel_sys": None,
+            "col_sys": None,
+            "ae_sys": None,
+            "vel_avg": None,
+            "col_avg": None,
+            "ae_avg": None,
+            "log_dist_mod": None,
+        }
+
+        self.model = """
+            data {
+                int<lower=0> sn_idx;
+                vector[4] obs[sn_idx]; // Observed SN properties
+                vector[4] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
+                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
+                real vel_sys[sn_idx]; // Systematic velocity uncertainties
+                real col_sys[sn_idx]; // Systematic color uncertainties
+                real ae_sys[sn_idx]; // Systematic ae uncertainties
+                real vel_avg; // Normalisation constans
+                real col_avg;
+                real ae_avg;
+                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+            }
+            parameters {
+                real Mi; // Absolute Hubble-free Magnitude
+                real alpha; // Velocity correction strength
+                real beta; // Color correction strength
+                real gamma; // a/e correction strength
+                real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
+            }
+            transformed parameters{
+                real mag_true[sn_idx];
+                real sigma_int;
+                real sigma_tot[sn_idx];
+                for (i in 1:sn_idx) {
+                    sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) /obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]) + gamma^2 *  (errors[i][4] + ae_sys[i]));
+                    mag_true[i] = Mi - alpha * log10(obs[i][2] / vel_avg) + beta * (obs[i][3] - col_avg) + gamma * (obs[i][4] - ae_avg) + 5 * log_dist_mod[i];
+                }
+                sigma_int = 10 ^ log_sigma;
+            }
+            model {
+                Mi ~ uniform(-10,0);
+                alpha ~ uniform(-10,10);
+                beta ~ uniform(-10,10);
+                gamma ~ uniform(-10,10);
+                log_sigma ~ uniform(-3,0);
+
+                for (i in 1:sn_idx) {
+                    target +=  normal_lpdf(obs[i][1] | mag_true[i], sqrt(sigma_tot[i]^2 + sigma_int^2 ));
+                }
+            }
+            """
+        self.init = {}
+
+        return
+
+    def print_results(self, df):
+        keys = ["alpha", "beta", "gamma", "sigma_int", "Mi"]
+        for key in keys:
+            print("%s = %.2g +/- %.2g" % (key, np.mean(df[key]), np.std(df[key])))
+        return
+    
 
 class HubbleFreeSCM(SCM_Model):
     def __init__(self):
@@ -123,6 +193,156 @@ class HubbleFreeSCM(SCM_Model):
 
     def print_results(self, df):
         keys = ["alpha", "beta", "gamma", "sigma_int", "Mi"]
+        for key in keys:
+            print("%s = %.2g +/- %.2g" % (key, np.mean(df[key]), np.std(df[key])))
+        return
+
+class ClassicNHHubbleFreeSCM(SCM_Model):
+    def __init__(self):
+        self.data = {
+            "sn_idx": None,
+            "obs": None,
+            "errors": None,
+            "mag_sys": None,
+            "vel_sys": None,
+            "col_sys": None,
+            "vel_avg": None,
+            "col_avg": None,
+            "log_dist_mod": None,
+        }
+
+        self.model = """
+            data {
+                int<lower=0> sn_idx;
+                vector[3] obs[sn_idx]; // Observed SN properties
+                vector[3] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
+                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
+                real vel_sys[sn_idx]; // Systematic velocity uncertainties
+                real col_sys[sn_idx]; // Systematic color uncertainties
+                real vel_avg; // Normalisation constans
+                real col_avg;
+                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+            }
+            parameters {
+                real Mi; // Absolute Hubble-free Magnitude
+                real alpha; // Velocity correction strength
+                real beta; // Color correction strength
+                real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
+            }
+            transformed parameters{
+                real mag_true[sn_idx];
+                real sigma_int;
+                real sigma_tot[sn_idx];
+                for (i in 1:sn_idx) {
+                    sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) /obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]));
+                    mag_true[i] = Mi - alpha * log10(obs[i][2] / vel_avg) + beta * (obs[i][3] - col_avg) + 5 * log_dist_mod[i];
+                }
+                sigma_int = 10 ^ log_sigma;
+            }
+            model {
+                Mi ~ uniform(-10,0);
+                alpha ~ uniform(-10,10);
+                beta ~ uniform(-10,10);
+                log_sigma ~ uniform(-3,0);
+
+                for (i in 1:sn_idx) {
+                    target +=  normal_lpdf(obs[i][1] | mag_true[i], sqrt(sigma_tot[i]^2 + sigma_int^2 ));
+                }
+            }
+            """
+        self.init = {}
+
+        return
+
+    def print_results(self, df):
+        keys = ["alpha", "beta", "sigma_int", "Mi"]
+        for key in keys:
+            print("%s = %.2g +/- %.2g" % (key, np.mean(df[key]), np.std(df[key])))
+        return
+    
+class ClassicHubbleFreeSCM(SCM_Model):
+    def __init__(self):
+        self.data = {
+            "sn_idx": None,
+            "obs": None,
+            "errors": None,
+            "mag_sys": None,
+            "vel_sys": None,
+            "col_sys": None,
+            "vel_avg": None,
+            "col_avg": None,
+            "log_dist_mod": None,
+        }
+
+        self.model = """
+            data {
+                int<lower=0> sn_idx;
+                vector[3] obs[sn_idx]; // Observed SN properties
+                vector[3] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
+                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
+                real vel_sys[sn_idx]; // Systematic velocity uncertainties
+                real col_sys[sn_idx]; // Systematic color uncertainties
+                real vel_avg; // Normalisation constans
+                real col_avg;
+                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+            }
+            parameters {
+                real Mi; // Absolute Hubble-free Magnitude
+                real alpha; // Velocity correction strength
+                real beta; // Color correction strength
+                real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
+                real<lower=0> vs; // Mean of latent velocity
+                real cs; // Mean of latent color
+                real<lower=0> rv; // Dispersion of latent velocity
+                real<lower=0> rc; // Dispersion of latent color
+                real <lower=0> v_true[sn_idx]; // Modeled latent velocities (cannot be negative)
+                real c_true[sn_idx]; // Modeled latent color
+            }
+            transformed parameters{
+                real mag_true[sn_idx];
+                real sigma_int;
+                sigma_int = 10 ^ log_sigma;
+                for (i in 1:sn_idx) {
+                    mag_true[i] = Mi - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + 5 * log_dist_mod[i];
+                }
+            }
+            model {
+                Mi ~ uniform(-10,0);
+                alpha ~ uniform(-10,10);
+                beta ~ uniform(-10,10);
+                log_sigma ~ uniform(-3,0);
+
+                vs ~ cauchy(7500e3,1500e3);
+                cs ~ cauchy(0,0.5);
+
+                rv ~ normal(0,1500e3);
+                rc ~ normal(0,0.05);
+
+                v_true ~ normal(vs,rv);
+                c_true ~ normal(cs,rc);
+
+                for (i in 1:sn_idx) {
+                    target +=  normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i]]', sqrt(errors[i] + [sigma_int^2, 0, 0]'));
+                }
+            }
+            """
+        self.init = {}
+
+        return
+
+    def set_initial_conditions(self, init=None):
+        if init is None:
+            self.init = {
+                "vs": [7500e3],
+                "rv": [1000e3],
+                "v_true": [7500e3] * self.data["sn_idx"],
+            }
+        else:
+            self.init = init
+        return
+
+    def print_results(self, df):
+        keys = ["alpha", "beta", "sigma_int", "Mi"]
         for key in keys:
             print("%s = %.2g +/- %.2g" % (key, np.mean(df[key]), np.std(df[key])))
         return

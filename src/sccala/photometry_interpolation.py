@@ -28,7 +28,7 @@ def main(args):
     # Load data
     dataframe = pd.read_csv(
         os.path.join(
-            pa.get_res_path(), "{:s}_{:s}_Photometry.csv".format(snname, instrument)
+            pa.get_data_path(), "{:s}_{:s}_Photometry.csv".format(snname, instrument)
         ),
         index_col=[0],
     )
@@ -61,7 +61,7 @@ def main(args):
 
     for band in bands:
         mag = dataframe[band].to_numpy()
-        mag_error = dataframe["%s_err" % band].to_numpy()
+        mag_error = dataframe["{:s}err".format(band)].to_numpy()
 
         mag_set = epoch_interp.EpochDataSet(
             mag,

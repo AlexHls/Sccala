@@ -115,7 +115,7 @@ def main(args):
         # Export data
         for unique_instrument in instrument_list:
             exp_name = os.path.join(
-                pa.get_res_path(), "%s_%s_Photometry.csv" % (sn[i], unique_instrument)
+                pa.get_data_path(), "%s_%s_Photometry.csv" % (sn[i], unique_instrument)
             )
 
             expdict = {
@@ -127,7 +127,7 @@ def main(args):
                 ].to_list()
             ):
                 expdict[f] = mags[j]
-                expdict["%s_err" % f] = mags_err[j]
+                expdict["{:s}err".format(f)] = mags_err[j]
 
             expdf = pd.DataFrame(expdict, index=np.array([sid]))
 
@@ -144,7 +144,7 @@ def main(args):
                         ]["filter"].to_list()
                     ):
                         data.loc[sid][f] = mags[j]
-                        data.loc[sid]["%s_err" % f] = mags_err[j]
+                        data.loc[sid]["{:s}err".format(f)] = mags_err[j]
                 data.to_csv(exp_name)
             else:
                 data = pd.DataFrame(expdf)

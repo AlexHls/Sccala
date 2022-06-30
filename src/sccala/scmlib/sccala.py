@@ -140,7 +140,7 @@ class SccalaSCM:
     # TODO various methods to modify (add/ delete SNe) and display loaded data
 
     def sample(
-        self, model, log_dir="log_dir", chains=4, iters=1000, quiet=False, init=None
+        self, model, log_dir="log_dir", chains=4, iters=1000, quiet=False, init=None, classic=False,
     ):
         """
         Samples the posterior for the given data and model
@@ -159,6 +159,9 @@ class SccalaSCM:
         quiet : bool
             Enables/ disables output statements after sampling has
             finished. Default: False
+        classic : bool
+            Switches classic mode on if True. In classic mode, a/e input is
+            ignored.
 
         Returns
         -------
@@ -170,10 +173,6 @@ class SccalaSCM:
             type(model), SCM_Model
         ), "'model' should be a subclass of SCM_Model"
 
-        # Observed values
-        obs = np.array([self.mag, self.vel, self.col, self.ae]).T
-
-        # Redshift, peculiar velocity and gravitational lensing uncertaintes
         red_uncertainty = (
             (
                 self.red_err
@@ -192,14 +191,35 @@ class SccalaSCM:
             ** 2
             + (0.055 * self.red) ** 2
         )
-        errors = np.array(
-            [
-                red_uncertainty + self.mag_err**2,
-                self.vel_err**2,
-                self.col_err**2,
-                self.ae_err**2,
-            ]
-        ).T
+
+        if not classic:
+            # Observed values
+            obs = np.array([self.mag, self.vel, self.col, self.ae]).T
+
+            # Redshift, peculiar velocity and gravitational lensing uncertaintes
+            errors = np.array(
+                [
+                    red_uncertainty + self.mag_err**2,
+                    self.vel_err**2,
+                    self.col_err**2,
+                    self.ae_err**2,
+                ]
+            ).T
+
+            model.data["ae_sys"] = self.ae_sys
+            model.data["ae_avg"] = np.mean(self.ae)
+        else:
+            # Observed values
+            obs = np.array([self.mag, self.vel, self.col]).T
+
+            # Redshift, peculiar velocity and gravitational lensing uncertaintes
+            errors = np.array(
+                [
+                    red_uncertainty + self.mag_err**2,
+                    self.vel_err**2,
+                    self.col_err**2,
+                ]
+            ).T
 
         # Fill model data
         model.data["sn_idx"] = len(self.sn)
@@ -208,10 +228,8 @@ class SccalaSCM:
         model.data["mag_sys"] = self.mag_sys
         model.data["vel_sys"] = self.v_sys
         model.data["col_sys"] = self.c_sys
-        model.data["ae_sys"] = self.ae_sys
         model.data["vel_avg"] = np.mean(self.vel)
         model.data["col_avg"] = np.mean(self.col)
-        model.data["ae_avg"] = np.mean(self.ae)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
 
         # TODO Fill calib model data
@@ -219,7 +237,6 @@ class SccalaSCM:
         model.set_initial_conditions(init)
 
         # Setup/ build STAN model
-        print(model.data)
         fit = stan.build(model.model, data=model.data)
         samples = fit.sample(
             num_chains=chains, num_samples=iters, init=[model.init] * chains
@@ -253,7 +270,7 @@ class SccalaSCM:
 
         return os.path.join(log_dir, savename)
 
-    def cornerplot(self, save=None):
+    def cornerplot(self, save=None, classic=False):
         """
         Plots the cornerplot of the posterior
 
@@ -261,6 +278,9 @@ class SccalaSCM:
         ----------
         save : str
             Specified where the generated cornerplot will be saved.
+        classic : bool
+            Switches classic mode on if True. In classic mode, a/e input is
+            ignored.
 
         Returns
         -------
@@ -277,17 +297,30 @@ class SccalaSCM:
             warnings.warn("corner package not installed, skipping...")
             return
 
-        paramnames = [
-            r"$\mathcal{M}_I$",
-            r"$\alpha$",
-            r"$\beta$",
-            r"$\gamma$",
-            r"$\sigma_{int}$",
-        ]
-        ndim = len(paramnames)
+        if not classic:
+            paramnames = [
+                r"$\mathcal{M}_I$",
+                r"$\alpha$",
+                r"$\beta$",
+                r"$\gamma$",
+                r"$\sigma_{int}$",
+            ]
+            ndim = len(paramnames)
 
-        # Get relevant parameters
-        keys = ["Mi", "alpha", "beta", "gamma", "sigma_int"]
+            # Get relevant parameters
+            keys = ["Mi", "alpha", "beta", "gamma", "sigma_int"]
+        else:
+            paramnames = [
+                r"$\mathcal{M}_I$",
+                r"$\alpha$",
+                r"$\beta$",
+                r"$\sigma_{int}$",
+            ]
+            ndim = len(paramnames)
+
+            # Get relevant parameters
+            keys = ["Mi", "alpha", "beta", "sigma_int"]
+
         posterior = self.posterior[keys].to_numpy()
 
         figure = corner.corner(
