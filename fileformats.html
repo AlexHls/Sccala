@@ -238,7 +238,30 @@
 </section>
 <section id="photometry">
 <h2>Photometry<a class="headerlink" href="#photometry" title="Permalink to this heading"></a></h2>
-<p>&lt;TBD&gt;</p>
+<p>Photometry files should store the pre-processed photometry data of a SN, i.e. after all corrections such as K-corrections etc. have been applied. All photometry should be stored in one file per photometric system, following the naming scheme <cite>&lt;SN name&gt;_&lt;photometric system&gt;_Photometry.csv&gt;</cite> in a CSV file. This file must contain the following columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 85%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Explanation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>MJD</cite></p></td>
+<td><p>Modified Julian Date in the observer frame of the photometry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>&lt;band&gt;</cite></p></td>
+<td><p>Observed magnitude in the <cite>&lt;band&gt;</cite> filter passband.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>&lt;band&gt;err</cite></p></td>
+<td><p>Uncertainty of the observed magnitude in the <cite>&lt;band&gt;</cite> filter passband.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Here, a <cite>&lt;band&gt;</cite> and <cite>&lt;band&gt;err</cite> column has to be given for each photometric passband.</p>
 </section>
 <section id="runner-files">
 <h2>Runner files<a class="headerlink" href="#runner-files" title="Permalink to this heading"></a></h2>

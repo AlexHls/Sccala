@@ -117,7 +117,19 @@ This function call will automatically save the appropriate uncertainty file. For
 Photometry
 ==========
 
-<TBD>
+Photometry files should store the pre-processed photometry data of a SN, i.e. after all corrections such as K-corrections etc. have been applied. All photometry should be stored in one file per photometric system, following the naming scheme `<SN name>_<photometric system>_Photometry.csv>` in a CSV file. This file must contain the following columns:
+
++-------------+------------------------------------------------------------------------+
+| Column      | Explanation                                                            |
++=============+========================================================================+
+| `MJD`       | Modified Julian Date in the observer frame of the photometry.          |
++-------------+------------------------------------------------------------------------+
+| `<band>`    | Observed magnitude in the `<band>` filter passband.                    |
++-------------+------------------------------------------------------------------------+
+| `<band>err` | Uncertainty of the observed magnitude in the `<band>` filter passband. |
++-------------+------------------------------------------------------------------------+
+
+Here, a `<band>` and `<band>err` column has to be given for each photometric passband. 
 
 ============
 Runner files
