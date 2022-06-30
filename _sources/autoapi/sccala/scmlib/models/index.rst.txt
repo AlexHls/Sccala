@@ -13,7 +13,10 @@ Classes
 .. autoapisummary::
 
    sccala.scmlib.models.SCM_Model
+   sccala.scmlib.models.NHHubbleFreeSCM
    sccala.scmlib.models.HubbleFreeSCM
+   sccala.scmlib.models.ClassicNHHubbleFreeSCM
+   sccala.scmlib.models.ClassicHubbleFreeSCM
 
 
 
@@ -29,14 +32,41 @@ Classes
    .. py:method:: print_model(self)
 
 
-   .. py:method:: set_initial_conditions(self)
+   .. py:method:: set_initial_conditions(self, init)
 
 
    .. py:method:: print_results(self, df)
 
 
 
+.. py:class:: NHHubbleFreeSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: print_results(self, df)
+
+
+
 .. py:class:: HubbleFreeSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: set_initial_conditions(self, init=None)
+
+
+   .. py:method:: print_results(self, df)
+
+
+
+.. py:class:: ClassicNHHubbleFreeSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: print_results(self, df)
+
+
+
+.. py:class:: ClassicHubbleFreeSCM
 
    Bases: :py:obj:`SCM_Model`
 
