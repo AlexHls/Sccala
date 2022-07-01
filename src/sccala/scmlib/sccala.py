@@ -12,7 +12,7 @@ from sccala.utillib.const import *
 
 
 class SccalaSCM:
-    def __init__(self, file, calib="CALIB"):
+    def __init__(self, file, calib="CALIB", blind=True, blindkey="HUBBLE"):
         """
         Initializes SccalaSCM object.
 
@@ -22,8 +22,22 @@ class SccalaSCM:
             Path to file containing collected data for SCM.
         calib : str
             Identifier for calibrator sample dataset. All SNe containing
-            this identifier in dataset name will be collected as calibrators
+            this identifier in dataset name will be collected as calibrators.
+            Default: "CALIB"
+        blind : bool
+            If True, H0 will not be revealed after the fit and saved in an
+            encrypted format based on the 'blindkey'. Default: True
+        blindkey : str
+            Encryption key used for encrypting the H0 values before
+            saving the output file.
         """
+
+        if blind:
+            assert (
+                blindkey is not None
+            ), "For blinding, a blindkey has to be specified..."
+        self.blind = blind
+        self.blindkey = blindkey
 
         df = pd.read_csv(file)
 
@@ -100,6 +114,10 @@ class SccalaSCM:
                 "ae_sys"
             ].to_numpy()
 
+            self.calib_dist_mod = df[df["dataset"].isin(calib_datasets)][
+                "mu"
+            ].to_numpy()
+
             self.calib_epoch = df[df["dataset"].isin(calib_datasets)][
                 "epoch"
             ].to_numpy()
@@ -126,6 +144,8 @@ class SccalaSCM:
             self.calib_c_sys = None
             self.calib_ae_sys = None
 
+            self.calib_dist_mod = None
+
             self.calib_epoch = None
 
         self.datasets = datasets
@@ -140,7 +160,14 @@ class SccalaSCM:
     # TODO various methods to modify (add/ delete SNe) and display loaded data
 
     def sample(
-        self, model, log_dir="log_dir", chains=4, iters=1000, quiet=False, init=None, classic=False,
+        self,
+        model,
+        log_dir="log_dir",
+        chains=4,
+        iters=1000,
+        quiet=False,
+        init=None,
+        classic=False,
     ):
         """
         Samples the posterior for the given data and model
@@ -233,6 +260,64 @@ class SccalaSCM:
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
 
         # TODO Fill calib model data
+        if model.hubble:
+            assert self.calib_sn is not None, "No calibrator SNe found..."
+
+            calib_red_uncertainty = (
+                (
+                    self.calib_red_err
+                    * 5
+                    * (1 + self.calib_red)
+                    / (self.calib_red * (1 + 0.5 * self.calib_red) * np.log(10))
+                )
+                ** 2
+                + (
+                    300
+                    / C_LIGHT
+                    * 5
+                    * (1 + self.calib_red)
+                    / (self.calib_red * (1 + 0.5 * self.calib_red) * np.log(10))
+                )
+                ** 2
+                + (0.055 * self.calib_red) ** 2
+            )
+
+            if not classic:
+                # Observed values
+                calib_obs = np.array(
+                    [self.calib_mag, self.calib_vel, self.calib_col, self.calib_ae]
+                ).T
+
+                # Redshift, peculiar velocity and gravitational lensing uncertaintes
+                calib_errors = np.array(
+                    [
+                        calib_red_uncertainty + self.calib_mag_err**2,
+                        self.calib_vel_err**2,
+                        self.calib_col_err**2,
+                        self.calib_ae_err**2,
+                    ]
+                ).T
+
+                model.data["calib_ae_sys"] = self.calib_ae_sys
+            else:
+                # Observed values
+                calib_obs = np.array([self.calib_mag, self.calib_vel, self.calib_col]).T
+
+                # Redshift, peculiar velocity and gravitational lensing uncertaintes
+                calib_errors = np.array(
+                    [
+                        calib_red_uncertainty + self.calib_mag_err**2,
+                        self.calib_vel_err**2,
+                        self.calib_col_err**2,
+                    ]
+                ).T
+            model.data["calib_sn_idx"] = len(self.calib_sn)
+            model.data["calib_obs"] = calib_obs
+            model.data["calib_errors"] = calib_errors
+            model.data["calib_mag_sys"] = self.calib_mag_sys
+            model.data["calib_vel_sys"] = self.calib_v_sys
+            model.data["calib_col_sys"] = self.calib_c_sys
+            model.data["calib_dist_mod"] = self.calib_dist_mod
 
         model.set_initial_conditions(init)
 
@@ -244,15 +329,27 @@ class SccalaSCM:
 
         self.posterior = samples.to_frame()
 
+        # Encrypt H0 for blinding
+        if self.blind and model.hubble:
+            from itsdangerous import URLSafeSerializer
+
+            norm = np.mean(self.posterior["H0"])
+            s = URLSafeSerializer(self.blindkey)
+            for i in range(len(self.posterior["H0"])):
+                self.posterior["H0"][i] = s.dumps(self.posterior["H0"][i] / norm)
+            norm = s.dumps(norm)
+        else:
+            norm = None
+
         if log_dir is not None:
-            self.__save_samples__(self.posterior, log_dir=log_dir)
+            self.__save_samples__(self.posterior, log_dir=log_dir, norm=norm)
 
         if not quiet:
-            model.print_results(self.posterior)
+            model.print_results(self.posterior, blind=self.blind)
 
         return self.posterior
 
-    def __save_samples__(self, df, log_dir="log_dir"):
+    def __save_samples__(self, df, log_dir="log_dir", norm=None):
         """Exports sample data"""
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
@@ -267,6 +364,10 @@ class SccalaSCM:
             savename = savename.replace("1", str(i + 1))
 
         df.to_csv(os.path.join(log_dir, savename))
+
+        if norm is not None:
+            normsave = savename.replace(".csv", ".key")
+            np.savetxt(os.path.join(log_dir, normsave), [norm], fmt="%s")
 
         return os.path.join(log_dir, savename)
 

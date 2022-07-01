@@ -30,6 +30,7 @@ setup(
         'bin/sccala-scm',
         'bin/sccala-project-init',
         'bin/collect-scm-data',
+        'bin/sccala-deblind',
     ],
 )
 
