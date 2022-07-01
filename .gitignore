@@ -1,4 +1,5 @@
 __pycache__
 sccala-dev
 build
+_build
 src/sccala_sniip.egg-info
