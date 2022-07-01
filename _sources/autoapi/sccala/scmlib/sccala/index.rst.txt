@@ -17,7 +17,7 @@ Classes
 
 
 
-.. py:class:: SccalaSCM(file, calib='CALIB')
+.. py:class:: SccalaSCM(file, calib='CALIB', blind=True, blindkey='HUBBLE')
 
    .. py:method:: sample(self, model, log_dir='log_dir', chains=4, iters=1000, quiet=False, init=None, classic=False)
 
@@ -47,7 +47,7 @@ Classes
           Result of the STAN sampling
 
 
-   .. py:method:: __save_samples__(self, df, log_dir='log_dir')
+   .. py:method:: __save_samples__(self, df, log_dir='log_dir', norm=None)
 
       Exports sample data
 

@@ -113,13 +113,25 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#sccala.scmlib.models.NHHubbleFreeSCM" title="sccala.scmlib.models.NHHubbleFreeSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NHHubbleFreeSCM</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.scmlib.models.HubbleFreeSCM" title="sccala.scmlib.models.HubbleFreeSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HubbleFreeSCM</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.scmlib.models.NHHubbleSCM" title="sccala.scmlib.models.NHHubbleSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NHHubbleSCM</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#sccala.scmlib.models.HubbleFreeSCM" title="sccala.scmlib.models.HubbleFreeSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HubbleFreeSCM</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.scmlib.models.HubbleSCM" title="sccala.scmlib.models.HubbleSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HubbleSCM</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM" title="sccala.scmlib.models.ClassicNHHubbleFreeSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassicNHHubbleFreeSCM</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.scmlib.models.ClassicHubbleFreeSCM" title="sccala.scmlib.models.ClassicHubbleFreeSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassicHubbleFreeSCM</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.scmlib.models.ClassicNHHubbleSCM" title="sccala.scmlib.models.ClassicNHHubbleSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassicNHHubbleSCM</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#sccala.scmlib.models.ClassicHubbleFreeSCM" title="sccala.scmlib.models.ClassicHubbleFreeSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassicHubbleFreeSCM</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.scmlib.models.ClassicHubbleSCM" title="sccala.scmlib.models.ClassicHubbleSCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ClassicHubbleSCM</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -144,12 +156,12 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model.set_initial_conditions">
-<span class="sig-name descname"><span class="pre">set_initial_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.set_initial_conditions" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_initial_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.set_initial_conditions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model.print_results">
-<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.print_results" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.print_results" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -160,7 +172,18 @@
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleFreeSCM.print_results">
-<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleFreeSCM.print_results" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleFreeSCM.print_results" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">NHHubbleSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCM" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCM.print_results">
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCM.print_results" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -176,7 +199,23 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.scmlib.models.HubbleFreeSCM.print_results">
-<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.HubbleFreeSCM.print_results" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.HubbleFreeSCM.print_results" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleSCM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">HubbleSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.HubbleSCM" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleSCM.set_initial_conditions">
+<span class="sig-name descname"><span class="pre">set_initial_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.HubbleSCM.set_initial_conditions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleSCM.print_results">
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.HubbleSCM.print_results" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -187,7 +226,18 @@
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleFreeSCM.print_results">
-<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM.print_results" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM.print_results" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">ClassicNHHubbleSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCM" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCM.print_results">
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCM.print_results" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -203,7 +253,23 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleFreeSCM.print_results">
-<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleFreeSCM.print_results" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleFreeSCM.print_results" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleSCM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">ClassicHubbleSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleSCM" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleSCM.set_initial_conditions">
+<span class="sig-name descname"><span class="pre">set_initial_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleSCM.set_initial_conditions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleSCM.print_results">
+<span class="sig-name descname"><span class="pre">print_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleSCM.print_results" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

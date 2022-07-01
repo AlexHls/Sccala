@@ -19,7 +19,7 @@ Functions
 
 
 
-.. py:function:: gen_testdata(zrange, save, size=250, plots=False)
+.. py:function:: gen_testdata(zrange, save, size=250, plots=False, hubble=False, zrange_hubble=(0.001, 0.005), hubble_size=25, h0=70.0)
 
    Function generating simulated datasets for standardisation
 
@@ -27,7 +27,7 @@ Functions
    ----------
    zrange : list or tuple
        Lower and upper limit of redshift interval for which
-       testdata is to be generated.
+       testdata is to be generated
    save : str
        Filename under which data will be saved
    size : int
@@ -37,6 +37,16 @@ Functions
        WARNING: Will output plot to current working directory.
        Any existing plots with the same names will be overwritten.
        Default: False
+   hubble : bool
+       If True, a calibrator sample will be generated as well. Default: False
+   zrange_tuple : list or tuple
+       Lower and upper limit of redshift interval for which
+       calibrator testdata is to be generated. Default: (0.001, 0.005)
+   hubble_size : int
+       Number of simulated calibrator SNe. Default: 25
+   h0 : float
+       Value of the Hubble constant used for simulating calibrator sample.
+       Default: 70.0
 
    Returns
    -------

@@ -25,6 +25,7 @@ Submodules
    :maxdepth: 1
 
    collect_scm_data/index.rst
+   deblind/index.rst
    gen_testdata/index.rst
    photometry_interpolation/index.rst
    project_init/index.rst

@@ -107,7 +107,7 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.gen_testdata.gen_testdata" title="sccala.gen_testdata.gen_testdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_testdata</span></code></a>(zrange, save, size=250, plots=False)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.gen_testdata.gen_testdata" title="sccala.gen_testdata.gen_testdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_testdata</span></code></a>(zrange, save, size=250, plots=False, hubble=False, zrange_hubble=(0.001, 0.005), hubble_size=25, h0=70.0)</p></td>
 <td><p>Function generating simulated datasets for standardisation</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#sccala.gen_testdata.main" title="sccala.gen_testdata.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>(args)</p></td>
@@ -120,11 +120,11 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="sccala.gen_testdata.gen_testdata">
-<span class="sig-prename descclassname"><span class="pre">sccala.gen_testdata.</span></span><span class="sig-name descname"><span class="pre">gen_testdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zrange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.gen_testdata.gen_testdata" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">sccala.gen_testdata.</span></span><span class="sig-name descname"><span class="pre">gen_testdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zrange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zrange_hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.001,</span> <span class="pre">0.005)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">70.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.gen_testdata.gen_testdata" title="Permalink to this definition"></a></dt>
 <dd><p>Function generating simulated datasets for standardisation</p>
 <dl class="simple">
 <dt>zrange<span class="classifier">list or tuple</span></dt><dd><p>Lower and upper limit of redshift interval for which
-testdata is to be generated.</p>
+testdata is to be generated</p>
 </dd>
 <dt>save<span class="classifier">str</span></dt><dd><p>Filename under which data will be saved</p>
 </dd>
@@ -134,6 +134,16 @@ testdata is to be generated.</p>
 WARNING: Will output plot to current working directory.
 Any existing plots with the same names will be overwritten.
 Default: False</p>
+</dd>
+<dt>hubble<span class="classifier">bool</span></dt><dd><p>If True, a calibrator sample will be generated as well. Default: False</p>
+</dd>
+<dt>zrange_tuple<span class="classifier">list or tuple</span></dt><dd><p>Lower and upper limit of redshift interval for which
+calibrator testdata is to be generated. Default: (0.001, 0.005)</p>
+</dd>
+<dt>hubble_size<span class="classifier">int</span></dt><dd><p>Number of simulated calibrator SNe. Default: 25</p>
+</dd>
+<dt>h0<span class="classifier">float</span></dt><dd><p>Value of the Hubble constant used for simulating calibrator sample.
+Default: 70.0</p>
 </dd>
 </dl>
 <dl class="simple">

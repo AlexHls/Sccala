@@ -14,9 +14,13 @@ Classes
 
    sccala.scmlib.models.SCM_Model
    sccala.scmlib.models.NHHubbleFreeSCM
+   sccala.scmlib.models.NHHubbleSCM
    sccala.scmlib.models.HubbleFreeSCM
+   sccala.scmlib.models.HubbleSCM
    sccala.scmlib.models.ClassicNHHubbleFreeSCM
+   sccala.scmlib.models.ClassicNHHubbleSCM
    sccala.scmlib.models.ClassicHubbleFreeSCM
+   sccala.scmlib.models.ClassicHubbleSCM
 
 
 
@@ -32,10 +36,10 @@ Classes
    .. py:method:: print_model(self)
 
 
-   .. py:method:: set_initial_conditions(self, init)
+   .. py:method:: set_initial_conditions(self, init=None)
 
 
-   .. py:method:: print_results(self, df)
+   .. py:method:: print_results(self, df, blind=True)
 
 
 
@@ -43,7 +47,15 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: print_results(self, df)
+   .. py:method:: print_results(self, df, blind=True)
+
+
+
+.. py:class:: NHHubbleSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: print_results(self, df, blind=True)
 
 
 
@@ -54,7 +66,18 @@ Classes
    .. py:method:: set_initial_conditions(self, init=None)
 
 
-   .. py:method:: print_results(self, df)
+   .. py:method:: print_results(self, df, blind=True)
+
+
+
+.. py:class:: HubbleSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: set_initial_conditions(self, init=None)
+
+
+   .. py:method:: print_results(self, df, blind=True)
 
 
 
@@ -62,7 +85,15 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: print_results(self, df)
+   .. py:method:: print_results(self, df, blind=True)
+
+
+
+.. py:class:: ClassicNHHubbleSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: print_results(self, df, blind=True)
 
 
 
@@ -73,7 +104,18 @@ Classes
    .. py:method:: set_initial_conditions(self, init=None)
 
 
-   .. py:method:: print_results(self, df)
+   .. py:method:: print_results(self, df, blind=True)
+
+
+
+.. py:class:: ClassicHubbleSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: set_initial_conditions(self, init=None)
+
+
+   .. py:method:: print_results(self, df, blind=True)
 
 
 
