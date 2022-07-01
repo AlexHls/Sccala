@@ -6,7 +6,12 @@ import sccala.scmlib.models as models
 
 
 def main(args):
-    sccala_scm = sc.SccalaSCM(args.data, calib=args.calib_identifier)
+    sccala_scm = sc.SccalaSCM(
+        args.data,
+        calib=args.calib_identifier,
+        blind=args.unblind,
+        blindkey=args.blindkey,
+    )
 
     model = args.model
     if not args.classic:
@@ -15,7 +20,7 @@ def main(args):
         elif model == "hubble-free":
             model = models.HubbleFreeSCM()
         elif model == "hubble-nh":
-            raise ValueError("Model not yet implemented")
+            model = models.NHHubbleSCM()
         elif model == "hubble-free-nh":
             model = models.NHHubbleFreeSCM()
         else:
@@ -26,7 +31,7 @@ def main(args):
         elif model == "hubble-free":
             model = models.ClassicHubbleFreeSCM()
         elif model == "hubble-nh":
-            raise ValueError("Model not yet implemented")
+            model = models.ClassicNHHubbleSCM()
         elif model == "hubble-free-nh":
             model = models.ClassicNHHubbleFreeSCM()
         else:
@@ -92,6 +97,16 @@ def cli():
         "--classic",
         action="store_true",
         help="If flag is given, classical SCM is used instead of extended SCM",
+    )
+    parser.add_argument(
+        "--unblind",
+        action="store_false",
+        help="If flag is given, fitted Hubble constant will be displayed and stored as clear text.",
+    )
+    parser.add_argument(
+        "--blindkey",
+        default="HUBBLE",
+        help="Encryption key used for blinding H0. Default: HUBBLE",
     )
 
     args = parser.parse_args()

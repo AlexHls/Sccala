@@ -8,3 +8,4 @@ specutils
 pystan
 corner
 cloudpickle
+itsdangerous
