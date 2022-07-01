@@ -16,7 +16,7 @@ def main(args):
     model = args.model
     if not args.classic:
         if model == "hubble":
-            raise ValueError("Model not yet implemented")
+            model = models.HubbleSCM()
         elif model == "hubble-free":
             model = models.HubbleFreeSCM()
         elif model == "hubble-nh":
@@ -27,7 +27,7 @@ def main(args):
             raise ValueError("Model not regognized")
     else:
         if model == "hubble":
-            raise ValueError("Model not yet implemented")
+            model = models.ClassicHubbleSCM()
         elif model == "hubble-free":
             model = models.ClassicHubbleFreeSCM()
         elif model == "hubble-nh":
