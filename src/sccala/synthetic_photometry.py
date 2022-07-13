@@ -113,9 +113,10 @@ def main(args):
         print(magnitudes.__repr__)
 
         # Export data
+        rootpath = os.path.join(pa.get_data_path(), sn[i])
         for unique_instrument in instrument_list:
             exp_name = os.path.join(
-                pa.get_data_path(), "%s_%s_Photometry.csv" % (sn[i], unique_instrument)
+                rootpath, "%s_%s_Photometry.csv" % (sn[i], unique_instrument)
             )
 
             expdict = {
