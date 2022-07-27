@@ -47,16 +47,16 @@ Functions
 
    Base class encapsulating line fits of a spectrum
 
-   .. py:method:: __get_builtin_lines__(self)
+   .. py:method:: __get_builtin_lines__()
 
 
-   .. py:method:: __reset_builtin_lines__(self)
+   .. py:method:: __reset_builtin_lines__()
 
       Resets builtin lines in case their properties have
       been overwritten
 
 
-   .. py:method:: fit_line(self, line, cr_low=None, cr_high=None, rest=None, ae_feature=False, noisefit=True, hodlrsolver=True, size=10000, diagnostic=None)
+   .. py:method:: fit_line(line, cr_low=None, cr_high=None, rest=None, ae_feature=False, noisefit=True, hodlrsolver=True, size=10000, diagnostic=None)
 
       Fits a specific line to the spectrum. Lines can either be
       choosen from the predefined set or specified manually
@@ -92,7 +92,7 @@ Functions
           Dictonary containing all the different fit quantities
 
 
-   .. py:method:: diagnostic_plot(self, line, save)
+   .. py:method:: diagnostic_plot(line, save)
 
       Creates a diagnostic plot of a line fit.
 
@@ -111,7 +111,7 @@ Functions
           Diagnostic figure
 
 
-   .. py:method:: get_results(self, line)
+   .. py:method:: get_results(line)
 
       Function that returns either the velocities or a/e values for a specific lines
 

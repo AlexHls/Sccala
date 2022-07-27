@@ -19,7 +19,7 @@ Classes
 
 .. py:class:: SccalaSCM(file, calib='CALIB', blind=True, blindkey='HUBBLE')
 
-   .. py:method:: sample(self, model, log_dir='log_dir', chains=4, iters=1000, quiet=False, init=None, classic=False)
+   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, quiet=False, init=None, classic=False)
 
       Samples the posterior for the given data and model
 
@@ -47,12 +47,12 @@ Classes
           Result of the STAN sampling
 
 
-   .. py:method:: __save_samples__(self, df, log_dir='log_dir', norm=None)
+   .. py:method:: __save_samples__(df, log_dir='log_dir', norm=None)
 
       Exports sample data
 
 
-   .. py:method:: cornerplot(self, save=None, classic=False)
+   .. py:method:: cornerplot(save=None, classic=False)
 
       Plots the cornerplot of the posterior
 

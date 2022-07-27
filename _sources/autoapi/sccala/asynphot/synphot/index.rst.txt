@@ -56,14 +56,14 @@ Functions
 
    Bases: :py:obj:`object`
 
-   .. py:method:: load_filter(cls, filter_id=None, interpolation_kind='linear')
+   .. py:method:: load_filter(filter_id=None, interpolation_kind='linear')
       :classmethod:
 
 
-   .. py:method:: interpolate(self, wavelength)
+   .. py:method:: interpolate(wavelength)
 
 
-   .. py:method:: calculate_vega_magnitude(self, spec_wav, spec_flux, spec_err=None)
+   .. py:method:: calculate_vega_magnitude(spec_wav, spec_flux, spec_err=None)
 
 
 
@@ -71,7 +71,7 @@ Functions
 
    Bases: :py:obj:`BaseFilterCurve`
 
-   .. py:method:: __repr__(self)
+   .. py:method:: __repr__()
 
       Return repr(self).
 
@@ -86,21 +86,21 @@ Functions
 
       
 
-   .. py:method:: __iter__(self)
+   .. py:method:: __iter__()
 
 
-   .. py:method:: __next__(self)
+   .. py:method:: __next__()
 
 
-   .. py:method:: __getitem__(self, item)
+   .. py:method:: __getitem__(item)
 
 
-   .. py:method:: __repr__(self)
+   .. py:method:: __repr__()
 
       Return repr(self).
 
 
-   .. py:method:: calculate_vega_magnitudes(self, spec_wav, spec_flux, spec_err=None)
+   .. py:method:: calculate_vega_magnitudes(spec_wav, spec_flux, spec_err=None)
 
 
 
@@ -108,7 +108,7 @@ Functions
 
    Bases: :py:obj:`FilterSet`
 
-   .. py:method:: __repr__(self)
+   .. py:method:: __repr__()
 
       Return repr(self).
 

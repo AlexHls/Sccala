@@ -22,21 +22,21 @@ Classes
    Class wrapping data time series and providing
    interpolation functionality
 
-   .. py:method:: get_results(self)
+   .. py:method:: get_results()
 
 
-   .. py:method:: exclude_data(self, beginning=True)
+   .. py:method:: exclude_data(beginning=True)
 
       Removes one datapoint from the data set.
       If beginning is True, first element is removed, otherwise last.
 
 
-   .. py:method:: diagnostic_plot(self, diagnostic, target)
+   .. py:method:: diagnostic_plot(diagnostic, target)
 
       Plots the output of the interpolation
 
 
-   .. py:method:: data_interp(self, target, step=0.1, date_low=None, date_high=None, diagnostic=None)
+   .. py:method:: data_interp(target, step=0.1, date_low=None, date_high=None, diagnostic=None)
 
       Interpolate dataocities using Gaussian Process regression
 

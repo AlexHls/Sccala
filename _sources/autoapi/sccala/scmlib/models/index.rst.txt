@@ -27,19 +27,19 @@ Classes
 
 .. py:class:: SCM_Model
 
-   .. py:method:: get_data(self)
+   .. py:method:: get_data()
 
 
-   .. py:method:: print_data(self)
+   .. py:method:: print_data()
 
 
-   .. py:method:: print_model(self)
+   .. py:method:: print_model()
 
 
-   .. py:method:: set_initial_conditions(self, init=None)
+   .. py:method:: set_initial_conditions(init=None)
 
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
@@ -47,7 +47,7 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
@@ -55,7 +55,7 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
@@ -63,10 +63,10 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: set_initial_conditions(self, init=None)
+   .. py:method:: set_initial_conditions(init=None)
 
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
@@ -74,10 +74,10 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: set_initial_conditions(self, init=None)
+   .. py:method:: set_initial_conditions(init=None)
 
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
@@ -85,7 +85,7 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
@@ -93,7 +93,7 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
@@ -101,10 +101,10 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: set_initial_conditions(self, init=None)
+   .. py:method:: set_initial_conditions(init=None)
 
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
@@ -112,10 +112,10 @@ Classes
 
    Bases: :py:obj:`SCM_Model`
 
-   .. py:method:: set_initial_conditions(self, init=None)
+   .. py:method:: set_initial_conditions(init=None)
 
 
-   .. py:method:: print_results(self, df, blind=True)
+   .. py:method:: print_results(df, blind=True)
 
 
 
