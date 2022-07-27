@@ -166,8 +166,14 @@ class LineFit:
             flux = self.flux[cutting_range]
             if self.error is not None:
                 error = self.error[cutting_range]
-            if wav[np.argmin(flux)] < rest:
-                break
+            try:
+                if wav[np.argmin(flux)] < rest:
+                    break
+            except ValueError as e:
+                warnings.warn(
+                    "No feature could be identified (spectral range possibly insufficent)"
+                )
+                raise e
             cr_high -= 20
 
         self.lines[line][1] = cr_high

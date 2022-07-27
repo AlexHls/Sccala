@@ -1,5 +1,6 @@
 import os
 import argparse
+import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -64,12 +65,18 @@ def main(args):
             sid,
         )
 
-        fit.fit_line(
-            line[i],
-            noisefit=noisefit[i],
-            diagnostic=diag_path,
-            size=10000,
-        )
+        try:
+            fit.fit_line(
+                line[i],
+                noisefit=noisefit[i],
+                diagnostic=diag_path,
+                size=10000,
+            )
+        except ValueError as e:
+            warnings.warn(
+                "Encountered error '%s' for ID %s, skipping..." % (str(e), str(sid))
+            )
+            continue
 
         peak_loc, peak_error_lower, peak_error_upper = fit.get_results(line[i])
 
@@ -100,7 +107,11 @@ def main(args):
 
     print("Finished fitting spectral lines from %s file!" % speclist)
 
-    return exp_name
+    try:
+        return exp_name
+    except UnboundLocalError:
+        warnings.warn("No features fitted, no output file was created...")
+        return None
 
 
 def cli():
