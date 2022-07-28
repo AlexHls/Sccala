@@ -1,5 +1,3 @@
-import os
-
 import numpy as np
 from scipy import interpolate
 from scipy import integrate
@@ -7,12 +5,10 @@ from scipy import integrate
 from sccala.asynphot.calibration import get_vega_spectrum
 from sccala.asynphot.io import load_transmission_data
 from sccala.asynphot import integrate as err_integrate
+from sccala.utillib.const import C_AA, H_ERG
 
 
 def calculate_vega_zp(filter):
-
-    c_AA = 299792458 * 1.0e10  # in AA/s
-    h_erg = 6.62607015e-27  # Plancks constant (erg.s)
 
     vega_wav, vega_flux = get_vega_spectrum()
 
@@ -20,8 +16,8 @@ def calculate_vega_zp(filter):
         2.5
         * np.log10(
             1
-            / h_erg
-            / c_AA
+            / H_ERG
+            / C_AA
             * integrate.simpson(
                 vega_flux * filter.interpolate(vega_wav) * vega_wav, vega_wav
             )
@@ -50,17 +46,14 @@ def calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None):
         calculated magnitude uncertainty
     """
 
-    h_erg = 6.62607015e-27  # Plancks constant (erg.s)
-    c_AA = 299792458 * 1.0e10  # in AA/s
-
     vega_zp = calculate_vega_zp(filter)
 
     vega_magnitude = (
         -2.5
         * np.log10(
             1
-            / h_erg
-            / c_AA
+            / H_ERG 
+            / C_AA
             * integrate.simpson(
                 spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav
             )
