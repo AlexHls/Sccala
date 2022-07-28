@@ -32,7 +32,7 @@ Functions
 .. py:function:: calculate_vega_zp(filter)
 
 
-.. py:function:: calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None)
+.. py:function:: calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None, error_method='analytic', error_n=100)
 
    Calculate Vega magnitudes from spectral flux. If spectral uncertainties are
    supplied, a magnitude uncertainty will be calculated by propagating the
@@ -46,10 +46,14 @@ Functions
        filter object on which the magnitude is to be calculated
    :param spec_err: np.array of floats or None
        spectral uncertainty. Default=None
+   :param error_method: str
+       method with which error is propagated. Default='analytic'
+   :param error_n: int
+       number of iteration for frequentist error propagation. Default=100
    :return vega_magnitude: np.array of floats
        calculated vega_magnitude
    :return vega_magnitude_error: np.array of floats, optional
-       calculated magnitude uncertainty
+       calculated magnitude uncertaint
 
 
 .. py:class:: BaseFilterCurve(wav, trans, interpolation_kind='linear', filter_id=None)
