@@ -560,7 +560,7 @@ class LineFit:
             os.makedirs(save)
         if save:
             plt.savefig(
-                os.path.join(save, "Fit_{:s}_{:s}.pdf".format(line, str(self.numcode))),
+                os.path.join(save, "Fit_{:s}_{:s}.png".format(line, str(self.numcode))),
                 bbox_inches="tight",
                 dpi=100,
             )
