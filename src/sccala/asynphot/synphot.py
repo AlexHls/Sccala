@@ -26,7 +26,9 @@ def calculate_vega_zp(filter):
     )
 
 
-def calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None):
+def calculate_vega_magnitude(
+    spec_wav, spec_flux, filter, spec_err=None, error_method="analytic", error_n=100
+):
     """
     Calculate Vega magnitudes from spectral flux. If spectral uncertainties are
     supplied, a magnitude uncertainty will be calculated by propagating the
@@ -40,10 +42,14 @@ def calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None):
         filter object on which the magnitude is to be calculated
     :param spec_err: np.array of floats or None
         spectral uncertainty. Default=None
+    :param error_method: str
+        method with which error is propagated. Default='analytic'
+    :param error_n: int
+        number of iteration for frequentist error propagation. Default=100
     :return vega_magnitude: np.array of floats
         calculated vega_magnitude
     :return vega_magnitude_error: np.array of floats, optional
-        calculated magnitude uncertainty
+        calculated magnitude uncertaint
     """
 
     vega_zp = calculate_vega_zp(filter)
@@ -52,7 +58,7 @@ def calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None):
         -2.5
         * np.log10(
             1
-            / H_ERG 
+            / H_ERG
             / C_AA
             * integrate.simpson(
                 spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav
@@ -64,18 +70,45 @@ def calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None):
     if spec_err is None:
         return vega_magnitude
     else:
-        vega_magnitude_error = (
-            2.5
-            / np.log(10)
-            / integrate.simpson(
-                spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav
-            )
-            * np.sqrt(
-                err_integrate.mod_simpson(
-                    (spec_err * filter.interpolate(spec_wav) * spec_wav) ** 2, spec_wav
+        if error_method == "frequentist":
+            noisy_mags = np.zeros(error_n)
+            for j in range(len(noisy_mags)):
+                noise = np.random.normal(scale=np.abs(spec_err))
+                noisy_flux = spec_flux + noise
+                noisy_mag = (
+                    -2.5
+                    * np.log10(
+                        1
+                        / H_ERG
+                        / C_AA
+                        * integrate.simpson(
+                            noisy_flux * filter.interpolate(spec_wav) * spec_wav,
+                            spec_wav,
+                        )
+                    )
+                    + vega_zp
+                )
+                noisy_mags[j] = noisy_mag
+            vega_magnitude_error = noisy_mags.std()
+        elif error_method == "analytic":
+            vega_magnitude_error = (
+                2.5
+                / np.log(10)
+                / integrate.simpson(
+                    spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav
+                )
+                * np.sqrt(
+                    err_integrate.mod_simpson(
+                        (spec_err * filter.interpolate(spec_wav) * spec_wav) ** 2,
+                        spec_wav,
+                    )
                 )
             )
-        )
+        else:
+            raise ValueError(
+                "Specified error_method not supported. Choice: ['analytic', 'frequentist']"
+            )
+
         return [vega_magnitude, vega_magnitude_error]
 
 
