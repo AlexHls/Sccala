@@ -33,6 +33,13 @@ def main(args):
             "Insufficient 'list.txt' supplied, see documentation for more info."
         )
 
+    # Edge case if only one item is passed
+    if isinstance(spec_id, np.int64):
+        sn = np.array([sn])
+        spec_id = np.array([spec_id])
+        line = np.array([line])
+        noisefit = np.array([noisefit])
+
     for i, sid in enumerate(spec_id):
         print("[ %d/%d ]" % (i + 1, len(spec_id)))
         info = pd.read_csv(
