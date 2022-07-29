@@ -15,6 +15,7 @@ def main(args):
     snname = args.snname
     line = args.line
     rules = args.rules
+    no_reject = args.noreject
 
     diag_path = os.path.join(pa.get_diag_path(), snname)
     if not os.path.exists(diag_path):
@@ -74,6 +75,7 @@ def main(args):
     vel_int, vel_int_error_lower, vel_int_error_upper, dates = vel_set.data_interp(
         line,
         diagnostic=diag_path,
+        no_reject=no_reject,
     )
 
     expname = os.path.join(
@@ -119,6 +121,11 @@ def cli():
     )
     parser.add_argument(
         "-r", "--rules", help="File containing velocity interpolation rules"
+    )
+    parser.add_argument(
+        "--noreject",
+        action="store_true",
+        help="When flag is passed, increasing values in the velocity fit will not be rejected.",
     )
 
     args = parser.parse_args()

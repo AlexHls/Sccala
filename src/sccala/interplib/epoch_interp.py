@@ -233,7 +233,7 @@ class EpochDataSet:
             )
 
             for v in self.data_pred[:100]:
-                ax2.plot(self.x_pred, np.array(v) / conv, color="k")
+                ax2.plot(self.x_pred, np.array(v) / conv, color="k", alpha=0.05)
 
         ax2.errorbar(
             x=self.time,
@@ -289,6 +289,7 @@ class EpochDataSet:
         date_low=None,
         date_high=None,
         diagnostic=None,
+        no_reject=False,
     ):
         """
         Interpolate dataocities using Gaussian Process regression
@@ -307,6 +308,9 @@ class EpochDataSet:
             Upper epoch limit of interpolation.
         diagnostic : str or None
             Path to directory where diagnostic plots are to be saved.
+        no_reject : bool
+            If True velocity fits with increasing values will not
+            be rejected. Default: False
 
         Returns
         -------
@@ -413,6 +417,7 @@ class EpochDataSet:
                 any(np.sign(np.diff(d)) == 1)
                 and target != "halpha-ae"
                 and "phot" not in target
+                and not no_reject
             ):
                 continue
 
