@@ -137,7 +137,7 @@ If beginning is True, first element is removed, otherwise last.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.data_interp">
-<span class="sig-name descname"><span class="pre">data_interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagnostic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.data_interp" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">data_interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagnostic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_reject</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.data_interp" title="Permalink to this definition"></a></dt>
 <dd><p>Interpolate dataocities using Gaussian Process regression</p>
 <dl class="simple">
 <dt>target<span class="classifier">str</span></dt><dd><p>Specifies as what the data is to be interpolated. Determines
@@ -151,6 +151,9 @@ target name.</p>
 <dt>date_up<span class="classifier">int or float</span></dt><dd><p>Upper epoch limit of interpolation.</p>
 </dd>
 <dt>diagnostic<span class="classifier">str or None</span></dt><dd><p>Path to directory where diagnostic plots are to be saved.</p>
+</dd>
+<dt>no_reject<span class="classifier">bool</span></dt><dd><p>If True velocity fits with increasing values will not
+be rejected. Default: False</p>
 </dd>
 </dl>
 <dl class="simple">
