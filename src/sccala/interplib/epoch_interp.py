@@ -9,6 +9,8 @@ import emcee
 import george
 from george import kernels
 
+from sccala.utillib.aux import convert_to_flux, convert_to_mag
+
 
 class EpochDataSet:
     """
@@ -160,12 +162,15 @@ class EpochDataSet:
 
         return
 
-    def diagnostic_plot(self, diagnostic, target):
+    def diagnostic_plot(self, diagnostic, target, flux_interp=False):
         """
         Plots the output of the interpolation
         """
 
-        fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=[6, 6])
+        if flux_interp:
+            fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, figsize=[6, 9])
+        else:
+            fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=[6, 6])
 
         if target == "halpha-ae" or "phot" in target:
             conv = 1
@@ -235,6 +240,40 @@ class EpochDataSet:
             for v in self.data_pred[:100]:
                 ax2.plot(self.x_pred, np.array(v) / conv, color="k", alpha=0.05)
 
+            # Plot flux
+            if flux_interp:
+                ax3.axhspan(
+                    convert_to_flux(self.minustwosigma[plotind]) / conv,
+                    convert_to_flux(self.plustwosigma[plotind]) / conv,
+                    alpha=0.1,
+                    color="red",
+                )
+                ax3.axhspan(
+                    convert_to_flux(self.minusonesigma[plotind]) / conv,
+                    convert_to_flux(self.plusonesigma[plotind]) / conv,
+                    alpha=0.3,
+                    color="red",
+                )
+                ax3.axhline(convert_to_flux(self.median[plotind]) / conv, color="red")
+                lower = self.dates[plotind] + self.toe - np.percentile(self.tkde, 15.87)
+                upper = self.dates[plotind] + self.toe - np.percentile(self.tkde, 84.13)
+                ax3.axvspan(
+                    lower, upper, alpha=0.3, color="blue", label="1$\sigma$ (68.26%)"
+                )
+                ax3.axvline(
+                    self.dates[plotind],
+                    color="blue",
+                    label="{:.1f} days".format(self.dates[plotind]),
+                )
+
+                for v in self.data_pred[:100]:
+                    ax3.plot(
+                        self.x_pred,
+                        convert_to_flux(np.array(v)) / conv,
+                        color="k",
+                        alpha=0.05,
+                    )
+
         ax2.errorbar(
             x=self.time,
             y=self.data / conv,
@@ -270,6 +309,37 @@ class EpochDataSet:
         if "phot" in target:
             ax2.invert_yaxis()
 
+        if flux_interp:
+            # Plot flux data
+            ax3.errorbar(
+                x=self.time,
+                y=convert_to_flux(self.data) / conv,
+                yerr=convert_to_flux(self.data, self.data_error) / conv,
+                marker="o",
+                ls=" ",
+                capsize=0,
+                color="orange",
+                label="Data",
+            )
+            ax3.errorbar(
+                x=self.time_ex,
+                y=convert_to_flux(self.data_ex) / conv,
+                yerr=convert_to_flux(self.data_ex, self.data_error_ex) / conv,
+                marker=".",
+                ls=" ",
+                capsize=0,
+                color="tab:red",
+                label="Excluded",
+            )
+            ax3.set_xlabel("Time (days)")
+            ax3.set_ylabel(r"{:s} (erg $\AA$)".format(target))
+            ax3.legend()
+            ax3.minorticks_on()
+            ax3.grid(which="major", axis="both", linestyle="-")
+            ax3.grid(which="minor", axis="both", linestyle="--")
+
+            ax3.set_xlim([max([ax3.get_xlim()[0], 0]), max([65.0, max(self.time)])])
+
         plt.tight_layout()
 
         fig.savefig(
@@ -290,6 +360,7 @@ class EpochDataSet:
         date_high=None,
         diagnostic=None,
         no_reject=False,
+        flux_interp=False,
     ):
         """
         Interpolate dataocities using Gaussian Process regression
@@ -311,6 +382,10 @@ class EpochDataSet:
         no_reject : bool
             If True velocity fits with increasing values will not
             be rejected. Default: False
+        flux_interp : bool
+            If True, data is converted to flux before interpolating.
+            Exported values will be converted back to magnitudes.
+            Only works with 'phot' in target. Default: False
 
         Returns
         -------
@@ -322,6 +397,9 @@ class EpochDataSet:
         date : float
             date to which the magnitudes have been interpolated
         """
+
+        if "phot" not in target and flux_interp:
+            raise ValueError("Flux interpolation only works with photometry targets")
 
         if date_low is None:
             date_low = self.reg_min
@@ -344,22 +422,29 @@ class EpochDataSet:
 
         self.dates = date
 
+        if flux_interp:
+            data = convert_to_flux(self.data)
+            data_error = convert_to_flux(self.data, self.data_error)
+        else:
+            data = self.data
+            data_error = self.data_error
+
         if target == "halpha-ae":
-            kernel = np.var(self.data) * kernels.PolynomialKernel(
-                log_sigma2=np.var(self.data), order=3
+            kernel = np.var(data) * kernels.PolynomialKernel(
+                log_sigma2=np.var(data), order=3
             )
         else:
-            kernel = np.var(self.data) * kernels.ExpSquaredKernel(1000)
+            kernel = np.var(data) * kernels.ExpSquaredKernel(1000)
 
         model = george.GP(
             kernel=kernel,
         )
 
         try:
-            model.compute(self.time, self.data_error)
+            model.compute(self.time, data_error)
         except np.linalg.LinAlgError:
             warnings.warn("LinAlgError occured, modifying data_error...")
-            model.compute(self.time, self.data_error * 2)
+            model.compute(self.time, data_error * 2)
 
         # Emcee sampling
         def lnprob(p):
@@ -407,7 +492,7 @@ class EpochDataSet:
         data_pred = []
         for s in samples[np.random.randint(len(samples), size=size)]:
             model.set_parameter_vector(s)
-            d = model.predict(self.data, x_pred, return_cov=False)
+            d = model.predict(data, x_pred, return_cov=False)
 
             # Rule to skip "0-fits"
             if np.mean(d) < 1 and target != "halpha-ae" and "phot" not in target:
@@ -425,7 +510,7 @@ class EpochDataSet:
             for num in uni_rng:
                 toe_rnd = np.percentile(self.tkde, num * 100)
                 t = date + (self.toe - toe_rnd)
-                dint = model.predict(self.data, t, return_cov=False)
+                dint = model.predict(data, t, return_cov=False)
                 data_int.append(dint)
 
             # If no matching curves are found, start excluding data
@@ -441,14 +526,21 @@ class EpochDataSet:
                 date_low=date_low,
                 date_high=date_high,
                 diagnostic=diagnostic,
+                no_reject=no_reject,
+                flux_interp=flux_interp,
             )
 
-        self.data_int = np.array(data_int)
-        self.data_pred = np.array(data_pred)
+        # Convert data back before exporting/ saving
+        if flux_interp:
+            self.data_int = convert_to_mag(np.array(data_int))
+            self.data_pred = convert_to_mag(np.array(data_pred))
+        else:
+            self.data_int = np.array(data_int)
+            self.data_pred = np.array(data_pred)
         self.get_results()
 
         if diagnostic:
-            self.diagnostic_plot(diagnostic, target)
+            self.diagnostic_plot(diagnostic, target, flux_interp=flux_interp)
 
         return (
             self.median,

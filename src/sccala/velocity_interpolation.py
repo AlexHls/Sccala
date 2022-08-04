@@ -123,6 +123,7 @@ def cli():
         "-r", "--rules", help="File containing velocity interpolation rules"
     )
     parser.add_argument(
+        "-n",
         "--noreject",
         action="store_true",
         help="When flag is passed, increasing values in the velocity fit will not be rejected.",

@@ -3,7 +3,6 @@ import argparse
 import warnings
 
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import cloudpickle
 
@@ -17,6 +16,7 @@ def main(args):
     instrument = args.instrument
     bands = args.bands
     rules = args.rules
+    flux_interp = args.fluxinterp
 
     if not isinstance(bands, list):
         bands = [bands]
@@ -28,7 +28,9 @@ def main(args):
     # Load data
     dataframe = pd.read_csv(
         os.path.join(
-            pa.get_data_path(), "{:s}_{:s}_Photometry.csv".format(snname, instrument)
+            pa.get_data_path(),
+            snname,
+            "{:s}_{:s}_Photometry.csv".format(snname, instrument),
         ),
         index_col=[0],
     )
@@ -80,6 +82,7 @@ def main(args):
         mag_int, mag_int_error_lower, mag_int_error_upper, dates = mag_set.data_interp(
             "{:s}_{:s}_phot".format(instrument, band),
             diagnostic=diag_path,
+            flux_interp=flux_interp,
         )
 
         expname = os.path.join(
@@ -126,6 +129,12 @@ def cli():
     parser.add_argument("bands", nargs="+", help="Photometric band(s) to be fit")
     parser.add_argument(
         "-r", "--rules", help="File containing velocity interpolation rules"
+    )
+    parser.add_argument(
+        "-f",
+        "--fluxinterp",
+        help="Convert mangitudes to flux for interpolation. Default: True",
+        action="store_true",
     )
 
     args = parser.parse_args()

@@ -1,10 +1,13 @@
 import numpy as np
 
+from sccala.utillib.const import H_ERG, C_AA, C_LIGHT
+
 
 def distmod_kin(z, q0=-0.55, j0=1):
     # Hubble constant free distance modulus d = d_L * H0 in kinematic expansion
-    c = 299792.458  # c in km/s
-    return (c * z) * (1 + (1 - q0) * z / 2 - (1 - q0 - 3 * q0**2 + j0) * z**2 / 6)
+    return (C_LIGHT * z) * (
+        1 + (1 - q0) * z / 2 - (1 - q0 - 3 * q0**2 + j0) * z**2 / 6
+    )
 
 
 def quantile(x, q, weights=None):
@@ -52,3 +55,22 @@ def quantile(x, q, weights=None):
         cdf /= cdf[-1]
         cdf = np.append(0, cdf)
         return np.array(np.interp(q, cdf, x[idx]).tolist())
+
+
+def convert_to_flux(data, data_err=None):
+    """
+    Converts magnitude data from mag to flux
+    """
+    flux = H_ERG * C_AA * np.power(10, -0.4 * data)
+    if data_err is not None:
+        return data_err / 2.5 * np.log(10) * flux
+
+    return flux
+
+
+def convert_to_mag(data):
+    """
+    Converts flux data from flux to mag
+    """
+    mag = -2.5 * np.log10(1 / H_ERG / C_AA * data)
+    return mag
