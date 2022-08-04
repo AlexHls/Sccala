@@ -17,6 +17,7 @@ def main(args):
     bands = args.bands
     rules = args.rules
     flux_interp = args.fluxinterp
+    no_overwrite = args.nooverwrite
 
     if not isinstance(bands, list):
         bands = [bands]
@@ -89,15 +90,16 @@ def main(args):
             pa.get_res_path(),
             "%s_%s_%s_InterpolationResults.csv" % (snname, instrument, band),
         )
-        ext = 1
-        while os.path.exists(expname):
-            warnings.warn("Results file already exists...")
-            expname = os.path.join(
-                pa.get_res_path(),
-                "%s_%s_%s_InterpolationResults(%d).csv"
-                % (snname, instrument, band, ext),
-            )
-            ext += 1
+        if no_overwrite:
+            ext = 1
+            while os.path.exists(expname):
+                warnings.warn("Results file already exists...")
+                expname = os.path.join(
+                    pa.get_res_path(),
+                    "%s_%s_%s_InterpolationResults(%d).csv"
+                    % (snname, instrument, band, ext),
+                )
+                ext += 1
 
         expdf = pd.DataFrame(
             {
@@ -134,6 +136,11 @@ def cli():
         "-f",
         "--fluxinterp",
         help="Convert mangitudes to flux for interpolation. Default: True",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--nooverwrite",
+        help="Prevents from overwriting existing results.",
         action="store_true",
     )
 

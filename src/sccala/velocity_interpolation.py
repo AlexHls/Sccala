@@ -82,8 +82,8 @@ def main(args):
     expname = os.path.join(
         pa.get_res_path(), "%s_%s_InterpolationResults.csv" % (snname, line)
     )
-    ext = 1
     if no_overwrite:
+        ext = 1
         while os.path.exists(expname):
             warnings.warn("Results file already exists...")
             expname = os.path.join(
