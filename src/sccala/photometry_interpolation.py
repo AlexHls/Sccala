@@ -66,6 +66,14 @@ def main(args):
         mag = dataframe[band].to_numpy()
         mag_error = dataframe["{:s}err".format(band)].to_numpy()
 
+        # Check for NaNs
+        if np.isnan(mag).any():
+            warnings.warn("Input contains NaN, removing invalid values...")
+            # Remove NaNs
+            mag_error = mag_error[np.logical_not(np.isnan(mag))]
+            mjd = mjd[np.logical_not(np.isnan(mag))]
+            mag = mag[np.logical_not(np.isnan(mag))]
+
         mag_set = epoch_interp.EpochDataSet(
             mag,
             mag_error,
