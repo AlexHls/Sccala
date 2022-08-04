@@ -31,12 +31,12 @@ Classes
       If beginning is True, first element is removed, otherwise last.
 
 
-   .. py:method:: diagnostic_plot(diagnostic, target)
+   .. py:method:: diagnostic_plot(diagnostic, target, flux_interp=False)
 
       Plots the output of the interpolation
 
 
-   .. py:method:: data_interp(target, step=0.1, date_low=None, date_high=None, diagnostic=None, no_reject=False)
+   .. py:method:: data_interp(target, step=0.1, date_low=None, date_high=None, diagnostic=None, no_reject=False, flux_interp=False)
 
       Interpolate dataocities using Gaussian Process regression
 
@@ -57,6 +57,10 @@ Classes
       no_reject : bool
           If True velocity fits with increasing values will not
           be rejected. Default: False
+      flux_interp : bool
+          If True, data is converted to flux before interpolating.
+          Exported values will be converted back to magnitudes.
+          Only works with 'phot' in target. Default: False
 
       Returns
       -------

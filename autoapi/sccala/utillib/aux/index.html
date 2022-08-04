@@ -113,6 +113,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#sccala.utillib.aux.quantile" title="sccala.utillib.aux.quantile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantile</span></code></a>(x, q[, weights])</p></td>
 <td><p>Compute sample quantiles with support for weighted samples.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.utillib.aux.convert_to_flux" title="sccala.utillib.aux.convert_to_flux"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_to_flux</span></code></a>(data[, data_err])</p></td>
+<td><p>Converts magnitude data from mag to flux</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#sccala.utillib.aux.convert_to_mag" title="sccala.utillib.aux.convert_to_mag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_to_mag</span></code></a>(data)</p></td>
+<td><p>Converts flux data from flux to mag</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py function">
@@ -150,6 +156,18 @@ x : array_like[nsamples,]</p>
 between <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">weights</span></code>.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.utillib.aux.convert_to_flux">
+<span class="sig-prename descclassname"><span class="pre">sccala.utillib.aux.</span></span><span class="sig-name descname"><span class="pre">convert_to_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.utillib.aux.convert_to_flux" title="Permalink to this definition"></a></dt>
+<dd><p>Converts magnitude data from mag to flux</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.utillib.aux.convert_to_mag">
+<span class="sig-prename descclassname"><span class="pre">sccala.utillib.aux.</span></span><span class="sig-name descname"><span class="pre">convert_to_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.utillib.aux.convert_to_mag" title="Permalink to this definition"></a></dt>
+<dd><p>Converts flux data from flux to mag</p>
 </dd></dl>
 
 </section>

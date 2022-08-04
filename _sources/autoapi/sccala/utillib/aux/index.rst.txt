@@ -15,6 +15,8 @@ Functions
 
    sccala.utillib.aux.distmod_kin
    sccala.utillib.aux.quantile
+   sccala.utillib.aux.convert_to_flux
+   sccala.utillib.aux.convert_to_mag
 
 
 
@@ -46,5 +48,15 @@ Functions
    ValueError
        For invalid quantiles; ``q`` not in ``[0, 1]`` or dimension mismatch
        between ``x`` and ``weights``.
+
+
+.. py:function:: convert_to_flux(data, data_err=None)
+
+   Converts magnitude data from mag to flux
+
+
+.. py:function:: convert_to_mag(data)
+
+   Converts flux data from flux to mag
 
 
