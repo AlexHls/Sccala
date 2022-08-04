@@ -16,6 +16,7 @@ def main(args):
     line = args.line
     rules = args.rules
     no_reject = args.noreject
+    no_overwrite = args.nooverwrite
 
     diag_path = os.path.join(pa.get_diag_path(), snname)
     if not os.path.exists(diag_path):
@@ -82,13 +83,14 @@ def main(args):
         pa.get_res_path(), "%s_%s_InterpolationResults.csv" % (snname, line)
     )
     ext = 1
-    while os.path.exists(expname):
-        warnings.warn("Results file already exists...")
-        expname = os.path.join(
-            pa.get_res_path(),
-            "%s_%s_InterpolationResults(%d).csv" % (snname, line, ext),
-        )
-        ext += 1
+    if no_overwrite:
+        while os.path.exists(expname):
+            warnings.warn("Results file already exists...")
+            expname = os.path.join(
+                pa.get_res_path(),
+                "%s_%s_InterpolationResults(%d).csv" % (snname, line, ext),
+            )
+            ext += 1
 
     expdf = pd.DataFrame(
         {
@@ -127,6 +129,11 @@ def cli():
         "--noreject",
         action="store_true",
         help="When flag is passed, increasing values in the velocity fit will not be rejected.",
+    )
+    parser.add_argument(
+        "--nooverwrite",
+        help="Prevents from overwriting existing results.",
+        action="store_true",
     )
 
     args = parser.parse_args()
