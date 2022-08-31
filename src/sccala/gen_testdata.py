@@ -362,7 +362,7 @@ def cli():
         "--zrange_hubble",
         nargs=2,
         type=float,
-        help="Redshift range in which the testdata is to be generated. Defaul: [0.001, 0.005]",
+        help="Redshift range in which the calibrator testdata is to be generated. Defaul: [0.001, 0.005]",
         default=[0.001, 0.005],
     )
     parser.add_argument(
