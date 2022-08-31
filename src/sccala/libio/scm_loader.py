@@ -269,8 +269,8 @@ def load_data(
             )
         )
         vel = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-        vel_err_lower = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-        vel_err_upper = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
+        vel_err_lower = df[df["Date"] == date[i]]["ErrorLower"].to_numpy()[0]
+        vel_err_upper = df[df["Date"] == date[i]]["ErrorUpper"].to_numpy()[0]
         vel_err = max(vel_err_lower, vel_err_upper)
         datadict["vel"].append(vel)
         datadict["vel_err"].append(vel_err)
@@ -283,8 +283,8 @@ def load_data(
             )
         )
         ae = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-        ae_err_lower = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-        ae_err_upper = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
+        ae_err_lower = df[df["Date"] == date[i]]["ErrorLower"].to_numpy()[0]
+        ae_err_upper = df[df["Date"] == date[i]]["ErrorUpper"].to_numpy()[0]
         ae_err = max(ae_err_lower, ae_err_upper)
         datadict["ae"].append(ae)
         datadict["ae_err"].append(ae_err)
@@ -389,8 +389,8 @@ def load_data(
                 )
             )
             vel = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-            vel_err_lower = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-            vel_err_upper = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
+            vel_err_lower = df[df["Date"] == date[i]]["ErrorLower"].to_numpy()[0]
+            vel_err_upper = df[df["Date"] == date[i]]["ErrorUpper"].to_numpy()[0]
             vel_err = max(vel_err_lower, vel_err_upper)
             datadict["vel"].append(vel)
             datadict["vel_err"].append(vel_err)
@@ -402,8 +402,8 @@ def load_data(
                 )
             )
             ae = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-            ae_err_lower = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-            ae_err_upper = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
+            ae_err_lower = df[df["Date"] == date[i]]["ErrorLower"].to_numpy()[0]
+            ae_err_upper = df[df["Date"] == date[i]]["ErrorUpper"].to_numpy()[0]
             ae_err = max(ae_err_lower, ae_err_upper)
             datadict["ae"].append(ae)
             datadict["ae_err"].append(ae_err)
