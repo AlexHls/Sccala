@@ -143,7 +143,6 @@ def gen_testdata(
     sint = 0.25
 
     # Calculate magnitudes
-    dl = 10 ** ((mu - 25) / 5)
     mag_err = (
         (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
         + (300 / c_light * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
@@ -157,6 +156,7 @@ def gen_testdata(
         + 5 * np.log10(distmod_kin(red))
     )
     if hubble:
+        dl = 10 ** ((mu - 25) / 5)
         hubble_mag_err = (
             (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
             + (300 / c_light * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10)))
