@@ -42,6 +42,8 @@ def main(args):
         log_dir=args.log_dir,
         chains=args.chains,
         iters=args.iters,
+        warmup=args.warmup,
+        save_warmup=args.save_warmup,
         quiet=False,
         classic=args.classic,
     )
@@ -79,6 +81,13 @@ def cli():
         type=int,
     )
     parser.add_argument(
+        "-w",
+        "--warmup",
+        help="Number of interations used as warmup in sampling procedure. Default: 1000",
+        default=1000,
+        type=int,
+    )
+    parser.add_argument(
         "-l",
         "--log_dir",
         help="Directory used for storing sampling results. Default: 'log_dir'",
@@ -88,6 +97,11 @@ def cli():
         "-p",
         "--plot",
         help="Specifies name of cornerplot to be saved to log_dir. Should end with file type.",
+    )
+    parser.add_argument(
+        "--save_warmup",
+        action="store_true",
+        help="If flag is given, warmup chains will be stored.",
     )
     parser.add_argument(
         "--calib_identifier",

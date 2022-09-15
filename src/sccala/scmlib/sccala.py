@@ -165,6 +165,8 @@ class SccalaSCM:
         log_dir="log_dir",
         chains=4,
         iters=1000,
+        warmup=1000,
+        save_warmup=False,
         quiet=False,
         init=None,
         classic=False,
@@ -183,6 +185,10 @@ class SccalaSCM:
             Number of chains used in STAN fit. Default: 4
         iters : int
             Number of iterations used in STAN fit. Default: 1000
+        warmup : int
+            Number of iterations used in STAN fit as warmup. Default: 1000
+        save_warmup : bool
+            If True, warmup elements of chain will be saved as well. Default: False
         quiet : bool
             Enables/ disables output statements after sampling has
             finished. Default: False
@@ -199,6 +205,8 @@ class SccalaSCM:
         assert issubclass(
             type(model), SCM_Model
         ), "'model' should be a subclass of SCM_Model"
+        assert isinstance(iters, int), "'iters' has to by of type 'int'"
+        assert isinstance(warmup, int), "'warmup' has to by of type 'int'"
 
         red_uncertainty = (
             (
@@ -324,7 +332,11 @@ class SccalaSCM:
         # Setup/ build STAN model
         fit = stan.build(model.model, data=model.data)
         samples = fit.sample(
-            num_chains=chains, num_samples=iters, init=[model.init] * chains
+            num_chains=chains,
+            num_samples=iters,
+            init=[model.init] * chains,
+            num_warmup=warmup,
+            save_warmup=save_warmup,
         )
 
         self.posterior = samples.to_frame()
