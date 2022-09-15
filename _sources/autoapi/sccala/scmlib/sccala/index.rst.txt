@@ -19,7 +19,7 @@ Classes
 
 .. py:class:: SccalaSCM(file, calib='CALIB', blind=True, blindkey='HUBBLE')
 
-   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, quiet=False, init=None, classic=False)
+   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, save_warmup=False, quiet=False, init=None, classic=False)
 
       Samples the posterior for the given data and model
 
@@ -34,6 +34,10 @@ Classes
           Number of chains used in STAN fit. Default: 4
       iters : int
           Number of iterations used in STAN fit. Default: 1000
+      warmup : int
+          Number of iterations used in STAN fit as warmup. Default: 1000
+      save_warmup : bool
+          If True, warmup elements of chain will be saved as well. Default: False
       quiet : bool
           Enables/ disables output statements after sampling has
           finished. Default: False
