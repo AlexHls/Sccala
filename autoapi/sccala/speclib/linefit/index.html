@@ -17,6 +17,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -131,16 +132,22 @@
 <span class="sig-prename descclassname"><span class="pre">sccala.speclib.linefit.</span></span><span class="sig-name descname"><span class="pre">velocity_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4861</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.velocity_conversion" title="Permalink to this definition"></a></dt>
 <dd><p>Converts wavelength into velocity with relativistic
 Doppler formula</p>
+<section id="parameters">
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>x<span class="classifier">float</span></dt><dd><p>wavelength to convert</p>
 </dd>
 <dt>rest<span class="classifier">float</span></dt><dd><p>restwavelength w.r.t to which to convert</p>
 </dd>
 </dl>
+</section>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>vel<span class="classifier">float</span></dt><dd><p>velocity in m/s</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py class">
@@ -164,6 +171,8 @@ been overwritten</p>
 <span class="sig-name descname"><span class="pre">fit_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ae_feature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noisefit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hodlrsolver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagnostic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.fit_line" title="Permalink to this definition"></a></dt>
 <dd><p>Fits a specific line to the spectrum. Lines can either be
 choosen from the predefined set or specified manually</p>
+<section id="id1">
+<h4>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>line<span class="classifier">str</span></dt><dd><p>Specifies the name of the line. Has to match the predefined
 line names, unless cr_low, cr_high and rest are specified.</p>
@@ -188,16 +197,22 @@ kernel is used, otherwise two will be used. Default: True</p>
 directory. Default: False</p>
 </dd>
 </dl>
+</section>
+<section id="id2">
+<h4>Returns<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>results<span class="classifier">dict</span></dt><dd><p>Dictonary containing all the different fit quantities</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.diagnostic_plot">
 <span class="sig-name descname"><span class="pre">diagnostic_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.diagnostic_plot" title="Permalink to this definition"></a></dt>
 <dd><p>Creates a diagnostic plot of a line fit.</p>
+<section id="id3">
+<h4>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>line<span class="classifier">str</span></dt><dd><p>Specifies the name of the line. Has to match the predefined
 line names, unless cr_low, cr_high and rest are specified.</p>
@@ -206,21 +221,30 @@ line names, unless cr_low, cr_high and rest are specified.</p>
 None or False can be passed.</p>
 </dd>
 </dl>
+</section>
+<section id="id4">
+<h4>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>fig<span class="classifier">matplotlib figure object</span></dt><dd><p>Diagnostic figure</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.get_results">
 <span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.get_results" title="Permalink to this definition"></a></dt>
 <dd><p>Function that returns either the velocities or a/e values for a specific lines</p>
+<section id="id5">
+<h4>Parameters<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>line<span class="classifier">str</span></dt><dd><p>Specifies the name of the line. Has to match the predefined
 line names, unless cr_low, cr_high and rest are specified.</p>
 </dd>
 </dl>
+</section>
+<section id="id6">
+<h4>Returns<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h4>
 <p>velocity : float
 vel_err_lower : float
 vel_err_upper : float</p>
@@ -230,6 +254,7 @@ vel_err_upper : float</p>
 <p>ae : float
 ae_err_lower : float
 ae_err_upper : float</p>
+</section>
 </dd></dl>
 
 </dd></dl>

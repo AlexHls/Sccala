@@ -17,6 +17,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -147,15 +148,21 @@ x : array_like[nsamples,]</p>
 <dt>weights<span class="classifier">Optional[array_like[nsamples,]]</span></dt><dd><p>An optional weight corresponding to each sample. These</p>
 </dd>
 </dl>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>quantiles<span class="classifier">array_like[nquantiles,]</span></dt><dd><p>The sample quantiles computed at <code class="docutils literal notranslate"><span class="pre">q</span></code>.</p>
 </dd>
 </dl>
+</section>
+<section id="raises">
+<h4>Raises<a class="headerlink" href="#raises" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>For invalid quantiles; <code class="docutils literal notranslate"><span class="pre">q</span></code> not in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> or dimension mismatch
 between <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">weights</span></code>.</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py function">

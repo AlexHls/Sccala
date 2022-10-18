@@ -17,6 +17,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -122,6 +123,8 @@
 <dt class="sig sig-object py" id="sccala.gen_testdata.gen_testdata">
 <span class="sig-prename descclassname"><span class="pre">sccala.gen_testdata.</span></span><span class="sig-name descname"><span class="pre">gen_testdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zrange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zrange_hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.001,</span> <span class="pre">0.005)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">70.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.gen_testdata.gen_testdata" title="Permalink to this definition"></a></dt>
 <dd><p>Function generating simulated datasets for standardisation</p>
+<section id="parameters">
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>zrange<span class="classifier">list or tuple</span></dt><dd><p>Lower and upper limit of redshift interval for which
 testdata is to be generated</p>
@@ -146,10 +149,14 @@ calibrator testdata is to be generated. Default: (0.001, 0.005)</p>
 Default: 70.0</p>
 </dd>
 </dl>
+</section>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>data<span class="classifier">pd.DataFrame</span></dt><dd><p>DataFrame containing the simulated testdata</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py function">

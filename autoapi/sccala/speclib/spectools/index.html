@@ -17,6 +17,7 @@
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -116,6 +117,8 @@
 <dt class="sig sig-object py" id="sccala.speclib.spectools.calculate_flux_error">
 <span class="sig-prename descclassname"><span class="pre">sccala.speclib.spectools.</span></span><span class="sig-name descname"><span class="pre">calculate_flux_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.spectools.calculate_flux_error" title="Permalink to this definition"></a></dt>
 <dd><p>Estimate Error of spectrum based on Savitzky-Golay filtering over large area and subtracting form original data</p>
+<section id="parameters">
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>datfile<span class="classifier">str</span></dt><dd><p>Path to spectral file of which to calculate flux error</p>
 </dd>
@@ -128,8 +131,12 @@
 <dt>scale<span class="classifier">int or float</span></dt><dd><p>Stdev of Gaussian distribution from which windowlengths are drawn. Default: 50</p>
 </dd>
 </dl>
+</section>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h4>
 <p>data_err : np.ndarray
 unnormalized error</p>
+</section>
 </dd></dl>
 
 </section>
