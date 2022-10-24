@@ -505,6 +505,9 @@ class EpochDataSet:
                 and not no_reject
             ):
                 continue
+            # Reject negative a/e
+            if any(np.sign(d) < 0.0) and target == "halpha-ae":
+                continue
 
             data_pred.append(d)
             for num in uni_rng:
