@@ -27,15 +27,27 @@ def main(args):
         os.makedirs(diag_path)
 
     # Load data
-    dataframe = pd.read_csv(
-        os.path.join(
-            pa.get_data_path(),
-            snname,
-            "{:s}_{:s}_Photometry.csv".format(snname, instrument),
-        ),
-        index_col=[0],
-    )
-    mjd = dataframe["MJD"].to_numpy()
+    try:
+        dataframe = pd.read_csv(
+            os.path.join(
+                pa.get_data_path(),
+                snname,
+                "{:s}_{:s}_Photometry.csv".format(snname, instrument),
+            ),
+            index_col=[0],
+        )
+        mjd = dataframe["MJD"].to_numpy()
+    except KeyError:
+        # If a key error occurs, assume that there is no index column
+        # and try loading it without an index column
+        dataframe = pd.read_csv(
+            os.path.join(
+                pa.get_data_path(),
+                snname,
+                "{:s}_{:s}_Photometry.csv".format(snname, instrument),
+            ),
+        )
+        mjd = dataframe["MJD"].to_numpy()
 
     # Import Gaussian KDE for time-prior
     data_path = os.path.join(pa.get_data_path(), snname)
