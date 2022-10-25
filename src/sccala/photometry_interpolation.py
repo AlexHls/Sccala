@@ -36,7 +36,7 @@ def main(args):
             ),
             index_col=[0],
         )
-        mjd = dataframe["MJD"].to_numpy()
+        mjd_full = dataframe["MJD"].to_numpy()
     except KeyError:
         # If a key error occurs, assume that there is no index column
         # and try loading it without an index column
@@ -47,7 +47,7 @@ def main(args):
                 "{:s}_{:s}_Photometry.csv".format(snname, instrument),
             ),
         )
-        mjd = dataframe["MJD"].to_numpy()
+        mjd_full = dataframe["MJD"].to_numpy()
 
     # Import Gaussian KDE for time-prior
     data_path = os.path.join(pa.get_data_path(), snname)
@@ -83,8 +83,10 @@ def main(args):
             warnings.warn("Input contains NaN, removing invalid values...")
             # Remove NaNs
             mag_error = mag_error[np.logical_not(np.isnan(mag))]
-            mjd = mjd[np.logical_not(np.isnan(mag))]
+            mjd = mjd_full[np.logical_not(np.isnan(mag))]
             mag = mag[np.logical_not(np.isnan(mag))]
+        else:
+            mjd = mjd_full
 
         mag_set = epoch_interp.EpochDataSet(
             mag,
