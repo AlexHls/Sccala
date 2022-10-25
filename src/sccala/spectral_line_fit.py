@@ -74,17 +74,23 @@ def main(args):
 
         # For noisefit, use HODLR solver, otherwise use default
         if noisefit[i] == "True":
-            hodlrsolver=True
+            hodlrsolver = True
+            nf = True
+        elif noisefit[i] == "False":
+            hodlrsolver = False
+            nf = False
         else:
-            hodlrsolver=False
+            raise ValueError(
+                "'noisefit' should be 'True' or 'False', but it is %s" % noisefit[i]
+            )
 
         try:
             print("ID: %s" % str(sid))
-            print("Noisefit: ", noisefit[i])
+            print("Noisefit: ", nf)
             print("HODLR solver: ", hodlrsolver)
             fit.fit_line(
                 line[i],
-                noisefit=noisefit[i],
+                noisefit=nf,
                 diagnostic=diag_path,
                 size=10000,
                 hodlrsolver=hodlrsolver,
