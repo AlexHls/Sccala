@@ -160,6 +160,55 @@ Doppler formula</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.__set_builtin_lines__">
+<span class="sig-name descname"><span class="pre">__set_builtin_lines__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ae_feature</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.__set_builtin_lines__" title="Permalink to this definition"></a></dt>
+<dd><p>Sets a new builtin line if it does not already exist
+Parameters
+———-
+line : str</p>
+<blockquote>
+<div><p>Specifies the name of the line. Has to be in the list
+of existing lines</p>
+</div></blockquote>
+<dl class="simple">
+<dt>cr_low<span class="classifier">float</span></dt><dd><p>Lower boundary of the line feature.</p>
+</dd>
+<dt>cr_high<span class="classifier">float</span></dt><dd><p>Upper boundary of the line feature.</p>
+</dd>
+<dt>rest<span class="classifier">float</span></dt><dd><p>Rest wavelength of the feature.</p>
+</dd>
+<dt>ae_feature<span class="classifier">bool</span></dt><dd><p>Specifies if absorption to emission ratio is to be fit.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.__modify_builtin_lines__">
+<span class="sig-name descname"><span class="pre">__modify_builtin_lines__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.__modify_builtin_lines__" title="Permalink to this definition"></a></dt>
+<dd><p>Modifies the builtin lines, e.g. changes the cr_ranges
+Parameters
+———-
+line : str</p>
+<blockquote>
+<div><p>Specifies the name of the line. Has to be in the list
+of existing lines</p>
+</div></blockquote>
+<dl class="simple">
+<dt>kwargs:</dt><dd><dl class="simple">
+<dt>cr_low<span class="classifier">float</span></dt><dd><p>Lower boundary of the line feature.</p>
+</dd>
+<dt>cr_high<span class="classifier">float</span></dt><dd><p>Upper boundary of the line feature.</p>
+</dd>
+<dt>rest<span class="classifier">float</span></dt><dd><p>Rest wavelength of the feature.</p>
+</dd>
+<dt>ae_feature<span class="classifier">bool</span></dt><dd><p>Specifies if absorption to emission ratio is to be fit.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.__reset_builtin_lines__">
 <span class="sig-name descname"><span class="pre">__reset_builtin_lines__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.__reset_builtin_lines__" title="Permalink to this definition"></a></dt>
 <dd><p>Resets builtin lines in case their properties have

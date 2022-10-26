@@ -50,6 +50,43 @@ Functions
    .. py:method:: __get_builtin_lines__()
 
 
+   .. py:method:: __set_builtin_lines__(line, cr_low, cr_high, rest, ae_feature)
+
+      Sets a new builtin line if it does not already exist
+      Parameters
+      ----------
+      line : str
+          Specifies the name of the line. Has to be in the list
+          of existing lines
+      cr_low : float
+          Lower boundary of the line feature.
+      cr_high : float
+          Upper boundary of the line feature.
+      rest : float
+          Rest wavelength of the feature.
+      ae_feature : bool
+          Specifies if absorption to emission ratio is to be fit.
+
+
+   .. py:method:: __modify_builtin_lines__(line, **kwargs)
+
+      Modifies the builtin lines, e.g. changes the cr_ranges
+      Parameters
+      ----------
+      line : str
+          Specifies the name of the line. Has to be in the list
+          of existing lines
+      kwargs:
+          cr_low : float
+              Lower boundary of the line feature.
+          cr_high : float
+              Upper boundary of the line feature.
+          rest : float
+              Rest wavelength of the feature.
+          ae_feature : bool
+              Specifies if absorption to emission ratio is to be fit.
+
+
    .. py:method:: __reset_builtin_lines__()
 
       Resets builtin lines in case their properties have
