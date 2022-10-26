@@ -72,6 +72,21 @@ def main(args):
             sid,
         )
 
+        if args.cr_low is not None:
+            fit.__modify_builtin_lines__(line[i], cr_low=args.cr_low)
+        if args.cr_high is not None:
+            fit.__modify_builtin_lines__(line[i], cr_high=args.cr_high)
+        if args.rest is not None:
+            fit.__modify_builtin_lines__(line[i], rest=args.rest)
+        if args.ae_feature is not None:
+            if args.ae_feature == "True":
+                ae_feature = True
+            elif args.ae_feature == "False":
+                ae_feature = False
+            else:
+                raise ValueError("Unrecognized ae_feature specification")
+            fit.__modify_builtin_lines__(line[i], ae_feature=ae_feature)
+
         # For noisefit, use HODLR solver, otherwise use default
         if noisefit[i] == "True":
             hodlrsolver = True
@@ -143,6 +158,26 @@ def cli():
     parser.add_argument(
         "speclist",
         help="Path to list with spectra and lines to be fitted",
+    )
+
+    parser.add_argument(
+        "--cr_low",
+        help="Changes the lower boundary of the lines to be fitted",
+        type=float,
+    )
+    parser.add_argument(
+        "--cr_high",
+        help="Changes the upper boundary of the lines to be fitted",
+        type=float,
+    )
+    parser.add_argument(
+        "--rest",
+        help="Changes the rest wavelength of the lines to be fitted",
+        type=float,
+    )
+    parser.add_argument(
+        "--ae_feature",
+        help="Changes if the line is to be fitted as an ae feature",
     )
 
     args = parser.parse_args()

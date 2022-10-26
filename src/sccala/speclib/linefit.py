@@ -84,6 +84,74 @@ class LineFit:
             )
         return
 
+    def __set_builtin_lines__(self, line, cr_low, cr_high, rest, ae_feature):
+        """
+        Sets a new builtin line if it does not already exist
+        Parameters
+        ----------
+        line : str
+            Specifies the name of the line. Has to be in the list
+            of existing lines
+        cr_low : float
+            Lower boundary of the line feature.
+        cr_high : float
+            Upper boundary of the line feature.
+        rest : float
+            Rest wavelength of the feature.
+        ae_feature : bool
+            Specifies if absorption to emission ratio is to be fit.
+        """
+
+        # Run some checks to make sure the input is sensible
+        assert line not in self.lines.keys(), "Line exists already"
+        assert cr_low < rest, "cr_low cannot be higher than rest"
+        assert rest < cr_high, "cr_high cannot be lower than rest"
+        assert type(ae_feature) is bool, "ae_feature has to be bool"
+
+        self.lines[line] = [cr_low, cr_high, rest, ae_feature]
+
+        print("Added %s line to lines" % line)
+
+        return
+
+    def __modify_builtin_lines__(self, line, **kwargs):
+        """
+        Modifies the builtin lines, e.g. changes the cr_ranges
+        Parameters
+        ----------
+        line : str
+            Specifies the name of the line. Has to be in the list
+            of existing lines
+        kwargs:
+            cr_low : float
+                Lower boundary of the line feature.
+            cr_high : float
+                Upper boundary of the line feature.
+            rest : float
+                Rest wavelength of the feature.
+            ae_feature : bool
+                Specifies if absorption to emission ratio is to be fit.
+        """
+
+        if line not in self.lines.keys():
+            raise ValueError("Line not in list of existing lines.")
+
+        for arg in kwargs:
+            if arg == "cr_low":
+                self.lines[line][0] = kwargs[arg]
+                print("Modified cr_low for %s line" % line)
+            elif arg == "cr_high":
+                self.lines[line][1] = kwargs[arg]
+                print("Modified cr_high for %s line" % line)
+            elif arg == "rest":
+                self.lines[line][2] = kwargs[arg]
+                print("Modified rest for %s line" % line)
+            elif arg == "ae_feature":
+                self.lines[line][3] = kwargs[arg]
+                print("Modified ae_feature for %s line" % line)
+
+        return
+
     def __reset_builtin_lines__(self):
         """
         Resets builtin lines in case their properties have
