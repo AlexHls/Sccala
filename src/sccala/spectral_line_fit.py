@@ -89,7 +89,7 @@ def main(args):
 
         # For noisefit, use HODLR solver, otherwise use default
         if noisefit[i] == "True":
-            if args.disable_hodlrsover:
+            if args.disable_hodlrsolver:
                 hodlrsolver = False
             else:
                 hodlrsolver = True
