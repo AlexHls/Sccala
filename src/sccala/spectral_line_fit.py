@@ -89,7 +89,10 @@ def main(args):
 
         # For noisefit, use HODLR solver, otherwise use default
         if noisefit[i] == "True":
-            hodlrsolver = True
+            if args.disable_hodlrsover:
+                hodlrsolver = False
+            else:
+                hodlrsolver = True
             nf = True
         elif noisefit[i] == "False":
             hodlrsolver = False
@@ -178,6 +181,11 @@ def cli():
     parser.add_argument(
         "--ae_feature",
         help="Changes if the line is to be fitted as an ae feature",
+    )
+    parser.add_argument(
+        "--disable_hodlrsover",
+        help="Disables HODLRSolver regardless of noisefit.",
+        action="store_true",
     )
 
     args = parser.parse_args()
