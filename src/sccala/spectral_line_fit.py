@@ -183,7 +183,7 @@ def cli():
         help="Changes if the line is to be fitted as an ae feature",
     )
     parser.add_argument(
-        "--disable_hodlrsover",
+        "--disable_hodlrsolver",
         help="Disables HODLRSolver regardless of noisefit.",
         action="store_true",
     )
