@@ -305,6 +305,10 @@ def load_data(
         datadict["epoch"].append(date[i])
 
     if calib_sne_list is not None:
+        # Create new distance modulus columns and fill them with 0 values
+        datadict["mu"] = [0] * len(datadict["SN"])
+        datadict["mu_err"] = [0] * len(datadict["SN"])
+
         for i, sn in enumerate(calib_sne):
             # Check if sn refers is a path to a SN or just a SN name
             if os.path.exists(sn):
@@ -422,6 +426,12 @@ def load_data(
 
             # Epoch
             datadict["epoch"].append(calib_date[i])
+
+            # Distance modulus
+            mu = np.mean(info["DistMod"].to_numpy())
+            mu_err = np.mean(info["DistMod_Error"])
+            datadict["mu"].append(mu)
+            datadict["mu_err"].append(mu_err)
 
     if mag_sys is None:
         datadict["mag_sys"] = [0] * len(datadict["SN"])
