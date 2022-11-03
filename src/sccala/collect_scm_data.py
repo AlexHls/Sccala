@@ -18,6 +18,10 @@ def main(args):
         export = True
     else:
         export = args.export
+    mag_sys = args.mag_sys
+    vel_sys = args.vel_sys
+    col_sys = args.col_sys
+    ae_sys = args.ae_sys
 
     df = sl.load_data(
         sne_list,
@@ -29,6 +33,10 @@ def main(args):
         calib_col=calib_col,
         instrument=instrument,
         export=export,
+        mag_sys=mag_sys,
+        vel_sys=vel_sys,
+        col_sys=col_sys,
+        ae_sys=ae_sys,
     )
 
     return df
@@ -86,6 +94,26 @@ def cli():
         "-e",
         "--export",
         help="Name of the output file. If 'default' is passed, output name is based on instrument and date and will be saved in the results directory",
+    )
+    parser.add_argument(
+        "--mag_sys",
+        help="Value of the systematic magnitude uncertainty.",
+        type=float,
+    )
+    parser.add_argument(
+        "--vel_sys",
+        help="Value of the systematic velocity uncertainty.",
+        type=float,
+    )
+    parser.add_argument(
+        "--col_sys",
+        help="Value of the systematic color uncertainty.",
+        type=float,
+    )
+    parser.add_argument(
+        "--ae_sys",
+        help="Value of the systematic a/e uncertainty.",
+        type=float,
     )
 
     args = parser.parse_args()

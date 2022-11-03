@@ -19,6 +19,10 @@ def load_data(
     calib_col=("V", "I"),
     instrument="Bessell12",
     export=False,
+    mag_sys=None,
+    vel_sys=None,
+    col_sys=None,
+    ae_sys=None,
 ):
     """
     Loads all the necessary data for the scm and bundles it
@@ -55,6 +59,14 @@ def load_data(
         Specifies if DataFrame is to be exported. If True is passed,
         exported file will be stored in results directory. If str is passed,
         file will be stored in specified location. Default: False
+    mag_sys : float or None
+        Systematic magnitude uncertainty added to all SNe. Default: None
+    vel_sys : float or None
+        Systematic velocity uncertainty added to all SNe. Default: None
+    col_sys : float or None
+        Systematic color uncertainty added to all SNe. Default: None
+    ae_sys : float or None
+        Systematic ae uncertainty added to all SNe. Default: None
 
     Returns
     -------
@@ -411,11 +423,25 @@ def load_data(
             # Epoch
             datadict["epoch"].append(calib_date[i])
 
-    # TODO implement proper systematics import treatment
-    datadict["mag_sys"] = [0] * len(datadict["SN"])
-    datadict["vel_sys"] = [0] * len(datadict["SN"])
-    datadict["col_sys"] = [0] * len(datadict["SN"])
-    datadict["ae_sys"] = [0] * len(datadict["SN"])
+    if mag_sys is None:
+        datadict["mag_sys"] = [0] * len(datadict["SN"])
+    else:
+        datadict["mag_sys"] = [mag_sys] * len(datadict["SN"])
+
+    if vel_sys is None:
+        datadict["vel_sys"] = [0] * len(datadict["SN"])
+    else:
+        datadict["vel_sys"] = [vel_sys] * len(datadict["SN"])
+
+    if col_sys is None:
+        datadict["col_sys"] = [0] * len(datadict["SN"])
+    else:
+        datadict["col_sys"] = [col_sys] * len(datadict["SN"])
+
+    if ae_sys is None:
+        datadict["ae_sys"] = [0] * len(datadict["SN"])
+    else:
+        datadict["ae_sys"] = [ae_sys] * len(datadict["SN"])
 
     scm_data = pd.DataFrame(datadict)
 
