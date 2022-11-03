@@ -117,6 +117,9 @@ class SccalaSCM:
             self.calib_dist_mod = df[df["dataset"].isin(calib_datasets)][
                 "mu"
             ].to_numpy()
+            self.calib_dist_mod_err = df[df["dataset"].isin(calib_datasets)][
+                "mu_err"
+            ].to_numpy()
 
             self.calib_epoch = df[df["dataset"].isin(calib_datasets)][
                 "epoch"
@@ -145,6 +148,7 @@ class SccalaSCM:
             self.calib_ae_sys = None
 
             self.calib_dist_mod = None
+            self.calib_dist_mod_err = None
 
             self.calib_epoch = None
 
@@ -299,7 +303,9 @@ class SccalaSCM:
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
                 calib_errors = np.array(
                     [
-                        calib_red_uncertainty + self.calib_mag_err**2,
+                        calib_red_uncertainty
+                        + self.calib_mag_err**2
+                        + self.calib_dist_mod_err**2,
                         self.calib_vel_err**2,
                         self.calib_col_err**2,
                         self.calib_ae_err**2,
@@ -314,7 +320,9 @@ class SccalaSCM:
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
                 calib_errors = np.array(
                     [
-                        calib_red_uncertainty + self.calib_mag_err**2,
+                        calib_red_uncertainty
+                        + self.calib_mag_err**2
+                        + self.calib_dist_mod_err**2,
                         self.calib_vel_err**2,
                         self.calib_col_err**2,
                     ]
