@@ -163,11 +163,11 @@ def load_data(
                 else:
                     calib_date = [calib_date] * len(calib_sne)
                 if "dataset" in df.columns:
-                    calib_dataset = df["dataset"].tolist
+                    calib_dataset = df["dataset"].tolist()
                 else:
                     calib_dataset = None
                 if "instrument" in df.columns:
-                    instrument = df["instrument"].tolist()
+                    calib_instrument = df["instrument"].tolist()
                 else:
                     calib_instrument = [instrument] * len(calib_sne)
             else:
@@ -344,7 +344,7 @@ def load_data(
             # Magnitudes
             df = pd.read_csv(
                 os.path.join(
-                    datapath,
+                    respath,
                     "%s_%s_%s_InterpolationResults.csv"
                     % (sn, calib_instrument[i], calib_mag[i]),
                 )
@@ -362,7 +362,7 @@ def load_data(
             # Color 0
             df = pd.read_csv(
                 os.path.join(
-                    datapath,
+                    respath,
                     "%s_%s_%s_InterpolationResults.csv"
                     % (sn, calib_instrument[i], calib_col[i][0]),
                 )
@@ -379,12 +379,12 @@ def load_data(
             # Color 1
             df = pd.read_csv(
                 os.path.join(
-                    datapath,
+                    respath,
                     "%s_%s_%s_InterpolationResults.csv"
                     % (sn, calib_instrument[i], calib_col[i][1]),
                 )
             )
-            col1 = df[df["Date"] == date[i]][calib_col[i][0]].to_numpy()[0]
+            col1 = df[df["Date"] == date[i]][calib_col[i][1]].to_numpy()[0]
             col1_err_lower = df[df["Date"] == date[i]][
                 "%s_err_lower" % calib_col[i][1]
             ].to_numpy()[0]
@@ -401,7 +401,8 @@ def load_data(
             df = pd.read_csv(
                 os.path.join(
                     respath,
-                    "%s_hbeta_InterpolationResults.csv",  # TODO Allow for other lines
+                    "%s_hbeta_InterpolationResults.csv"
+                    % sn,  # TODO Allow for other lines
                 )
             )
             vel = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
@@ -414,7 +415,8 @@ def load_data(
             df = pd.read_csv(
                 os.path.join(
                     respath,
-                    "%s_halpha-ae_InterpolationResults.csv",  # TODO Allow for other lines
+                    "%s_halpha-ae_InterpolationResults.csv"
+                    % sn,  # TODO Allow for other lines
                 )
             )
             ae = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
