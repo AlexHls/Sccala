@@ -275,25 +275,6 @@ class SccalaSCM:
         if model.hubble:
             assert self.calib_sn is not None, "No calibrator SNe found..."
 
-            calib_red_uncertainty = (
-                (
-                    self.calib_red_err
-                    * 5
-                    * (1 + self.calib_red)
-                    / (self.calib_red * (1 + 0.5 * self.calib_red) * np.log(10))
-                )
-                ** 2
-                + (
-                    300
-                    / C_LIGHT
-                    * 5
-                    * (1 + self.calib_red)
-                    / (self.calib_red * (1 + 0.5 * self.calib_red) * np.log(10))
-                )
-                ** 2
-                + (0.055 * self.calib_red) ** 2
-            )
-
             if not classic:
                 # Observed values
                 calib_obs = np.array(
@@ -303,8 +284,7 @@ class SccalaSCM:
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
                 calib_errors = np.array(
                     [
-                        calib_red_uncertainty
-                        + self.calib_mag_err**2
+                        self.calib_mag_err**2
                         + self.calib_dist_mod_err**2,
                         self.calib_vel_err**2,
                         self.calib_col_err**2,
@@ -320,8 +300,7 @@ class SccalaSCM:
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
                 calib_errors = np.array(
                     [
-                        calib_red_uncertainty
-                        + self.calib_mag_err**2
+                        self.calib_mag_err**2
                         + self.calib_dist_mod_err**2,
                         self.calib_vel_err**2,
                         self.calib_col_err**2,
