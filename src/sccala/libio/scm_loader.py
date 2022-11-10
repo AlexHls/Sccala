@@ -349,11 +349,11 @@ def load_data(
                     % (sn, calib_instrument[i], calib_mag[i]),
                 )
             )
-            mags = df[df["Date"] == date[i]][calib_mag[i]].to_numpy()[0]
-            mags_err_lower = df[df["Date"] == date[i]][
+            mags = df[df["Date"] == calib_date[i]][calib_mag[i]].to_numpy()[0]
+            mags_err_lower = df[df["Date"] == calib_date[i]][
                 "%s_err_lower" % calib_mag[i]
             ].to_numpy()[0]
-            mags_err_upper = df[df["Date"] == date[i]][
+            mags_err_upper = df[df["Date"] == calib_date[i]][
                 "%s_err_upper" % calib_mag[i]
             ].to_numpy()[0]
             datadict["mag"].append(mags)
@@ -367,11 +367,11 @@ def load_data(
                     % (sn, calib_instrument[i], calib_col[i][0]),
                 )
             )
-            col0 = df[df["Date"] == date[i]][calib_col[i][0]].to_numpy()[0]
-            col0_err_lower = df[df["Date"] == date[i]][
+            col0 = df[df["Date"] == calib_date[i]][calib_col[i][0]].to_numpy()[0]
+            col0_err_lower = df[df["Date"] == calib_date[i]][
                 "%s_err_lower" % calib_col[i][0]
             ].to_numpy()[0]
-            col0_err_upper = df[df["Date"] == date[i]][
+            col0_err_upper = df[df["Date"] == calib_date[i]][
                 "%s_err_upper" % calib_col[i][0]
             ].to_numpy()[0]
             col0_err = max(col0_err_lower, col0_err_upper)
@@ -384,11 +384,11 @@ def load_data(
                     % (sn, calib_instrument[i], calib_col[i][1]),
                 )
             )
-            col1 = df[df["Date"] == date[i]][calib_col[i][1]].to_numpy()[0]
-            col1_err_lower = df[df["Date"] == date[i]][
+            col1 = df[df["Date"] == calib_date[i]][calib_col[i][1]].to_numpy()[0]
+            col1_err_lower = df[df["Date"] == calib_date[i]][
                 "%s_err_lower" % calib_col[i][1]
             ].to_numpy()[0]
-            col1_err_upper = df[df["Date"] == date[i]][
+            col1_err_upper = df[df["Date"] == calib_date[i]][
                 "%s_err_upper" % calib_col[i][1]
             ].to_numpy()[0]
             col1_err = max(col1_err_lower, col1_err_upper)
@@ -405,9 +405,9 @@ def load_data(
                     % sn,  # TODO Allow for other lines
                 )
             )
-            vel = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-            vel_err_lower = df[df["Date"] == date[i]]["ErrorLower"].to_numpy()[0]
-            vel_err_upper = df[df["Date"] == date[i]]["ErrorUpper"].to_numpy()[0]
+            vel = df[df["Date"] == calib_date[i]]["VelInt"].to_numpy()[0]
+            vel_err_lower = df[df["Date"] == calib_date[i]]["ErrorLower"].to_numpy()[0]
+            vel_err_upper = df[df["Date"] == calib_date[i]]["ErrorUpper"].to_numpy()[0]
             vel_err = max(vel_err_lower, vel_err_upper)
             datadict["vel"].append(vel)
             datadict["vel_err"].append(vel_err)
@@ -419,9 +419,9 @@ def load_data(
                     % sn,  # TODO Allow for other lines
                 )
             )
-            ae = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
-            ae_err_lower = df[df["Date"] == date[i]]["ErrorLower"].to_numpy()[0]
-            ae_err_upper = df[df["Date"] == date[i]]["ErrorUpper"].to_numpy()[0]
+            ae = df[df["Date"] == calib_date[i]]["VelInt"].to_numpy()[0]
+            ae_err_lower = df[df["Date"] == calib_date[i]]["ErrorLower"].to_numpy()[0]
+            ae_err_upper = df[df["Date"] == calib_date[i]]["ErrorUpper"].to_numpy()[0]
             ae_err = max(ae_err_lower, ae_err_upper)
             datadict["ae"].append(ae)
             datadict["ae_err"].append(ae_err)

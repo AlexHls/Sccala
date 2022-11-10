@@ -271,7 +271,6 @@ class SccalaSCM:
         model.data["col_avg"] = np.mean(self.col)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
 
-        # TODO Fill calib model data
         if model.hubble:
             assert self.calib_sn is not None, "No calibrator SNe found..."
 
