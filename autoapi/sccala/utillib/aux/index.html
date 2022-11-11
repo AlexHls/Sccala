@@ -120,6 +120,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#sccala.utillib.aux.convert_to_mag" title="sccala.utillib.aux.convert_to_mag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_to_mag</span></code></a>(data)</p></td>
 <td><p>Converts flux data from flux to mag</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.utillib.aux.nullify_output" title="sccala.utillib.aux.nullify_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nullify_output</span></code></a>([suppress_stdout, suppress_stderr])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#sccala.utillib.aux.split_list" title="sccala.utillib.aux.split_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_list</span></code></a>(in_list, chunk_size)</p></td>
+<td><p>Splits list into chunks for parallelization</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py function">
@@ -175,6 +181,17 @@ between <code class="docutils literal notranslate"><span class="pre">x</span></c
 <dt class="sig sig-object py" id="sccala.utillib.aux.convert_to_mag">
 <span class="sig-prename descclassname"><span class="pre">sccala.utillib.aux.</span></span><span class="sig-name descname"><span class="pre">convert_to_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.utillib.aux.convert_to_mag" title="Permalink to this definition"></a></dt>
 <dd><p>Converts flux data from flux to mag</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.utillib.aux.nullify_output">
+<span class="sig-prename descclassname"><span class="pre">sccala.utillib.aux.</span></span><span class="sig-name descname"><span class="pre">nullify_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">suppress_stdout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suppress_stderr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.utillib.aux.nullify_output" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.utillib.aux.split_list">
+<span class="sig-prename descclassname"><span class="pre">sccala.utillib.aux.</span></span><span class="sig-name descname"><span class="pre">split_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.utillib.aux.split_list" title="Permalink to this definition"></a></dt>
+<dd><p>Splits list into chunks for parallelization</p>
 </dd></dl>
 
 </section>

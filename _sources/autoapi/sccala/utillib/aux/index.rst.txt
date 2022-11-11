@@ -17,6 +17,8 @@ Functions
    sccala.utillib.aux.quantile
    sccala.utillib.aux.convert_to_flux
    sccala.utillib.aux.convert_to_mag
+   sccala.utillib.aux.nullify_output
+   sccala.utillib.aux.split_list
 
 
 
@@ -58,5 +60,13 @@ Functions
 .. py:function:: convert_to_mag(data)
 
    Converts flux data from flux to mag
+
+
+.. py:function:: nullify_output(suppress_stdout=True, suppress_stderr=True)
+
+
+.. py:function:: split_list(in_list, chunk_size)
+
+   Splits list into chunks for parallelization
 
 

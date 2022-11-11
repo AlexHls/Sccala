@@ -29,6 +29,7 @@ Submodules
    gen_testdata/index.rst
    photometry_interpolation/index.rst
    project_init/index.rst
+   sccala_bootstrap/index.rst
    sccala_scm/index.rst
    spectral_line_fit/index.rst
    synthetic_photometry/index.rst

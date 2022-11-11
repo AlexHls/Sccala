@@ -51,6 +51,41 @@ Classes
           Result of the STAN sampling
 
 
+   .. py:method:: bootstrap(model, log_dir='log_dir', chains=2, iters=1000, warmup=1000, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True)
+
+      Samples the posterior for the given data and model
+
+      Parameters
+      ----------
+      model : SCM_Model
+          Model for which to fit the data
+      log_dir : str
+          Directory in which to save sampling output. If None is passed,
+          result will not be saved. Default: log_dir
+      chains : int
+          Number of chains used in STAN fit. Default: 4
+      iters : int
+          Number of iterations used in STAN fit. Default: 1000
+      warmup : int
+          Number of iterations used in STAN fit as warmup. Default: 1000
+      save_warmup : bool
+          If True, warmup elements of chain will be saved as well. Default: False
+      save_chains : bool
+          If True, individual chains of each bootstrap step will be saved.
+          WARNING: This will use huge amounts of disk space! Default: False
+      classic : bool
+          Switches classic mode on if True. In classic mode, a/e input is
+          ignored.
+      replacement : bool
+          If True, bootstrap resampling will be done with replacement.
+          Default: True
+
+      Returns
+      -------
+      bootstrap_h0 : list of float
+          List containing 50th quantiles of each individual bootstrap step.
+
+
    .. py:method:: __save_samples__(df, log_dir='log_dir', norm=None)
 
       Exports sample data
