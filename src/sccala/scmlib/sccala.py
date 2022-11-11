@@ -1,10 +1,12 @@
 import os
 import warnings
+import itertools
 
 import numpy as np
 import pandas as pd
 import stan
 import matplotlib.pyplot as plt
+from tqdm import trange
 
 from sccala.scmlib.models import *
 from sccala.utillib.aux import *
@@ -283,8 +285,7 @@ class SccalaSCM:
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
                 calib_errors = np.array(
                     [
-                        self.calib_mag_err**2
-                        + self.calib_dist_mod_err**2,
+                        self.calib_mag_err**2 + self.calib_dist_mod_err**2,
                         self.calib_vel_err**2,
                         self.calib_col_err**2,
                         self.calib_ae_err**2,
@@ -299,8 +300,7 @@ class SccalaSCM:
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
                 calib_errors = np.array(
                     [
-                        self.calib_mag_err**2
-                        + self.calib_dist_mod_err**2,
+                        self.calib_mag_err**2 + self.calib_dist_mod_err**2,
                         self.calib_vel_err**2,
                         self.calib_col_err**2,
                     ]
@@ -346,6 +346,250 @@ class SccalaSCM:
             model.print_results(self.posterior, blind=self.blind)
 
         return self.posterior
+
+    def bootstrap(
+        self,
+        model,
+        log_dir="log_dir",
+        chains=2,
+        iters=1000,
+        warmup=1000,
+        save_warmup=False,
+        save_chains=False,
+        init=None,
+        classic=False,
+        replacement=True,
+    ):
+        """
+        Samples the posterior for the given data and model
+
+        Parameters
+        ----------
+        model : SCM_Model
+            Model for which to fit the data
+        log_dir : str
+            Directory in which to save sampling output. If None is passed,
+            result will not be saved. Default: log_dir
+        chains : int
+            Number of chains used in STAN fit. Default: 4
+        iters : int
+            Number of iterations used in STAN fit. Default: 1000
+        warmup : int
+            Number of iterations used in STAN fit as warmup. Default: 1000
+        save_warmup : bool
+            If True, warmup elements of chain will be saved as well. Default: False
+        save_chains : bool
+            If True, individual chains of each bootstrap step will be saved.
+            WARNING: This will use huge amounts of disk space! Default: False
+        classic : bool
+            Switches classic mode on if True. In classic mode, a/e input is
+            ignored.
+        replacement : bool
+            If True, bootstrap resampling will be done with replacement.
+            Default: True
+
+        Returns
+        -------
+        bootstrap_h0 : list of float
+            List containing 50th quantiles of each individual bootstrap step.
+        """
+
+        assert issubclass(
+            type(model), SCM_Model
+        ), "'model' should be a subclass of SCM_Model"
+        assert isinstance(iters, int), "'iters' has to by of type 'int'"
+        assert isinstance(warmup, int), "'warmup' has to by of type 'int'"
+        assert self.calib_sn is not None, "There are no calibrator SNe"
+        assert model.hubble, "Bootstrap resampling only works for H0 models"
+
+        # Some checks to make sure that the chain length etc. aren't too long.
+        if chains > 2:
+            warnings.warn(
+                "High number of chains detected (%d), this might thake a while..."
+                % chains
+            )
+        if iters > 2000:
+            warnings.warn(
+                "High number of iterations detected (%d), this might thake a while..."
+                % iters
+            )
+        if warmup > 2000:
+            warnings.warn(
+                "High number of warmup iterations detected (%d), this might thake a while..."
+                % warmup
+            )
+        if save_warmup or save_chains:
+            warnings.warn(
+                "Saving of chains enabled. This will use HUGE amounts of disk space!"
+            )
+
+        try:
+            from mpi4py import MPI
+
+            comm = MPI.COMM_WORLD
+            rank = comm.Get_rank()
+            size = comm.Get_size()
+            parallel = True
+        except ModuleNotFoundError:
+            comm = None
+            rank = 0
+            size = 1
+            parallel = False
+
+        red_uncertainty = (
+            (
+                self.red_err
+                * 5
+                * (1 + self.red)
+                / (self.red * (1 + 0.5 * self.red) * np.log(10))
+            )
+            ** 2
+            + (
+                300
+                / C_LIGHT
+                * 5
+                * (1 + self.red)
+                / (self.red * (1 + 0.5 * self.red) * np.log(10))
+            )
+            ** 2
+            + (0.055 * self.red) ** 2
+        )
+
+        if not classic:
+            # Observed values
+            obs = np.array([self.mag, self.vel, self.col, self.ae]).T
+
+            # Redshift, peculiar velocity and gravitational lensing uncertaintes
+            errors = np.array(
+                [
+                    red_uncertainty + self.mag_err**2,
+                    self.vel_err**2,
+                    self.col_err**2,
+                    self.ae_err**2,
+                ]
+            ).T
+
+            model.data["ae_sys"] = self.ae_sys
+            model.data["ae_avg"] = np.mean(self.ae)
+        else:
+            # Observed values
+            obs = np.array([self.mag, self.vel, self.col]).T
+
+            # Redshift, peculiar velocity and gravitational lensing uncertaintes
+            errors = np.array(
+                [
+                    red_uncertainty + self.mag_err**2,
+                    self.vel_err**2,
+                    self.col_err**2,
+                ]
+            ).T
+
+        # Fill model data
+        model.data["sn_idx"] = len(self.sn)
+        model.data["obs"] = obs
+        model.data["errors"] = errors
+        model.data["mag_sys"] = self.mag_sys
+        model.data["vel_sys"] = self.v_sys
+        model.data["col_sys"] = self.c_sys
+        model.data["vel_avg"] = np.mean(self.vel)
+        model.data["col_avg"] = np.mean(self.col)
+        model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
+
+        if not classic:
+            # Observed values
+            calib_obs = np.array(
+                [self.calib_mag, self.calib_vel, self.calib_col, self.calib_ae]
+            ).T
+
+            # Redshift, peculiar velocity and gravitational lensing uncertaintes
+            calib_errors = np.array(
+                [
+                    self.calib_mag_err**2 + self.calib_dist_mod_err**2,
+                    self.calib_vel_err**2,
+                    self.calib_col_err**2,
+                    self.calib_ae_err**2,
+                ]
+            ).T
+
+            model.data["calib_ae_sys"] = self.calib_ae_sys
+        else:
+            # Observed values
+            calib_obs = np.array([self.calib_mag, self.calib_vel, self.calib_col]).T
+
+            # Redshift, peculiar velocity and gravitational lensing uncertaintes
+            calib_errors = np.array(
+                [
+                    self.calib_mag_err**2 + self.calib_dist_mod_err**2,
+                    self.calib_vel_err**2,
+                    self.calib_col_err**2,
+                ]
+            ).T
+
+        # Generate list with all bootstrap combinations.
+        indices = np.arange(len(self.calib_sn))
+        if replacement:
+            bt_inds = list(
+                itertools.combinations_with_replacement(indices, len(self.calib_sn))
+            )
+        else:
+            bt_inds = list(itertools.combinations(indices, len(self.calib_sn)))
+
+        h0_vals = []
+
+        if rank == 0:
+            print(
+                "Beginning bootstrap resampling for %d combinations, this might take a while..."
+                % len(bt_inds)
+            )
+
+        # Some parallelization stuff
+        if parallel:
+            comm.Barrier()
+            perrank = int(np.ceil(len(bt_inds) / size))
+            bt_inds_lists = list(split_list(bt_inds, perrank))
+        else:
+            perrank = len(bt_inds)
+            bt_inds_lists = bt_inds
+
+        for k in trange(len(bt_inds_lists[rank]), desc="Rank %d" % rank, position=rank):
+            inds = bt_inds_lists[rank][k]
+
+            model.data["calib_sn_idx"] = len(self.calib_sn)
+            model.data["calib_obs"] = [calib_obs[i] for i in inds]
+            model.data["calib_errors"] = [calib_errors[i] for i in inds]
+            model.data["calib_mag_sys"] = [self.calib_mag_sys[i] for i in inds]
+            model.data["calib_vel_sys"] = [self.calib_v_sys[i] for i in inds]
+            model.data["calib_col_sys"] = [self.calib_c_sys[i] for i in inds]
+            model.data["calib_dist_mod"] = [self.calib_dist_mod[i] for i in inds]
+
+            model.set_initial_conditions(init)
+
+            # Setup/ build STAN model
+            with nullify_output(suppress_stdout=True, suppress_stderr=True):
+                fit = stan.build(model.model, data=model.data)
+                samples = fit.sample(
+                    num_chains=chains,
+                    num_samples=iters,
+                    init=[model.init] * chains,
+                    num_warmup=warmup,
+                    save_warmup=save_warmup,
+                )
+
+            self.posterior = samples.to_frame()
+
+            # Append found H0 values to list
+            h0_vals.append(quantile(self.posterior["H0"], 0.5))
+
+            if log_dir is not None and save_chains:
+                self.__save_samples__(self.posterior, log_dir=log_dir, norm=None)
+
+        if parallel:
+            comm.Barrier()
+            h0_vals = comm.gather(h0_vals, root=0)
+            if rank == 0:
+                h0_vals = [item for sublist in h0_vals for item in sublist]
+
+        return h0_vals
 
     def __save_samples__(self, df, log_dir="log_dir", norm=None):
         """Exports sample data"""

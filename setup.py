@@ -28,6 +28,7 @@ setup(
         'bin/sccala-photometry-interpolation',
         'bin/sccala-gen-testdata',
         'bin/sccala-scm',
+        'bin/sccala-bootstrap',
         'bin/sccala-project-init',
         'bin/collect-scm-data',
         'bin/sccala-deblind',

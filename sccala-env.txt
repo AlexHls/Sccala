@@ -9,3 +9,5 @@ pystan
 corner
 cloudpickle
 itsdangerous
+tqdm
+mpi4py

@@ -1,3 +1,7 @@
+import os
+import sys
+from contextlib import contextmanager
+
 import numpy as np
 
 from sccala.utillib.const import H_ERG, C_AA, C_LIGHT
@@ -74,3 +78,29 @@ def convert_to_mag(data):
     """
     mag = -2.5 * np.log10(1 / H_ERG / C_AA * data)
     return mag
+
+
+@contextmanager
+def nullify_output(suppress_stdout=True, suppress_stderr=True):
+    stdout = sys.stdout
+    stderr = sys.stderr
+    devnull = open(os.devnull, "w")
+    try:
+        if suppress_stdout:
+            sys.stdout = devnull
+        if suppress_stderr:
+            sys.stderr = devnull
+        yield
+    finally:
+        if suppress_stdout:
+            sys.stdout = stdout
+        if suppress_stderr:
+            sys.stderr = stderr
+
+
+def split_list(in_list, chunk_size):
+    """
+    Splits list into chunks for parallelization
+    """
+    for i in range(0, len(in_list), chunk_size):
+        yield in_list[i : i + chunk_size]
