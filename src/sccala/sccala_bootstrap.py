@@ -9,6 +9,10 @@ import sccala.scmlib.models as models
 
 def main(args):
 
+    if args.log_dir is not None:
+        if not os.path.exists(args.log_dir):
+            os.makedirs(args.log_dir)
+
     sccala_scm = sc.SccalaSCM(
         args.data,
         calib=args.calib_identifier,
@@ -40,6 +44,7 @@ def main(args):
 
     h0_values = sccala_scm.bootstrap(
         model,
+        args.output,
         log_dir=args.log_dir,
         chains=args.chains,
         iters=args.iters,
@@ -47,34 +52,11 @@ def main(args):
         save_warmup=args.save_warmup,
         classic=args.classic,
         replacement=args.no_replacement,
+        restart=args.disable_restart,
+        walltime=args.time,
     )
 
-    try:
-        from mpi4py import MPI
-
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
-    except ModuleNotFoundError:
-        comm = None
-        rank = 0
-
-    if rank == 0:
-        # Save resampled h0 values
-        if not os.path.exists(args.log_dir):
-            os.makedirs(args.log_dir)
-
-        savename = "bootstrap_h0_1.dat"
-        if os.path.exists(os.path.join(args.log_dir, savename)):
-            i = 1
-            while os.path.exists(
-                os.path.join(args.log_dir, savename.replace("1", str(i + 1)))
-            ):
-                i += 1
-            savename = savename.replace("1", str(i + 1))
-
-        np.savetxt(os.path.join(args.log_dir, savename), np.array(h0_values), fmt="%g")
-
-        print("Finished bootstrap resampling")
+    print("Finished bootstrap resampling")
 
     return h0_values
 
@@ -87,6 +69,9 @@ def cli():
         "model",
         choices=["hubble", "hubble-nh"],
         help="Model to be fit to the data. Only selects from built-in models",
+    )
+    parser.add_argument(
+        "output", help="Name of file where H0 values will be written to"
     )
     parser.add_argument(
         "-c",
@@ -116,6 +101,13 @@ def cli():
         default="log_dir",
     )
     parser.add_argument(
+        "-t",
+        "--time",
+        help="Wallclock time (in h) of parent job. Once 95% of the Wallclock time has passed no new iteration will be started. Default: 24.0",
+        default=24.0,
+        type=float,
+    )
+    parser.add_argument(
         "--no_replacement",
         help="If flag is given, bootstrap resampling will be done without replacement",
         action="store_false",
@@ -133,6 +125,11 @@ def cli():
         "--classic",
         action="store_true",
         help="If flag is given, classical SCM is used instead of extended SCM",
+    )
+    parser.add_argument(
+        "--disable_restart",
+        help="Disables writing or restart file",
+        action="store_false",
     )
 
     args = parser.parse_args()

@@ -1,4 +1,5 @@
 import os
+import time
 import warnings
 import itertools
 
@@ -350,6 +351,7 @@ class SccalaSCM:
     def bootstrap(
         self,
         model,
+        output,
         log_dir="log_dir",
         chains=2,
         iters=1000,
@@ -359,6 +361,8 @@ class SccalaSCM:
         init=None,
         classic=False,
         replacement=True,
+        restart=True,
+        walltime=24.0,
     ):
         """
         Samples the posterior for the given data and model
@@ -367,6 +371,9 @@ class SccalaSCM:
         ----------
         model : SCM_Model
             Model for which to fit the data
+        output : str
+            Name of the file where the resampled H0 values should be
+            written to.
         log_dir : str
             Directory in which to save sampling output. If None is passed,
             result will not be saved. Default: log_dir
@@ -387,12 +394,21 @@ class SccalaSCM:
         replacement : bool
             If True, bootstrap resampling will be done with replacement.
             Default: True
+        restart : bool
+            Enables writing of restart files. Can be disabled if disk space is a
+            concern. Restart files will be written in the log_dir. Default: True
+        time : float
+            Wallclock time (in h) available. Once 95% of the available wallclock
+            time is used, no new iteration will be started and job will exit
+            cleanly. Should be used with restart set to True. Default 24.0
 
         Returns
         -------
         bootstrap_h0 : list of float
             List containing 50th quantiles of each individual bootstrap step.
         """
+
+        start = time.clock_gettime(time.CLOCK_REALTIME)
 
         assert issubclass(
             type(model), SCM_Model
@@ -401,6 +417,8 @@ class SccalaSCM:
         assert isinstance(warmup, int), "'warmup' has to by of type 'int'"
         assert self.calib_sn is not None, "There are no calibrator SNe"
         assert model.hubble, "Bootstrap resampling only works for H0 models"
+        if restart:
+            assert log_dir is not None, "Restart required valid log_dir"
 
         # Some checks to make sure that the chain length etc. aren't too long.
         if chains > 2:
@@ -425,11 +443,15 @@ class SccalaSCM:
 
         try:
             from mpi4py import MPI
+            from filelock import Timeout, FileLock
 
             comm = MPI.COMM_WORLD
             rank = comm.Get_rank()
             size = comm.Get_size()
             parallel = True
+            out_lock = FileLock(output + ".lock")
+            if restart:
+                restart_lock = FileLock(os.path.join(log_dir, "restart.dat.lock"))
         except ModuleNotFoundError:
             comm = None
             rank = 0
@@ -542,17 +564,41 @@ class SccalaSCM:
                 % len(bt_inds)
             )
 
+        # Check if restart files exist
+        restart_file = os.path.join(log_dir, "restart.dat")
+        if os.path.exists(restart_file) and restart:
+            found_restart = True
+        else:
+            found_restart = False
+
         # Some parallelization stuff
         if parallel:
             comm.Barrier()
             perrank = int(np.ceil(len(bt_inds) / size))
             bt_inds_lists = list(split_list(bt_inds, perrank))
+            tr = trange(len(bt_inds_lists[rank]), desc="Rank %d" % rank, position=rank)
         else:
             perrank = len(bt_inds)
             bt_inds_lists = bt_inds
+            tr = trange(len(bt_inds_lists), desc="Rank %d" % rank, position=rank)
 
-        for k in trange(len(bt_inds_lists[rank]), desc="Rank %d" % rank, position=rank):
-            inds = bt_inds_lists[rank][k]
+        for k in tr:
+            if parallel:
+                inds = bt_inds_lists[rank][k]
+            else:
+                inds = bt_inds_lists[k]
+
+            # Check if index combination has already been done
+            if found_restart:
+                if not parallel:
+                    done = np.genfromtxt(restart_file, dtype=int)
+                    if any(np.equal(done, inds).all(1)):
+                        continue
+                else:
+                    # TODO Parallelize file read
+                    done = np.genfromtxt(restart_file, dtype=int)
+                    if any(np.equal(done, inds).all(1)):
+                        continue
 
             model.data["calib_sn_idx"] = len(self.calib_sn)
             model.data["calib_obs"] = [calib_obs[i] for i in inds]
@@ -578,10 +624,40 @@ class SccalaSCM:
             self.posterior = samples.to_frame()
 
             # Append found H0 values to list
-            h0_vals.append(quantile(self.posterior["H0"], 0.5))
+            h0 = quantile(self.posterior["H0"], 0.5)
+            h0_vals.append(h0)
 
             if log_dir is not None and save_chains:
                 self.__save_samples__(self.posterior, log_dir=log_dir, norm=None)
+
+            # Save resampled h0 values
+            if not parallel:
+                with open(output, "ab") as f:
+                    np.savetxt(f, h0)
+                # Append index list to restart file
+                if restart:
+                    with open(restart_file, "ab") as f:
+                        np.savetxt(f, [inds], fmt="%d")
+            else:
+                try:
+                    with out_lock.acquire(timeout=100):
+                        with open(output, "ab") as f:
+                            np.savetxt(f, h0)
+                except Timeout:
+                    raise IOError("Output file is locked")
+                if restart:
+                    try:
+                        with restart_lock.acquire(timeout=100):
+                            with open(restart_file, "ab") as f:
+                                np.savetxt(f, [inds], fmt="%d")
+                    except Timeout:
+                        raise IOError("Restart file is locked")
+
+            # Time passed in h
+            time_passed = (time.clock_gettime(time.CLOCK_REALTIME) - start) / 3600
+            if time_passed > 0.95 * walltime:
+                print("[TIMELIMIT] Rank %d reached wallclock limit, exiting..." % rank)
+                break
 
         if parallel:
             comm.Barrier()
