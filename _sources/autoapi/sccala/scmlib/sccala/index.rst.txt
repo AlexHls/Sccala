@@ -51,7 +51,7 @@ Classes
           Result of the STAN sampling
 
 
-   .. py:method:: bootstrap(model, log_dir='log_dir', chains=2, iters=1000, warmup=1000, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True)
+   .. py:method:: bootstrap(model, output, log_dir='log_dir', chains=2, iters=1000, warmup=1000, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True, restart=True, walltime=24.0)
 
       Samples the posterior for the given data and model
 
@@ -59,6 +59,9 @@ Classes
       ----------
       model : SCM_Model
           Model for which to fit the data
+      output : str
+          Name of the file where the resampled H0 values should be
+          written to.
       log_dir : str
           Directory in which to save sampling output. If None is passed,
           result will not be saved. Default: log_dir
@@ -79,6 +82,13 @@ Classes
       replacement : bool
           If True, bootstrap resampling will be done with replacement.
           Default: True
+      restart : bool
+          Enables writing of restart files. Can be disabled if disk space is a
+          concern. Restart files will be written in the log_dir. Default: True
+      time : float
+          Wallclock time (in h) available. Once 95% of the available wallclock
+          time is used, no new iteration will be started and job will exit
+          cleanly. Should be used with restart set to True. Default 24.0
 
       Returns
       -------
