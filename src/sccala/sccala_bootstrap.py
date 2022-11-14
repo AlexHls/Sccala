@@ -1,17 +1,10 @@
-import os
 import argparse
-
-import numpy as np
 
 import sccala.scmlib.sccala as sc
 import sccala.scmlib.models as models
 
 
 def main(args):
-
-    if args.log_dir is not None:
-        if not os.path.exists(args.log_dir):
-            os.makedirs(args.log_dir)
 
     sccala_scm = sc.SccalaSCM(
         args.data,

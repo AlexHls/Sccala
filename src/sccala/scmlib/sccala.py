@@ -458,6 +458,10 @@ class SccalaSCM:
             size = 1
             parallel = False
 
+        if log_dir is not None and rank == 0:
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+
         red_uncertainty = (
             (
                 self.red_err
