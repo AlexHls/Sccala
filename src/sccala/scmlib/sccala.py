@@ -561,8 +561,8 @@ class SccalaSCM:
 
         if rank == 0:
             print(
-                "Beginning bootstrap resampling for %d combinations, this might take a while..."
-                % len(bt_inds)
+                "Beginning bootstrap resampling for %d combinations on %d ranks, this might take a while..."
+                % (len(bt_inds), size)
             )
 
         # Check if restart files exist for each rank
