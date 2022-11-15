@@ -646,18 +646,20 @@ class SccalaSCM:
 
             # Save resampled h0 values
             if not parallel:
-                with open(output, "ab") as f:
-                    np.savetxt(f, h0)
+                with open(output, "a") as f:
+                    f.write("%g\n" % h0)
                 # Append index list to restart file
                 if restart:
-                    with open(os.path.join(log_dir, restart_files[rank]), "ab") as f:
-                        np.savetxt(f, [inds], fmt="%d")
+                    with open(os.path.join(log_dir, restart_files[rank]), "a") as f:
+                        done_inds = " ".join(map(str, inds)) + "\n"
+                        f.write(done_inds)
             else:
-                with open("output_%03d.tmp" % rank, "ab") as f:
-                    np.savetxt(f, h0)
+                with open("output_%03d.tmp" % rank, "a") as f:
+                    f.write("%g\n" % h0)
                 if restart:
-                    with open(os.path.join(log_dir, restart_files[rank]), "ab") as f:
-                        np.savetxt(f, [inds], fmt="%d")
+                    with open(os.path.join(log_dir, restart_files[rank]), "a") as f:
+                        done_inds = " ".join(map(str, inds)) + "\n"
+                        f.write(done_inds)
 
             # Time passed in h
             time_passed = (time.clock_gettime(time.CLOCK_REALTIME) - start) / 3600
