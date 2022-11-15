@@ -1,5 +1,6 @@
 import os
 import time
+import glob
 import warnings
 import itertools
 
@@ -443,15 +444,11 @@ class SccalaSCM:
 
         try:
             from mpi4py import MPI
-            from filelock import Timeout, FileLock
 
             comm = MPI.COMM_WORLD
             rank = comm.Get_rank()
             size = comm.Get_size()
             parallel = True
-            out_lock = FileLock(output + ".lock")
-            if restart:
-                restart_lock = FileLock(os.path.join(log_dir, "restart.dat.lock"))
         except ModuleNotFoundError:
             comm = None
             rank = 0
@@ -568,12 +565,18 @@ class SccalaSCM:
                 % len(bt_inds)
             )
 
-        # Check if restart files exist
-        restart_file = os.path.join(log_dir, "restart.dat")
-        if os.path.exists(restart_file) and restart:
-            found_restart = True
-        else:
+        # Check if restart files exist for each rank
+        restart_files = glob.glob("restart_*.dat", root_dir=log_dir)
+        if len(restart_files) == 0 or not restart:
+            if restart:
+                restart_files = ["restart_%03d.dat" % i for i in range(size)]
             found_restart = False
+        else:
+            assert (
+                len(restart_files) == size
+            ), "Mismatch between number of restart files and ranks"
+            restart_files.sort()
+            found_restart = True
 
         # Some parallelization stuff
         if parallel:
@@ -595,14 +598,21 @@ class SccalaSCM:
             # Check if index combination has already been done
             if found_restart:
                 if not parallel:
-                    done = np.genfromtxt(restart_file, dtype=int)
+                    done = np.genfromtxt(
+                        os.path.join(log_dir, restart_files[rank]), dtype=int
+                    )
                     if any(np.equal(done, inds).all(1)):
                         continue
                 else:
-                    # TODO Parallelize file read
-                    done = np.genfromtxt(restart_file, dtype=int)
-                    if any(np.equal(done, inds).all(1)):
-                        continue
+                    done = np.genfromtxt(
+                        os.path.join(log_dir, restart_files[rank]), dtype=int
+                    )
+                    try:
+                        if any(np.equal(done, inds).all(1)):
+                            continue
+                    except np.AxisError:
+                        if any(np.equal(done, inds)):
+                            continue
 
             model.data["calib_sn_idx"] = len(self.calib_sn)
             model.data["calib_obs"] = [calib_obs[i] for i in inds]
@@ -640,22 +650,14 @@ class SccalaSCM:
                     np.savetxt(f, h0)
                 # Append index list to restart file
                 if restart:
-                    with open(restart_file, "ab") as f:
+                    with open(os.path.join(log_dir, restart_files[rank]), "ab") as f:
                         np.savetxt(f, [inds], fmt="%d")
             else:
-                try:
-                    with out_lock.acquire(timeout=100):
-                        with open(output, "ab") as f:
-                            np.savetxt(f, h0)
-                except Timeout:
-                    raise IOError("Output file is locked")
+                with open("output_%03d.tmp" % rank, "ab") as f:
+                    np.savetxt(f, h0)
                 if restart:
-                    try:
-                        with restart_lock.acquire(timeout=100):
-                            with open(restart_file, "ab") as f:
-                                np.savetxt(f, [inds], fmt="%d")
-                    except Timeout:
-                        raise IOError("Restart file is locked")
+                    with open(os.path.join(log_dir, restart_files[rank]), "ab") as f:
+                        np.savetxt(f, [inds], fmt="%d")
 
             # Time passed in h
             time_passed = (time.clock_gettime(time.CLOCK_REALTIME) - start) / 3600
@@ -668,6 +670,10 @@ class SccalaSCM:
             h0_vals = comm.gather(h0_vals, root=0)
             if rank == 0:
                 h0_vals = [item for sublist in h0_vals for item in sublist]
+                if parallel:
+                    # Collect all H0 values into one h0_file
+                    with open(output, "ab") as f:
+                        np.savetxt(f, h0_vals)
 
         return h0_vals
 
