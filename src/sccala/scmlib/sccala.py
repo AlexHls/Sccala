@@ -589,6 +589,11 @@ class SccalaSCM:
             bt_inds_lists = bt_inds
             tr = trange(len(bt_inds_lists), desc="Rank %d" % rank, position=rank)
 
+        if found_restart:
+            done = np.genfromtxt(os.path.join(log_dir, restart_files[rank]), dtype=int)
+        else:
+            done = []
+
         for k in tr:
             if parallel:
                 inds = bt_inds_lists[rank][k]
@@ -596,23 +601,16 @@ class SccalaSCM:
                 inds = bt_inds_lists[k]
 
             # Check if index combination has already been done
-            if found_restart:
-                if not parallel:
-                    done = np.genfromtxt(
-                        os.path.join(log_dir, restart_files[rank]), dtype=int
-                    )
+            if found_restart and not parallel:
+                if any(np.equal(done, inds).all(1)):
+                    continue
+            elif found_restart and parallel:
+                try:
                     if any(np.equal(done, inds).all(1)):
                         continue
-                else:
-                    done = np.genfromtxt(
-                        os.path.join(log_dir, restart_files[rank]), dtype=int
-                    )
-                    try:
-                        if any(np.equal(done, inds).all(1)):
-                            continue
-                    except np.AxisError:
-                        if any(np.equal(done, inds)):
-                            continue
+                except np.AxisError:
+                    if any(np.equal(done, inds)):
+                        continue
 
             model.data["calib_sn_idx"] = len(self.calib_sn)
             model.data["calib_obs"] = [calib_obs[i] for i in inds]

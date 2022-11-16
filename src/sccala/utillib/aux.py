@@ -96,6 +96,7 @@ def nullify_output(suppress_stdout=True, suppress_stderr=True):
             sys.stdout = stdout
         if suppress_stderr:
             sys.stderr = stderr
+        devnull.close()
 
 
 def split_list(in_list, chunk_size):
