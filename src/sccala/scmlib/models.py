@@ -122,6 +122,8 @@ class NHHubbleSCM(SCM_Model):
             "calib_col_sys": None,
             "calib_ae_sys": None,
             "calib_dist_mod": None,
+            "calib_dset_idx": None,
+            "num_calib_dset": None,
         }
 
         self.model = """
@@ -145,6 +147,8 @@ class NHHubbleSCM(SCM_Model):
                 real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
                 real calib_ae_sys[calib_sn_idx]; // Systematic ae uncertainties
                 real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
+                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
                 real H0; // Hubble constant
@@ -153,14 +157,14 @@ class NHHubbleSCM(SCM_Model):
                 real beta; // Color correction strength
                 real gamma; // a/e correction strength
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
-                real<lower=-3,upper=0> calib_log_sigma; // Unexplained intrinsic scatter
+                real<lower=-3,upper=0> calib_log_sigma[num_calib_dset]; // Unexplained calibrator intrinsic scatter
             }
             transformed parameters{
                 real mag_true[sn_idx];
                 real sigma_int;
                 real sigma_tot[sn_idx];
                 real calib_mag_true[calib_sn_idx];
-                real calib_sigma_int;
+                real calib_sigma_int[num_calib_dset];
                 real calib_sigma_tot[calib_sn_idx];
                 for (i in 1:sn_idx) {
                     sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]) + gamma^2 *  (errors[i][4] + ae_sys[i]));
@@ -171,7 +175,9 @@ class NHHubbleSCM(SCM_Model):
                     calib_sigma_tot[i] = sqrt((calib_errors[i][1] + calib_mag_sys[i]) + (alpha / log(10) / calib_obs[i][2])^2 * (calib_errors[i][2] + calib_vel_sys[i])+ beta^2 * (calib_errors[i][3] + calib_col_sys[i]) + gamma^2 *  (calib_errors[i][4] + calib_ae_sys[i]));
                     calib_mag_true[i] = calib_obs[i][1] + alpha * log10(calib_obs[i][2] / vel_avg) - beta * (calib_obs[i][3] - col_avg) - gamma * (calib_obs[i][4] - ae_avg) - calib_dist_mod[i];
                 }
-                calib_sigma_int = 10 ^ calib_log_sigma;
+                for (i in 1:num_calib_dset) {
+                    calib_sigma_int[i] = 10 ^ calib_log_sigma[i];
+                }
             }
             model {
                 H0 ~ uniform(0,200);
@@ -180,13 +186,15 @@ class NHHubbleSCM(SCM_Model):
                 beta ~ uniform(-20,20);
                 gamma ~ uniform(-20,20);
                 log_sigma ~ uniform(-3,0);
-                calib_log_sigma ~ uniform(-3,0);
+                for (i in 1:num_calib_dset) {
+                    calib_log_sigma[i] ~ uniform(-3,0);
+                }
 
                 for (i in 1:sn_idx) {
                     target +=  normal_lpdf(mag_true[i] | Mi, sqrt(sigma_tot[i]^2 + sigma_int^2));
                 }
                 for (i in 1:calib_sn_idx) {
-                    target +=  normal_lpdf(calib_mag_true[i] | Mi, sqrt(calib_sigma_tot[i]^2 + calib_sigma_int^2));
+                    target +=  normal_lpdf(calib_mag_true[i] | Mi, sqrt(calib_sigma_tot[i]^2 + calib_sigma_int[calib_dset_idx[i]]^2));
                 }
             }
             """
@@ -328,6 +336,8 @@ class HubbleSCM(SCM_Model):
             "calib_col_sys": None,
             "calib_ae_sys": None,
             "calib_dist_mod": None,
+            "calib_dset_idx": None,
+            "num_calib_dset": None,
         }
 
         self.model = """
@@ -351,6 +361,8 @@ class HubbleSCM(SCM_Model):
                 real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
                 real calib_ae_sys[calib_sn_idx]; // Systematic ae uncertainties
                 real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
+                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
                 real H0; // Hubble constant
@@ -359,7 +371,7 @@ class HubbleSCM(SCM_Model):
                 real beta; // Color correction strength
                 real gamma; // a/e correction strength
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
-                real<lower=-3,upper=0> calib_log_sigma; // Unexplained intrinsic scatter
+                real<lower=-3,upper=0> calib_log_sigma[num_calib_dset]; // Unexplained intrinsic scatter
                 real<lower=0> vs; // Mean of latent velocity
                 real cs; // Mean of latent color
                 real<lower=0> as; // Mean of latent a/e
@@ -377,9 +389,11 @@ class HubbleSCM(SCM_Model):
                 real mag_true[sn_idx];
                 real calib_mag_true[calib_sn_idx];
                 real sigma_int;
-                real calib_sigma_int;
+                real calib_sigma_int[num_calib_dset];
                 sigma_int = 10 ^ log_sigma;
-                calib_sigma_int = 10 ^ calib_log_sigma;
+                for (i in 1:num_calib_dset) {
+                    calib_sigma_int[i] = 10 ^ calib_log_sigma[i];
+                }
                 for (i in 1:sn_idx) {
                     mag_true[i] = Mi - 5 * log10(H0) + 25 - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + gamma * (a_true[i] - ae_avg) + 5 * log_dist_mod[i];
                 }
@@ -394,7 +408,9 @@ class HubbleSCM(SCM_Model):
                 beta ~ uniform(-20,20);
                 gamma ~ uniform(-20,20);
                 log_sigma ~ uniform(-3,0);
-                calib_log_sigma ~ uniform(-3,0);
+                for (i in 1:num_calib_dset) {
+                    calib_log_sigma[i] ~ uniform(-3,0);
+                }
 
                 vs ~ cauchy(7500e3,1500e3);
                 cs ~ cauchy(0,0.5);
@@ -416,7 +432,7 @@ class HubbleSCM(SCM_Model):
                     target +=  normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]', sqrt(errors[i] + [sigma_int^2, 0, 0, 0]'));
                 }
                 for (i in 1:calib_sn_idx) {
-                    target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i] + calib_mag_sys[i], calib_v_true[i] + calib_vel_sys[i], calib_c_true[i] + calib_col_sys[i], calib_a_true[i] + calib_ae_sys[i]]', sqrt(calib_errors[i] + [calib_sigma_int^2, 0, 0, 0]'));
+                    target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i] + calib_mag_sys[i], calib_v_true[i] + calib_vel_sys[i], calib_c_true[i] + calib_col_sys[i], calib_a_true[i] + calib_ae_sys[i]]', sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0, 0]'));
                 }
             }
             """
@@ -531,6 +547,8 @@ class ClassicNHHubbleSCM(SCM_Model):
             "calib_vel_sys": None,
             "calib_col_sys": None,
             "calib_dist_mod": None,
+            "calib_dset_idx": None,
+            "num_calib_dset": None,
         }
 
         self.model = """
@@ -551,6 +569,8 @@ class ClassicNHHubbleSCM(SCM_Model):
                 real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
                 real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
                 real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
+                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
                 real H0; // Hubble constant
@@ -558,14 +578,14 @@ class ClassicNHHubbleSCM(SCM_Model):
                 real alpha; // Velocity correction strength
                 real beta; // Color correction strength
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
-                real<lower=-3,upper=0> calib_log_sigma; // Unexplained intrinsic scatter
+                real<lower=-3,upper=0> calib_log_sigma[num_calib_dset]; // Unexplained intrinsic scatter
             }
             transformed parameters{
                 real mag_true[sn_idx];
                 real sigma_int;
                 real sigma_tot[sn_idx];
                 real calib_mag_true[calib_sn_idx];
-                real calib_sigma_int;
+                real calib_sigma_int[num_calib_dset];
                 real calib_sigma_tot[calib_sn_idx];
                 for (i in 1:sn_idx) {
                     sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]));
@@ -576,7 +596,9 @@ class ClassicNHHubbleSCM(SCM_Model):
                     calib_sigma_tot[i] = sqrt((calib_errors[i][1] + calib_mag_sys[i]) + (alpha / log(10) / calib_obs[i][2])^2 * (calib_errors[i][2] + calib_vel_sys[i])+ beta^2 * (calib_errors[i][3] + calib_col_sys[i]));
                     calib_mag_true[i] = calib_obs[i][1] + alpha * log10(calib_obs[i][2] / vel_avg) - beta * (calib_obs[i][3] - col_avg) - calib_dist_mod[i];
                 }
-                calib_sigma_int = 10 ^ calib_log_sigma;
+                for (i in 1:num_calib_dset) {
+                    calib_sigma_int[i] = 10 ^ calib_log_sigma[i];
+                }
             }
             model {
                 H0 ~ uniform(0,200);
@@ -584,13 +606,15 @@ class ClassicNHHubbleSCM(SCM_Model):
                 alpha ~ uniform(-20,20);
                 beta ~ uniform(-20,20);
                 log_sigma ~ uniform(-3,0);
-                calib_log_sigma ~ uniform(-3,0);
+                for (i in 1:num_calib_dset) {
+                    calib_log_sigma[i] ~ uniform(-3,0);
+                }
 
                 for (i in 1:sn_idx) {
                     target +=  normal_lpdf(mag_true[i] | Mi, sqrt(sigma_tot[i]^2 + sigma_int^2));
                 }
                 for (i in 1:calib_sn_idx) {
-                    target +=  normal_lpdf(calib_mag_true[i] | Mi, sqrt(calib_sigma_tot[i]^2 + calib_sigma_int^2));
+                    target +=  normal_lpdf(calib_mag_true[i] | Mi, sqrt(calib_sigma_tot[i]^2 + calib_sigma_int[calib_dset_idx[i]]^2));
                 }
             }
             """
@@ -717,6 +741,8 @@ class ClassicHubbleSCM(SCM_Model):
             "calib_vel_sys": None,
             "calib_col_sys": None,
             "calib_dist_mod": None,
+            "calib_dset_idx": None,
+            "num_calib_dset": None,
         }
 
         self.model = """
@@ -737,6 +763,8 @@ class ClassicHubbleSCM(SCM_Model):
                 real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
                 real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
                 real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
+                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
                 real H0; // Hubble constant
@@ -744,7 +772,7 @@ class ClassicHubbleSCM(SCM_Model):
                 real alpha; // Velocity correction strength
                 real beta; // Color correction strength
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
-                real<lower=-3,upper=0> calib_log_sigma; // Unexplained intrinsic scatter
+                real<lower=-3,upper=0> calib_log_sigma[num_calib_dset]; // Unexplained intrinsic scatter
                 real<lower=0> vs; // Mean of latent velocity
                 real cs; // Mean of latent color
                 real<lower=0> rv; // Dispersion of latent velocity
@@ -758,9 +786,11 @@ class ClassicHubbleSCM(SCM_Model):
                 real mag_true[sn_idx];
                 real calib_mag_true[calib_sn_idx];
                 real sigma_int;
-                real calib_sigma_int;
+                real calib_sigma_int[num_calib_dset];
                 sigma_int = 10 ^ log_sigma;
-                calib_sigma_int = 10 ^ calib_log_sigma;
+                for (i in 1:num_calib_dset) {
+                    calib_sigma_int[i] = 10 ^ calib_log_sigma[i];
+                }
                 for (i in 1:sn_idx) {
                     mag_true[i] = Mi - 5 * log10(H0) + 25 - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + 5 * log_dist_mod[i];
                 }
@@ -774,7 +804,9 @@ class ClassicHubbleSCM(SCM_Model):
                 alpha ~ uniform(-20,20);
                 beta ~ uniform(-20,20);
                 log_sigma ~ uniform(-3,0);
-                calib_log_sigma ~ uniform(-3,0);
+                for (i in 1:num_calib_dset) {
+                    calib_log_sigma[i] ~ uniform(-3,0);
+                }
 
                 vs ~ cauchy(7500e3,1500e3);
                 cs ~ cauchy(0,0.5);
@@ -792,7 +824,7 @@ class ClassicHubbleSCM(SCM_Model):
                     target +=  normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i]]', sqrt(errors[i] + [sigma_int^2, 0, 0]'));
                 }
                 for (i in 1:calib_sn_idx) {
-                    target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i] + calib_mag_sys[i], calib_v_true[i] + calib_vel_sys[i], calib_c_true[i] + calib_col_sys[i]]', sqrt(calib_errors[i] + [calib_sigma_int^2, 0, 0]'));
+                    target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i] + calib_mag_sys[i], calib_v_true[i] + calib_vel_sys[i], calib_c_true[i] + calib_col_sys[i]]', sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0]'));
                 }
             }
             """

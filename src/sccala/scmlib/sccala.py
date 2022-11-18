@@ -156,9 +156,12 @@ class SccalaSCM:
 
             self.calib_epoch = None
 
-        self.datasets = datasets
+        self.datasets = df[df["dataset"].isin(datasets)]["dataset"].to_numpy()
+
         if calib:
-            self.calib_datasets = calib_datasets
+            self.calib_datasets = df[df["dataset"].isin(calib_datasets)][
+                "dataset"
+            ].to_numpy()
         else:
             self.calib_datasets = None
         self.posterior = None
@@ -314,6 +317,14 @@ class SccalaSCM:
             model.data["calib_vel_sys"] = self.calib_v_sys
             model.data["calib_col_sys"] = self.calib_c_sys
             model.data["calib_dist_mod"] = self.calib_dist_mod
+
+            # Convert differnet datasets to dataset indices
+            n_calib_dset = len(set(self.calib_datasets))
+            mappded_dsets = dict(zip(set(self.calib_datasets), range(n_calib_dset)))
+            # Plus one to take care of 1-based stan indexing
+            calib_dset_idx = map(lambda x: mappded_dsets[x] + 1, self.calib_datasets)
+            model.data["calib_dset_idx"] = list(calib_dset_idx)
+            model.data["num_calib_dset"] = n_calib_dset
 
         model.set_initial_conditions(init)
 
