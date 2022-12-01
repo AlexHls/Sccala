@@ -20,7 +20,7 @@ setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
 #    packages=['sccala'],
-    python_requires=">=3.6",
+    python_requires=">=3.10",
     scripts=[
         'bin/sccala-photometry',
         'bin/sccala-linefit',
