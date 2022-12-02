@@ -631,6 +631,16 @@ class SccalaSCM:
             model.data["calib_col_sys"] = [self.calib_c_sys[i] for i in inds]
             model.data["calib_dist_mod"] = [self.calib_dist_mod[i] for i in inds]
 
+            # Convert differnet datasets to dataset indices
+            active_datasets = [self.calib_datasets[i] for i in inds]
+            n_calib_dset = len(set(active_datasets))
+            mappded_dsets = dict(zip(set(active_datasets), range(n_calib_dset)))
+            # Plus one to take care of 1-based stan indexing
+            calib_dset_idx = map(lambda x: mappded_dsets[x] + 1, active_datasets)
+
+            model.data["calib_dset_idx"] = list(calib_dset_idx)
+            model.data["num_calib_dset"] = n_calib_dset
+
             model.set_initial_conditions(init)
 
             # Setup/ build STAN model
