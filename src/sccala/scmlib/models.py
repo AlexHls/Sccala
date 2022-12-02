@@ -378,6 +378,12 @@ class HubbleSCM(SCM_Model):
                 real<lower=0> rv; // Dispersion of latent velocity
                 real<lower=0> rc; // Dispersion of latent color
                 real<lower=0> ra; // Dispersion of latent a/e
+                real<lower=0> calib_vs[num_calib_dset]; // Mean of latent velocity
+                real calib_cs[num_calib_dset]; // Mean of latent color
+                real<lower=0> calib_as[num_calib_dset]; // Mean of latent a/e
+                real<lower=0> calib_rv[num_calib_dset]; // Dispersion of latent velocity
+                real<lower=0> calib_rc[num_calib_dset]; // Dispersion of latent color
+                real<lower=0> calib_ra[num_calib_dset]; // Dispersion of latent a/e
                 real<lower=0> v_true[sn_idx]; // Modeled latent velocities (cannot be negative)
                 real c_true[sn_idx]; // Modeled latent color
                 real<lower=0> a_true[sn_idx]; // Modeled latent a/e (cannot be negative)
@@ -424,9 +430,21 @@ class HubbleSCM(SCM_Model):
                 c_true ~ normal(cs,rc);
                 a_true ~ normal(as,ra);
 
-                calib_v_true ~ normal(vs,rv);
-                calib_c_true ~ normal(cs,rc);
-                calib_a_true ~ normal(as,ra);
+                for (i in 1:num_calib_dset) {
+                    calib_vs[i] ~ cauchy(7500e3,1500e3);
+                    calib_cs[i] ~ cauchy(0,0.5);
+                    calib_as[i] ~ cauchy(0.5,0.5);
+
+                    calib_rv[i] ~ normal(0,1500e3);
+                    calib_rc[i] ~ normal(0,0.05);
+                    calib_ra[i] ~ normal(0,0.05);
+                }
+                
+                for (i in 1:calib_sn_idx) {
+                    calib_v_true[i] ~ normal(calib_vs[calib_dset_idx[i]],calib_rv[calib_dset_idx[i]]);
+                    calib_c_true[i] ~ normal(calib_cs[calib_dset_idx[i]],calib_rc[calib_dset_idx[i]]);
+                    calib_a_true[i] ~ normal(calib_as[calib_dset_idx[i]],calib_ra[calib_dset_idx[i]]);
+                }
 
                 for (i in 1:sn_idx) {
                     target +=  normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]', sqrt(errors[i] + [sigma_int^2, 0, 0, 0]'));
@@ -446,6 +464,10 @@ class HubbleSCM(SCM_Model):
             self.init = {
                 "vs": [7500e3],
                 "rv": [1000e3],
+                "calib_vs.1": [7500e3],
+                "calib_rv.1": [1000e3],
+                "calib_vs.2": [7500e3],
+                "calib_rv.2": [1000e3],
                 "v_true": [7500e3] * self.data["sn_idx"],
                 "calib_v_true": [7500e3] * self.data["calib_sn_idx"],
             }
