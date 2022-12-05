@@ -320,7 +320,9 @@ class SccalaSCM:
 
             # Convert differnet datasets to dataset indices
             n_calib_dset = len(set(self.calib_datasets))
-            mappded_dsets = dict(zip(set(self.calib_datasets), range(n_calib_dset)))
+            mappded_dsets = dict(
+                zip(sorted(set(self.calib_datasets)), range(n_calib_dset))
+            )
             # Plus one to take care of 1-based stan indexing
             calib_dset_idx = map(lambda x: mappded_dsets[x] + 1, self.calib_datasets)
             model.data["calib_dset_idx"] = list(calib_dset_idx)
@@ -634,7 +636,7 @@ class SccalaSCM:
             # Convert differnet datasets to dataset indices
             active_datasets = [self.calib_datasets[i] for i in inds]
             n_calib_dset = len(set(active_datasets))
-            mappded_dsets = dict(zip(set(active_datasets), range(n_calib_dset)))
+            mappded_dsets = dict(zip(sorted(set(active_datasets)), range(n_calib_dset)))
             # Plus one to take care of 1-based stan indexing
             calib_dset_idx = map(lambda x: mappded_dsets[x] + 1, active_datasets)
 
