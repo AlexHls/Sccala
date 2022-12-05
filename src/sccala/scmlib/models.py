@@ -464,13 +464,12 @@ class HubbleSCM(SCM_Model):
             self.init = {
                 "vs": [7500e3],
                 "rv": [1000e3],
-                "calib_vs.1": [7500e3],
-                "calib_rv.1": [1000e3],
-                "calib_vs.2": [7500e3],
-                "calib_rv.2": [1000e3],
                 "v_true": [7500e3] * self.data["sn_idx"],
                 "calib_v_true": [7500e3] * self.data["calib_sn_idx"],
             }
+            for i in range(self.data["num_calib_dset"]):
+                self.init["calib_vs.%d" % (i + 1)] = [7500e3]
+                self.init["calib_rv.%d" % (i + 1)] = [1000e3]
         else:
             self.init = init
         return
@@ -799,6 +798,10 @@ class ClassicHubbleSCM(SCM_Model):
                 real cs; // Mean of latent color
                 real<lower=0> rv; // Dispersion of latent velocity
                 real<lower=0> rc; // Dispersion of latent color
+                real<lower=0> calib_vs[num_calib_dset]; // Mean of latent velocity
+                real calib_cs[num_calib_dset]; // Mean of latent color
+                real<lower=0> calib_rv[num_calib_dset]; // Dispersion of latent velocity
+                real<lower=0> calib_rc[num_calib_dset]; // Dispersion of latent color
                 real<lower=0> v_true[sn_idx]; // Modeled latent velocities (cannot be negative)
                 real c_true[sn_idx]; // Modeled latent color
                 real<lower=0> calib_v_true[calib_sn_idx]; // Modeled latent velocities (cannot be negative)
@@ -839,6 +842,19 @@ class ClassicHubbleSCM(SCM_Model):
                 v_true ~ normal(vs,rv);
                 c_true ~ normal(cs,rc);
 
+                for (i in 1:num_calib_dset) {
+                    calib_vs[i] ~ cauchy(7500e3,1500e3);
+                    calib_cs[i] ~ cauchy(0,0.5);
+
+                    calib_rv[i] ~ normal(0,1500e3);
+                    calib_rc[i] ~ normal(0,0.05);
+                }
+                
+                for (i in 1:calib_sn_idx) {
+                    calib_v_true[i] ~ normal(calib_vs[calib_dset_idx[i]],calib_rv[calib_dset_idx[i]]);
+                    calib_c_true[i] ~ normal(calib_cs[calib_dset_idx[i]],calib_rc[calib_dset_idx[i]]);
+                }
+
                 calib_v_true ~ normal(vs,rv);
                 calib_c_true ~ normal(cs,rc);
 
@@ -863,6 +879,9 @@ class ClassicHubbleSCM(SCM_Model):
                 "v_true": [7500e3] * self.data["sn_idx"],
                 "calib_v_true": [7500e3] * self.data["calib_sn_idx"],
             }
+            for i in range(self.data["num_calib_dset"]):
+                self.init["calib_vs.%d" % (i + 1)] = [7500e3]
+                self.init["calib_rv.%d" % (i + 1)] = [1000e3]
         else:
             self.init = init
         return
