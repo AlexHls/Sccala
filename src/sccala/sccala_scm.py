@@ -21,6 +21,8 @@ def main(args):
             model = models.HubbleFreeSCM()
         elif model == "hubble-nh":
             model = models.NHHubbleSCM()
+        elif model == "hubble-nh-simple":
+            model = models.NHHubbleSCMSimple()
         elif model == "hubble-free-nh":
             model = models.NHHubbleFreeSCM()
         else:
@@ -32,6 +34,8 @@ def main(args):
             model = models.ClassicHubbleFreeSCM()
         elif model == "hubble-nh":
             model = models.ClassicNHHubbleSCM()
+        elif model == "hubble-nh-simple":
+            model = models.ClassicNHHubbleSCMSimple()
         elif model == "hubble-free-nh":
             model = models.ClassicNHHubbleFreeSCM()
         else:
@@ -63,7 +67,13 @@ def cli():
     parser.add_argument("data", help="Path to file containing standardisation data")
     parser.add_argument(
         "model",
-        choices=["hubble", "hubble-free", "hubble-nh", "hubble-free-nh"],
+        choices=[
+            "hubble",
+            "hubble-free",
+            "hubble-nh",
+            "hubble-nh-simple",
+            "hubble-free-nh",
+        ],
         help="Model to be fit to the data. Only selects from built-in models",
     )
     parser.add_argument(

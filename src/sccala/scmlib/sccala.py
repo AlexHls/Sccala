@@ -593,7 +593,6 @@ class SccalaSCM:
 
         # Some parallelization stuff
         if parallel:
-            comm.Barrier()
             perrank = int(np.ceil(len(bt_inds) / size))
             bt_inds_lists = list(split_list(bt_inds, perrank))
             tr = trange(len(bt_inds_lists[rank]), desc="Rank %d" % rank, position=rank)
