@@ -15,10 +15,12 @@ Classes
    sccala.scmlib.models.SCM_Model
    sccala.scmlib.models.NHHubbleFreeSCM
    sccala.scmlib.models.NHHubbleSCM
+   sccala.scmlib.models.NHHubbleSCMSimple
    sccala.scmlib.models.HubbleFreeSCM
    sccala.scmlib.models.HubbleSCM
    sccala.scmlib.models.ClassicNHHubbleFreeSCM
    sccala.scmlib.models.ClassicNHHubbleSCM
+   sccala.scmlib.models.ClassicNHHubbleSCMSimple
    sccala.scmlib.models.ClassicHubbleFreeSCM
    sccala.scmlib.models.ClassicHubbleSCM
 
@@ -59,6 +61,14 @@ Classes
 
 
 
+.. py:class:: NHHubbleSCMSimple
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: print_results(df, blind=True)
+
+
+
 .. py:class:: HubbleFreeSCM
 
    Bases: :py:obj:`SCM_Model`
@@ -90,6 +100,14 @@ Classes
 
 
 .. py:class:: ClassicNHHubbleSCM
+
+   Bases: :py:obj:`SCM_Model`
+
+   .. py:method:: print_results(df, blind=True)
+
+
+
+.. py:class:: ClassicNHHubbleSCMSimple
 
    Bases: :py:obj:`SCM_Model`
 
