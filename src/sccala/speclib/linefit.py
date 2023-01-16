@@ -68,6 +68,7 @@ class LineFit:
         self.lines = {
             "halpha-ae": [6250, 6650, 6563, True],
             "hbeta": [4550, 4900, 4861, False],
+            "si-ii": [5900, 6450, 6355, False],
         }
 
     def __get_builtin_lines__(self):
