@@ -21,7 +21,6 @@ Package Contents
 ----------------
 
 .. py:data:: file
-   
 
    
 

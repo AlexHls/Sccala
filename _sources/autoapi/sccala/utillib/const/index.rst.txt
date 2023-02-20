@@ -8,17 +8,16 @@ Module Contents
 ---------------
 
 .. py:data:: C_LIGHT
-   :annotation: = 299792.458
+   :value: 299792.458
 
    
 
 .. py:data:: H_ERG
-   :annotation: = 6.62607015e-27
+   :value: 6.62607015e-27
 
    
 
 .. py:data:: C_AA
-   
 
    
 

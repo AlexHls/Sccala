@@ -86,7 +86,6 @@ Functions
    Bases: :py:obj:`object`
 
    .. py:attribute:: next
-      
 
       
 
