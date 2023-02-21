@@ -2,13 +2,13 @@ import os
 import warnings
 
 import numpy as np
-from numpy.random import default_rng
 import matplotlib.pyplot as plt
 
-import emcee
-import george
-from george import kernels
-
+from sccala.interplib.interpolators import (
+    LC_Interpolator,
+    Vel_Interpolator,
+    AE_Interpolator,
+)
 from sccala.utillib.aux import convert_to_flux, convert_to_mag
 
 
@@ -112,13 +112,11 @@ class EpochDataSet:
         self.mjd = self.mjd[mask]
 
         # results
-        self.data_pred = None
         self.data_int = None
 
         return
 
     def get_results(self):
-
         if self.data_int is None:
             raise ValueError("No interpolated values found")
 
@@ -237,8 +235,21 @@ class EpochDataSet:
                 label="{:.1f} days".format(self.dates[plotind]),
             )
 
-            for v in self.data_pred[:100]:
-                ax2.plot(self.x_pred, np.array(v) / conv, color="k", alpha=0.05)
+            ax2.plot(self.dates, self.median / conv, color="k", label="Prediction")
+            ax2.fill_between(
+                self.dates,
+                self.minusonesigma / conv,
+                self.plusonesigma / conv,
+                color="k",
+                alpha=0.3,
+            )
+            ax2.fill_between(
+                self.dates,
+                self.minustwosigma / conv,
+                self.plustwosigma / conv,
+                color="k",
+                alpha=0.1,
+            )
 
             # Plot flux
             if flux_interp:
@@ -266,13 +277,26 @@ class EpochDataSet:
                     label="{:.1f} days".format(self.dates[plotind]),
                 )
 
-                for v in self.data_pred[:100]:
-                    ax3.plot(
-                        self.x_pred,
-                        convert_to_flux(np.array(v)) / conv,
-                        color="k",
-                        alpha=0.05,
-                    )
+                ax3.plot(
+                    self.dates,
+                    convert_to_flux(self.median) / conv,
+                    color="k",
+                    label="Prediction",
+                )
+                ax3.fill_between(
+                    self.dates,
+                    convert_to_flux(self.minusonesigma) / conv,
+                    convert_to_flux(self.plusonesigma) / conv,
+                    color="k",
+                    alpha=0.3,
+                )
+                ax3.fill_between(
+                    self.dates,
+                    convert_to_flux(self.minustwosigma) / conv,
+                    convert_to_flux(self.plustwosigma) / conv,
+                    color="k",
+                    alpha=0.1,
+                )
 
         ax2.errorbar(
             x=self.time,
@@ -361,6 +385,7 @@ class EpochDataSet:
         diagnostic=None,
         no_reject=False,
         flux_interp=False,
+        num_live_points=800,
     ):
         """
         Interpolate dataocities using Gaussian Process regression
@@ -429,16 +454,66 @@ class EpochDataSet:
             data = self.data
             data_error = self.data_error
 
+        if "phot" in target:
+            interpolator = LC_Interpolator(data, data_error, self.time)
+            interpolator.sample_posterior(num_live_points=num_live_points)
+
+            data_int = interpolator.predict_from_posterior(date, self.tkde, self.toe)
+        elif target == "halpha-ae":
+            interpolator = AE_Interpolator(data, data_error, self.time)
+            interpolator.sample_posterior(num_live_points=num_live_points)
+
+            data_int = interpolator.predict_from_posterior(date, self.tkde, self.toe)
+        elif target:
+            interpolator = Vel_Interpolator(data, data_error, self.time)
+            interpolator.sample_posterior(num_live_points=num_live_points)
+
+            data_int = interpolator.predict_from_posterior(date, self.tkde, self.toe)
+        else:
+            raise NotImplementedError("Target has no implemented interpolator")
+
+        # If no matching curves are found, start excluding data
+        # until interpolation is successful
+        if len(data_int) <= 3:
+            warnings.warn("No valid parameters found, excluding datapoints...")
+            self.reg_min = self.time[0] + 0.1
+            self.exclude_data()
+
+            return self.data_interp(
+                target,
+                step=step,
+                date_low=date_low,
+                date_high=date_high,
+                diagnostic=diagnostic,
+                no_reject=no_reject,
+                flux_interp=flux_interp,
+            )
+
+        if flux_interp:
+            self.data_int = convert_to_mag(np.array(data_int))
+        else:
+            self.data_int = np.array(data_int)
+
+        self.get_results()
+
+        """
         if target == "halpha-ae":
             kernel = np.var(data) * kernels.PolynomialKernel(
                 log_sigma2=np.var(data), order=3
             )
+        elif "phot" in target:
+            kernel = np.var(data) * kernels.ExpSquaredKernel(1000)
         else:
             kernel = np.var(data) * kernels.ExpSquaredKernel(1000)
 
-        model = george.GP(
-            kernel=kernel,
-        )
+        if "phot" in target:
+            model = george.GP(
+                kernel=kernel
+            )
+        else:
+            model = george.GP(
+                kernel=kernel,
+            )
 
         try:
             model.compute(self.time, data_error)
@@ -492,7 +567,7 @@ class EpochDataSet:
         data_pred = []
         for s in samples[np.random.randint(len(samples), size=size)]:
             model.set_parameter_vector(s)
-            d = model.predict(data, x_pred, return_cov=False)
+            d = model.sample_conditional(data, x_pred)
 
             # Rule to skip "0-fits"
             if np.mean(d) < 1 and target != "halpha-ae" and "phot" not in target:
@@ -541,6 +616,8 @@ class EpochDataSet:
             self.data_int = np.array(data_int)
             self.data_pred = np.array(data_pred)
         self.get_results()
+
+        """
 
         if diagnostic:
             self.diagnostic_plot(diagnostic, target, flux_interp=flux_interp)
