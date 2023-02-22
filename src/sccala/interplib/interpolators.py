@@ -144,7 +144,7 @@ class Vel_Interpolator:
         t_grid,
         num_live_points=800,
         disable_mean_fit=True,
-        disable_white_noise_fit=False,
+        disable_white_noise_fit=True,
     ):
         self.data = data
         self.data_error = data_error
@@ -278,25 +278,41 @@ class AE_Interpolator:
         data_error,
         t_grid,
         num_live_points=800,
-        disable_mean_fit=False,
-        disable_white_noise_fit=False,
+        disable_mean_fit=True,
+        disable_white_noise_fit=True,
     ):
         self.data = data
         self.data_error = data_error
         self.t_grid = t_grid
         self.num_live_points = num_live_points
+        self.disable_mean_fit = disable_mean_fit
+        self.disable_white_noise_fit = disable_white_noise_fit
+        if disable_mean_fit and not disable_white_noise_fit:
+            warnings.warn(
+                "It is not recommended to use noise fit"
+                "without a mean fit for halpha-ae."
+            )
 
         # Setup kernel
-        kernel = np.var(self.data) * kernels.PolynomialKernel(
-            log_sigma2=np.var(self.data), order=3
-        )
-        self.parameters = ["mean", "log_var", "log_sigma2"]
+        kernel = np.var(data) * kernels.PolynomialKernel(log_sigma2=6.0, order=3)
+        self.parameters = []
+        if not disable_mean_fit:
+            self.parameters.append("mean")
+            mean_model = ConstantModel(data.mean())
+        else:
+            mean_model = None
+        if not disable_white_noise_fit:
+            self.parameters.append("log_var_white")
+            white_noise = np.log(0.01**2)
+        else:
+            white_noise = None
+        self.parameters.extend(["log_var", "log_sigma2"])
         self.gp = george.GP(
             kernel,
-            mean=ConstantModel(data.mean()),
-            fit_mean=True,
-            # fit_white_noise=True,
-            # white_noise=np.log(0.01 ** 2)
+            mean=mean_model,
+            fit_mean=(not disable_mean_fit),
+            fit_white_noise=(not disable_white_noise_fit),
+            white_noise=white_noise,
         )
         try:
             self.gp.compute(self.t_grid, self.data_error)
@@ -307,23 +323,44 @@ class AE_Interpolator:
     def log_likelihood(self, params):
         # Update the kernel and compute the log_likelihood.
         self.gp.set_parameter_vector(params)
-
-        return self.gp.log_likelihood(self.data, quiet=True)
+        like = self.gp.log_likelihood(self.data, quiet=True)
+        if np.isinf(like):
+            return -1e100
+        return like
 
     def prior_transform(self, cube):
         # the argument, cube, consists of values from 0 to 1
         # we have to convert them to physical scales
 
         params = cube.copy()
-        # Mean prior -> Uniform prior from 10 to 30
-        params[0] = 0.5 * cube[0] + 0.1
-        # Variance prior -> Half Gaussian prior
-        params[1] = np.log(st.halfnorm.ppf(cube[1], scale=0.5) ** 2)
-        # l prior -> InvGamma prior
-        # params[2] = np.log(
-        #    st.invgamma.ppf(cube[2], 4.62908952, scale=110.33659801) ** 2
-        # )
-        params[2] = np.log(st.norm.ppf(cube[2]) ** 2)
+        if self.disable_mean_fit and self.disable_white_noise_fit:
+            params[0] = np.log(st.halfnorm.ppf(cube[0], scale=0.5) ** 2)
+            params[1] = np.log(
+                st.invgamma.ppf(cube[1], 4.62908952, scale=110.33659801) ** 2
+            )
+        elif self.disable_mean_fit:
+            params[0] = np.log(st.loguniform.ppf(np.array(cube[0]), 1e-6, 0.2) * 2)
+            params[1] = np.log(st.halfnorm.ppf(cube[1], scale=0.5) ** 2)
+            params[2] = np.log(
+                st.invgamma.ppf(cube[2], 4.62908952, scale=110.33659801) ** 2
+            )
+        elif self.disable_white_noise_fit:
+            params[0] = cube[0] * 2.0
+            params[1] = np.log(st.halfnorm.ppf(cube[1], scale=0.5) ** 2)
+            params[2] = np.log(
+                st.invgamma.ppf(cube[2], 4.62908952, scale=110.33659801) ** 2
+            )
+        else:
+            # Mean prior -> Uniform prior
+            params[0] = cube[0] * 2.0
+            # White noise prior -> log-Uniform prior
+            params[1] = np.log(st.loguniform.ppf(np.array(cube[1]), 1e-6, 0.2) * 2)
+            # Variance prior -> Half Gaussian prior
+            params[2] = np.log(st.halfnorm.ppf(cube[2], scale=0.2) ** 2)
+            # l prior -> InvGamma prior
+            params[3] = np.log(
+                st.invgamma.ppf(cube[3], 4.62908952, scale=110.33659801) ** 2
+            )
 
         return params
 
@@ -337,8 +374,10 @@ class AE_Interpolator:
 
         return self.sampler
 
-    def predict_from_posterior(self, t_pred, tkde=None, toe=0.0, size=50):
-        # This makes sure that data_int.extend() works as intended
+    def predict_from_posterior(
+        self, t_pred, tkde=None, toe=0.0, size=50, no_reject=False
+    ):
+        # This makes sure that data_int.append() works as intended
         assert size > 1, "Insufficient size"
 
         data_int = []
@@ -358,9 +397,17 @@ class AE_Interpolator:
                     toe_rnd = np.percentile(tkde, num * 100)
                     t = t_pred + (toe - toe_rnd)
                     dint = self.gp.sample_conditional(self.data, t, size=size)
-                    data_int.extend(dint)
+                    for d in dint:
+                        if any(np.sign(d) < 0.0) and not no_reject:
+                            continue
+                        else:
+                            data_int.append(d)
             else:
                 dint = self.gp.sample_conditional(self.data, t_pred, size=size)
-                data_int.extend(dint)
+                for d in dint:
+                    if any(np.sign(d) < 0.0) and not no_reject:
+                        continue
+                    else:
+                        data_int.append(d)
 
         return np.array(data_int)

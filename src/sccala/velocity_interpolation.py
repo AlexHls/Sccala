@@ -22,7 +22,7 @@ def main(args):
     size = args.sample_size
     num_live_points = args.num_live_points
     disable_mean_fit = not args.enable_mean_fit
-    disable_white_noise_fit = args.disable_white_noise_fit
+    disable_white_noise_fit = not args.enable_white_noise_fit
     ignore_toe_uncertainty = args.ignore_toe_uncertainty
 
     diag_path = os.path.join(pa.get_diag_path(), snname)
@@ -157,8 +157,8 @@ def cli():
         action="store_true",
     )
     parser.add_argument(
-        "--disable_white_noise_fit",
-        help="Disables white noise fit in Gaussian Process",
+        "--enable_white_noise_fit",
+        help="Enables white noise fit in Gaussian Process",
         action="store_true",
     )
     parser.add_argument(

@@ -9,7 +9,6 @@ from sccala.utillib.const import C_AA, H_ERG
 
 
 def calculate_vega_zp(filter):
-
     vega_wav, vega_flux = get_vega_spectrum()
 
     return (
@@ -157,7 +156,6 @@ class FilterCurve(BaseFilterCurve):
 
 class FilterSet(object):
     def __init__(self, filter_set, interpolation_kind="linear"):
-
         if hasattr(filter_set[0], "wavelength"):
             self.filter_set = filter_set
         else:

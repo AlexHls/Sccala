@@ -546,68 +546,6 @@ class EpochDataSet:
 
         self.get_results()
 
-        """
-        if target == "halpha-ae":
-            kernel = np.var(data) * kernels.PolynomialKernel(
-                log_sigma2=np.var(data), order=3
-            )
-
-        try:
-            model.compute(self.time, data_error)
-        except np.linalg.LinAlgError:
-            warnings.warn("LinAlgError occured, modifying data_error...")
-            model.compute(self.time, data_error * 2)
-
-            # Rule to skip "0-fits"
-            if np.mean(d) < 1 and target != "halpha-ae" and "phot" not in target:
-                continue
-            # Reject curve if values increase
-            if (
-                any(np.sign(np.diff(d)) == 1)
-                and target != "halpha-ae"
-                and "phot" not in target
-                and not no_reject
-            ):
-                continue
-            # Reject negative a/e
-            if any(np.sign(d) < 0.0) and target == "halpha-ae":
-                continue
-
-            data_pred.append(d)
-            for num in uni_rng:
-                toe_rnd = np.percentile(self.tkde, num * 100)
-                t = date + (self.toe - toe_rnd)
-                dint = model.predict(data, t, return_cov=False)
-                data_int.append(dint)
-
-            # If no matching curves are found, start excluding data
-            # until interpolation is successful
-        if len(data_int) <= 3:
-            warnings.warn("No valid parameters found, excluding datapoints...")
-            self.reg_min = self.time[0] + 0.1
-            self.exclude_data()
-
-            return self.data_interp(
-                target,
-                step=step,
-                date_low=date_low,
-                date_high=date_high,
-                diagnostic=diagnostic,
-                no_reject=no_reject,
-                flux_interp=flux_interp,
-            )
-
-        # Convert data back before exporting/ saving
-        if flux_interp:
-            self.data_int = convert_to_mag(np.array(data_int))
-            self.data_pred = convert_to_mag(np.array(data_pred))
-        else:
-            self.data_int = np.array(data_int)
-            self.data_pred = np.array(data_pred)
-        self.get_results()
-
-        """
-
         if diagnostic:
             self.diagnostic_plot(diagnostic, target, flux_interp=flux_interp)
 
