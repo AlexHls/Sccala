@@ -5,7 +5,6 @@ import sccala.scmlib.models as models
 
 
 def main(args):
-
     sccala_scm = sc.SccalaSCM(
         args.data,
         calib=args.calib_identifier,

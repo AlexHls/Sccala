@@ -31,7 +31,7 @@ class EpochDataSet:
         reg_min=20.0,
         reg_max=60.0,
         extrapolate=5.0,
-        size=100,
+        size=50,
         num_live_points=800,
         disable_mean_fit=False,
         disable_white_noise_fit=False,
@@ -466,29 +466,59 @@ class EpochDataSet:
             data_error = self.data_error
 
         if "phot" in target:
-            interpolator = LC_Interpolator(data, data_error, self.time, disable_mean_fit=self.disable_mean_fit, disable_white_noise_fit=self.disable_white_noise_fit)
+            interpolator = LC_Interpolator(
+                data,
+                data_error,
+                self.time,
+                disable_mean_fit=self.disable_mean_fit,
+                disable_white_noise_fit=self.disable_white_noise_fit,
+            )
             interpolator.sample_posterior(num_live_points=self.num_live_points)
 
             if self.ignore_toe_uncertainty:
-                data_int = interpolator.predict_from_posterior(date, tkde=None, toe=self.toe, size=self.size)
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=None, toe=self.toe, size=self.size
+                )
             else:
-                data_int = interpolator.predict_from_posterior(date, tkde=self.tkde, toe=self.toe, size=self.size)
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=self.tkde, toe=self.toe, size=self.size
+                )
         elif target == "halpha-ae":
-            interpolator = AE_Interpolator(data, data_error, self.time, disable_mean_fit=self.disable_mean_fit, disable_white_noise_fit=self.disable_white_noise_fit)
+            interpolator = AE_Interpolator(
+                data,
+                data_error,
+                self.time,
+                disable_mean_fit=self.disable_mean_fit,
+                disable_white_noise_fit=self.disable_white_noise_fit,
+            )
             interpolator.sample_posterior(num_live_points=self.num_live_points)
 
             if self.ignore_toe_uncertainty:
-                data_int = interpolator.predict_from_posterior(date, tkde=None, toe=self.toe, size=self.size)
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=None, toe=self.toe, size=self.size
+                )
             else:
-                data_int = interpolator.predict_from_posterior(date, tkde=self.tkde, toe=self.toe, size=self.size)
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=self.tkde, toe=self.toe, size=self.size
+                )
         elif target:
-            interpolator = Vel_Interpolator(data, data_error, self.time, disable_mean_fit=self.disable_mean_fit, disable_white_noise_fit=self.disable_white_noise_fit)
+            interpolator = Vel_Interpolator(
+                data,
+                data_error,
+                self.time,
+                disable_mean_fit=self.disable_mean_fit,
+                disable_white_noise_fit=self.disable_white_noise_fit,
+            )
             interpolator.sample_posterior(num_live_points=self.num_live_points)
 
             if self.ignore_toe_uncertainty:
-                data_int = interpolator.predict_from_posterior(date, tkde=None, toe=self.toe, size=self.size)
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=None, toe=self.toe, size=self.size
+                )
             else:
-                data_int = interpolator.predict_from_posterior(date, tkde=self.tkde, toe=self.toe, size=self.size)
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=self.tkde, toe=self.toe, size=self.size
+                )
         else:
             raise NotImplementedError("Target has no implemented interpolator")
 
@@ -521,73 +551,12 @@ class EpochDataSet:
             kernel = np.var(data) * kernels.PolynomialKernel(
                 log_sigma2=np.var(data), order=3
             )
-        elif "phot" in target:
-            kernel = np.var(data) * kernels.ExpSquaredKernel(1000)
-        else:
-            kernel = np.var(data) * kernels.ExpSquaredKernel(1000)
-
-        if "phot" in target:
-            model = george.GP(
-                kernel=kernel
-            )
-        else:
-            model = george.GP(
-                kernel=kernel,
-            )
 
         try:
             model.compute(self.time, data_error)
         except np.linalg.LinAlgError:
             warnings.warn("LinAlgError occured, modifying data_error...")
             model.compute(self.time, data_error * 2)
-
-        # Emcee sampling
-        def lnprob(p):
-            model.set_parameter_vector(p)
-            return model.log_likelihood(self.data, quiet=True) + model.log_prior()
-
-        initial = model.get_parameter_vector()
-        ndim, nwalkers = len(initial), 32
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
-
-        try:
-            print("Running first burn-in...")
-            p0 = initial + 1e-8 * np.random.randn(nwalkers, ndim)
-            p0, lp, _ = sampler.run_mcmc(p0, 400)
-
-            print("Running second burn-in...")
-            p0 = p0[np.argmax(lp)] + 1e-8 * np.random.randn(nwalkers, ndim)
-            sampler.reset()
-            p0, _, _ = sampler.run_mcmc(p0, 400)
-
-            print("Running production...")
-            sampler.run_mcmc(p0, 800)
-        except ValueError:
-            warnings.warn("ValueError occured, skipping second burn-in...")
-            ndim, nwalkers = len(initial), 32
-            sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
-            print("Running first burn-in...")
-            p0 = initial + 1e-8 * np.random.randn(nwalkers, ndim)
-            p0, _, _ = sampler.run_mcmc(p0, 400)
-            sampler.reset()
-            print("Running production...")
-            sampler.run_mcmc(p0, 800)
-
-        x_pred = np.linspace(min(date), max([max(date), 45, max(self.time)]), 100)
-        self.x_pred = x_pred
-
-        samples = sampler.flatchain
-
-        # Draw time from toe prior
-        size = 125
-        rng = default_rng()
-        uni_rng = rng.uniform(size=size)
-
-        data_int = []
-        data_pred = []
-        for s in samples[np.random.randint(len(samples), size=size)]:
-            model.set_parameter_vector(s)
-            d = model.sample_conditional(data, x_pred)
 
             # Rule to skip "0-fits"
             if np.mean(d) < 1 and target != "halpha-ae" and "phot" not in target:

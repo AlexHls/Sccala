@@ -6,7 +6,6 @@ import numpy as np
 
 
 def main(args):
-
     file = pd.read_csv(args.file)
 
     s = URLSafeSerializer(args.key)

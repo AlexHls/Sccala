@@ -167,8 +167,8 @@ def cli():
         "-s",
         "--sample_size",
         help="Number of samples drawn from posterior during sample prediction."
-            " Total number of samples is <size>^3.",
-        default=100,
+        " Total number of samples is <size>^3.",
+        default=50,
         type=int,
     )
     parser.add_argument(
@@ -179,22 +179,22 @@ def cli():
         type=int,
     )
     parser.add_argument(
-        "-r", "--rules", help="File containing velocity interpolation rules"
+        "-r", "--rules", help="File containing photometry interpolation rules"
     )
     parser.add_argument(
         "--disable_mean_fit",
         help="Disables mean fit in Gaussian Process",
-        action="store_true"
+        action="store_true",
     )
     parser.add_argument(
         "--disable_white_noise_fit",
         help="Disables white noise fit in Gaussian Process",
-        action="store_true"
+        action="store_true",
     )
     parser.add_argument(
         "--ignore_toe_uncertainty",
         help="Ignores ToE uncertainty during sample prediction",
-        action="store_true"
+        action="store_true",
     )
     parser.add_argument(
         "-f",
