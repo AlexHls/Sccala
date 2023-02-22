@@ -16,21 +16,36 @@ class LC_Interpolator:
         data_error,
         t_grid,
         num_live_points=800,
+        disable_mean_fit=False,
+        disable_white_noise_fit=False,
     ):
         self.data = data
         self.data_error = data_error
         self.t_grid = t_grid
         self.num_live_points = num_live_points
+        self.disable_mean_fit = disable_mean_fit
+        self.disable_white_noise_fit = disable_white_noise_fit
 
         # Setup kernel
         kernel = np.var(data) * kernels.ExpSquaredKernel(25**2)
-        self.parameters = ["mean", "log_var_white", "log_var", "l"]
+        self.parameters = []
+        if not disable_mean_fit:
+            self.parameters.append("mean")
+            mean_model = ConstantModel(data.mean())
+        else:
+            mean_model = None
+        if not disable_white_noise_fit:
+            self.parameters.append("log_var_white")
+            white_noise = np.log(0.01 ** 2)
+        else:
+            white_noise = None
+        self.parameters.extend(["log_var", "l"])
         self.gp = george.GP(
             kernel,
-            mean=ConstantModel(data.mean()),
-            fit_mean=True,
-            fit_white_noise=True,
-            white_noise=np.log(0.01 ** 2),
+            mean=mean_model,
+            fit_mean=(not disable_mean_fit),
+            fit_white_noise=(not disable_white_noise_fit),
+            white_noise=white_noise,
         )
         self.gp.compute(self.t_grid, self.data_error)
 
@@ -45,14 +60,26 @@ class LC_Interpolator:
         # we have to convert them to physical scales
 
         params = cube.copy()
-        # Mean prior -> Uniform prior from 10 to 30
-        params[0] = cube[0] * 20 + 10
-        # White noise prior -> log-Uniform prior
-        params[1] = np.log(st.loguniform.ppf(np.array(cube[1]), 1e-5, 0.2) * 2)
-        # Variance prior -> Half Gaussian prior
-        params[2] = np.log(st.halfnorm.ppf(cube[2], scale=1.5) ** 2)
-        # l prior -> InvGamma prior
-        params[3] = np.log(st.invgamma.ppf(cube[3], 4.62908952, scale=110.33659801) ** 2)
+        if self.disable_mean_fit and self.disable_white_noise_fit:
+            params[0] = np.log(st.halfnorm.ppf(cube[0], scale=1.5) ** 2)
+            params[1] = np.log(st.invgamma.ppf(cube[1], 4.62908952, scale=110.33659801) ** 2)
+        elif self.disable_mean_fit:
+            params[0] = np.log(st.loguniform.ppf(np.array(cube[0]), 1e-5, 0.2) * 2)
+            params[1] = np.log(st.halfnorm.ppf(cube[1], scale=1.5) ** 2)
+            params[2] = np.log(st.invgamma.ppf(cube[2], 4.62908952, scale=110.33659801) ** 2)
+        elif self.disable_white_noise_fit:
+            params[0] = cube[0] * 20 + 10
+            params[1] = np.log(st.halfnorm.ppf(cube[1], scale=1.5) ** 2)
+            params[2] = np.log(st.invgamma.ppf(cube[2], 4.62908952, scale=110.33659801) ** 2)
+        else:
+            # Mean prior -> Uniform prior from 10 to 30
+            params[0] = cube[0] * 20 + 10
+            # White noise prior -> log-Uniform prior
+            params[1] = np.log(st.loguniform.ppf(np.array(cube[1]), 1e-5, 0.2) * 2)
+            # Variance prior -> Half Gaussian prior
+            params[2] = np.log(st.halfnorm.ppf(cube[2], scale=1.5) ** 2)
+            # l prior -> InvGamma prior
+            params[3] = np.log(st.invgamma.ppf(cube[3], 4.62908952, scale=110.33659801) ** 2)
         
         return params
 
@@ -66,11 +93,14 @@ class LC_Interpolator:
 
         return self.sampler
 
-    def predict_from_posterior(self, t_pred, tkde, toe):
+    def predict_from_posterior(self, t_pred, tkde=None, toe=0.0, size=50):
+
+        # This makes sure that data_int.extend() works as intended
+        assert size > 1, "Insufficient size"
+
         data_int = []
 
         # Draw time from toe prior
-        size = 50
         rng = default_rng()
         uni_rng = rng.uniform(size=size)
 
@@ -78,11 +108,15 @@ class LC_Interpolator:
         print("Predicting lightcurves...")
         for s in tqdm(self.sampler.results["samples"][subsample]):
             self.gp.set_parameter_vector(s)
-            for num in uni_rng:
-                toe_rnd = np.percentile(tkde, num * 100)
-                t = t_pred + (toe - toe_rnd)
-                dint = self.gp.sample_conditional(self.data, t)
-                data_int.append(dint)
+            if tkde is not None:
+                for num in uni_rng:
+                    toe_rnd = np.percentile(tkde, num * 100)
+                    t = t_pred + (toe - toe_rnd)
+                    dint = self.gp.sample_conditional(self.data, t, size=size)
+                    data_int.extend(dint)
+            else:
+                dint = self.gp.sample_conditional(self.data, t_pred, size=size)
+                data_int.extend(dint)
 
         return np.array(data_int)
 
@@ -94,6 +128,8 @@ class Vel_Interpolator:
         data_error,
         t_grid,
         num_live_points=800,
+        disable_mean_fit=False,
+        disable_white_noise_fit=False,
     ):
         self.data = data
         self.data_error = data_error
@@ -144,23 +180,30 @@ class Vel_Interpolator:
 
         return self.sampler
 
-    def predict_from_posterior(self, t_pred, tkde, toe):
+    def predict_from_posterior(self, t_pred, tkde=None, toe=0.0, size=50):
+
+        # This makes sure that data_int.extend() works as intended
+        assert size > 1, "Insufficient size"
+
         data_int = []
 
         # Draw time from toe prior
-        size = 50
         rng = default_rng()
         uni_rng = rng.uniform(size=size)
 
         subsample = np.random.randint(len(self.sampler.results["samples"][:,0]), size=size)
-        print("Predicting velocities...")
+        print("Predicting lightcurves...")
         for s in tqdm(self.sampler.results["samples"][subsample]):
             self.gp.set_parameter_vector(s)
-            for num in uni_rng:
-                toe_rnd = np.percentile(tkde, num * 100)
-                t = t_pred + (toe - toe_rnd)
-                dint = self.gp.sample_conditional(self.data, t)
-                data_int.append(dint)
+            if tkde is not None:
+                for num in uni_rng:
+                    toe_rnd = np.percentile(tkde, num * 100)
+                    t = t_pred + (toe - toe_rnd)
+                    dint = self.gp.sample_conditional(self.data, t, size=size)
+                    data_int.extend(dint)
+            else:
+                dint = self.gp.sample_conditional(self.data, t_pred, size=size)
+                data_int.extend(dint)
 
         return np.array(data_int)
 
@@ -172,6 +215,8 @@ class AE_Interpolator:
         data_error,
         t_grid,
         num_live_points=800,
+        disable_mean_fit=False,
+        disable_white_noise_fit=False,
     ):
         self.data = data
         self.data_error = data_error
@@ -226,11 +271,14 @@ class AE_Interpolator:
 
         return self.sampler
 
-    def predict_from_posterior(self, t_pred, tkde, toe):
+    def predict_from_posterior(self, t_pred, tkde=None, toe=0.0, size=50):
+
+        # This makes sure that data_int.extend() works as intended
+        assert size > 1, "Insufficient size"
+
         data_int = []
 
         # Draw time from toe prior
-        size = 50
         rng = default_rng()
         uni_rng = rng.uniform(size=size)
 
@@ -238,10 +286,14 @@ class AE_Interpolator:
         print("Predicting lightcurves...")
         for s in tqdm(self.sampler.results["samples"][subsample]):
             self.gp.set_parameter_vector(s)
-            for num in uni_rng:
-                toe_rnd = np.percentile(tkde, num * 100)
-                t = t_pred + (toe - toe_rnd)
-                dint = self.gp.sample_conditional(self.data, t)
-                data_int.append(dint)
+            if tkde is not None:
+                for num in uni_rng:
+                    toe_rnd = np.percentile(tkde, num * 100)
+                    t = t_pred + (toe - toe_rnd)
+                    dint = self.gp.sample_conditional(self.data, t, size=size)
+                    data_int.extend(dint)
+            else:
+                dint = self.gp.sample_conditional(self.data, t_pred, size=size)
+                data_int.extend(dint)
 
         return np.array(data_int)

@@ -31,6 +31,11 @@ class EpochDataSet:
         reg_min=20.0,
         reg_max=60.0,
         extrapolate=5.0,
+        size=100,
+        num_live_points=800,
+        disable_mean_fit=False,
+        disable_white_noise_fit=False,
+        ignore_toe_uncertainty=False,
     ):
         """
         Initialize EpochDataSet
@@ -86,7 +91,7 @@ class EpochDataSet:
         self.reg_max = reg_max
         self.extrapolate = extrapolate
 
-        self.toe = np.percentile(tkde, 50.0)
+        self.toe = float(np.percentile(tkde, 50.0))
 
         # Confert dates to restframe
         self.time = (mjd - self.toe) / (1 + red)
@@ -113,6 +118,13 @@ class EpochDataSet:
 
         # results
         self.data_int = None
+
+        # Sampling parameters
+        self.size = size
+        self.num_live_points = num_live_points
+        self.disable_mean_fit = disable_mean_fit
+        self.disable_white_noise_fit = disable_white_noise_fit
+        self.ignore_toe_uncertainty = ignore_toe_uncertainty
 
         return
 
@@ -385,7 +397,6 @@ class EpochDataSet:
         diagnostic=None,
         no_reject=False,
         flux_interp=False,
-        num_live_points=800,
     ):
         """
         Interpolate dataocities using Gaussian Process regression
@@ -455,20 +466,29 @@ class EpochDataSet:
             data_error = self.data_error
 
         if "phot" in target:
-            interpolator = LC_Interpolator(data, data_error, self.time)
-            interpolator.sample_posterior(num_live_points=num_live_points)
+            interpolator = LC_Interpolator(data, data_error, self.time, disable_mean_fit=self.disable_mean_fit, disable_white_noise_fit=self.disable_white_noise_fit)
+            interpolator.sample_posterior(num_live_points=self.num_live_points)
 
-            data_int = interpolator.predict_from_posterior(date, self.tkde, self.toe)
+            if self.ignore_toe_uncertainty:
+                data_int = interpolator.predict_from_posterior(date, tkde=None, toe=self.toe, size=self.size)
+            else:
+                data_int = interpolator.predict_from_posterior(date, tkde=self.tkde, toe=self.toe, size=self.size)
         elif target == "halpha-ae":
-            interpolator = AE_Interpolator(data, data_error, self.time)
-            interpolator.sample_posterior(num_live_points=num_live_points)
+            interpolator = AE_Interpolator(data, data_error, self.time, disable_mean_fit=self.disable_mean_fit, disable_white_noise_fit=self.disable_white_noise_fit)
+            interpolator.sample_posterior(num_live_points=self.num_live_points)
 
-            data_int = interpolator.predict_from_posterior(date, self.tkde, self.toe)
+            if self.ignore_toe_uncertainty:
+                data_int = interpolator.predict_from_posterior(date, tkde=None, toe=self.toe, size=self.size)
+            else:
+                data_int = interpolator.predict_from_posterior(date, tkde=self.tkde, toe=self.toe, size=self.size)
         elif target:
-            interpolator = Vel_Interpolator(data, data_error, self.time)
-            interpolator.sample_posterior(num_live_points=num_live_points)
+            interpolator = Vel_Interpolator(data, data_error, self.time, disable_mean_fit=self.disable_mean_fit, disable_white_noise_fit=self.disable_white_noise_fit)
+            interpolator.sample_posterior(num_live_points=self.num_live_points)
 
-            data_int = interpolator.predict_from_posterior(date, self.tkde, self.toe)
+            if self.ignore_toe_uncertainty:
+                data_int = interpolator.predict_from_posterior(date, tkde=None, toe=self.toe, size=self.size)
+            else:
+                data_int = interpolator.predict_from_posterior(date, tkde=self.tkde, toe=self.toe, size=self.size)
         else:
             raise NotImplementedError("Target has no implemented interpolator")
 
