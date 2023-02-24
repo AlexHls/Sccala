@@ -107,7 +107,7 @@ class LC_Interpolator:
 
         return self.sampler
 
-    def predict_from_posterior(self, t_pred, tkde=None, toe=0.0, size=50):
+    def predict_from_posterior(self, t_pred, tkde=None, toe=0.0, size=1000):
         # This makes sure that data_int.extend() works as intended
         assert size > 1, "Insufficient size"
 
@@ -115,7 +115,7 @@ class LC_Interpolator:
 
         # Draw time from toe prior
         rng = default_rng()
-        uni_rng = rng.uniform(size=size)
+        uni_rng = rng.uniform(size=25)
 
         subsample = np.random.randint(
             len(self.sampler.results["samples"][:, 0]), size=size
@@ -127,10 +127,10 @@ class LC_Interpolator:
                 for num in uni_rng:
                     toe_rnd = np.percentile(tkde, num * 100)
                     t = t_pred + (toe - toe_rnd)
-                    dint = self.gp.sample_conditional(self.data, t, size=size)
+                    dint = self.gp.sample_conditional(self.data, t, size=10)
                     data_int.extend(dint)
             else:
-                dint = self.gp.sample_conditional(self.data, t_pred, size=size)
+                dint = self.gp.sample_conditional(self.data, t_pred, size=10)
                 data_int.extend(dint)
 
         return np.array(data_int)
@@ -233,7 +233,7 @@ class Vel_Interpolator:
         return self.sampler
 
     def predict_from_posterior(
-        self, t_pred, tkde=None, toe=0.0, size=50, no_reject=False
+        self, t_pred, tkde=None, toe=0.0, size=1000, no_reject=False
     ):
         # This makes sure that data_int.append() works as intended
         assert size > 1, "Insufficient size"
@@ -242,7 +242,7 @@ class Vel_Interpolator:
 
         # Draw time from toe prior
         rng = default_rng()
-        uni_rng = rng.uniform(size=size)
+        uni_rng = rng.uniform(size=25)
 
         subsample = np.random.randint(
             len(self.sampler.results["samples"][:, 0]), size=size
@@ -254,14 +254,14 @@ class Vel_Interpolator:
                 for num in uni_rng:
                     toe_rnd = np.percentile(tkde, num * 100)
                     t = t_pred + (toe - toe_rnd)
-                    dint = self.gp.sample_conditional(self.data, t, size=size)
+                    dint = self.gp.sample_conditional(self.data, t, size=10)
                     for d in dint:
                         if any(np.sign(np.diff(d)) == 1) and not no_reject:
                             continue
                         else:
                             data_int.append(d)
             else:
-                dint = self.gp.sample_conditional(self.data, t_pred, size=size)
+                dint = self.gp.sample_conditional(self.data, t_pred, size=10)
                 for d in dint:
                     if any(np.sign(np.diff(d)) == 1) and not no_reject:
                         continue
@@ -375,7 +375,7 @@ class AE_Interpolator:
         return self.sampler
 
     def predict_from_posterior(
-        self, t_pred, tkde=None, toe=0.0, size=50, no_reject=False
+        self, t_pred, tkde=None, toe=0.0, size=1000, no_reject=False
     ):
         # This makes sure that data_int.append() works as intended
         assert size > 1, "Insufficient size"
@@ -384,7 +384,7 @@ class AE_Interpolator:
 
         # Draw time from toe prior
         rng = default_rng()
-        uni_rng = rng.uniform(size=size)
+        uni_rng = rng.uniform(size=25)
 
         subsample = np.random.randint(
             len(self.sampler.results["samples"][:, 0]), size=size
@@ -396,14 +396,14 @@ class AE_Interpolator:
                 for num in uni_rng:
                     toe_rnd = np.percentile(tkde, num * 100)
                     t = t_pred + (toe - toe_rnd)
-                    dint = self.gp.sample_conditional(self.data, t, size=size)
+                    dint = self.gp.sample_conditional(self.data, t, size=10)
                     for d in dint:
                         if any(np.sign(d) < 0.0) and not no_reject:
                             continue
                         else:
                             data_int.append(d)
             else:
-                dint = self.gp.sample_conditional(self.data, t_pred, size=size)
+                dint = self.gp.sample_conditional(self.data, t_pred, size=10)
                 for d in dint:
                     if any(np.sign(d) < 0.0) and not no_reject:
                         continue

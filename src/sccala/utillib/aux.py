@@ -3,8 +3,58 @@ import sys
 from contextlib import contextmanager
 
 import numpy as np
+import scipy.stats as st
+import scipy.optimize as op
 
 from sccala.utillib.const import H_ERG, C_AA, C_LIGHT
+
+
+def prior_tune(l, u):
+    """
+    Function to fune tune inverse gamma function
+    parameters following the example of
+    https://betanalpha.github.io/assets/case_studies/gaussian_processes.html#323_Informative_Prior_Model
+    """
+
+    def tail_delta(y, l, u):
+        a, b = y
+        return (
+            st.invgamma.cdf(l, a, scale=b) - 0.01,
+            1 - st.invgamma.cdf(u, a, scale=b) - 0.01,
+        )
+
+    delta = 1
+    a_0 = (delta * (u + l) / (u - l)) ** 2 + 2
+    b_0 = ((u + l) / 2) * ((delta * (u + l) / (u - l)) ** 2 + 1)
+    log_a_0 = np.log(a_0)
+    log_b_0 = np.log(b_0)
+    y0 = [log_a_0, log_b_0]
+
+    a, b = op.fsolve(tail_delta, y0, args=(l, u))
+    print("a =", a)
+    print("b =", b)
+    assert all(np.isclose(tail_delta((a, b), l, u), [0.0, 0.0])), "Solver failed"
+
+    return a, b
+
+
+def velocity_conversion(x, rest=4861):
+    """Converts wavelength into velocity with relativistic
+    Doppler formula
+
+    Parameters
+    ----------
+    x : float
+        wavelength to convert
+    rest : float
+        restwavelength w.r.t to which to convert
+
+    Returns
+    -------
+    vel : float
+        velocity in m/s
+    """
+    return 299792458 * (rest**2 - x**2) / (rest**2 + x**2)
 
 
 def distmod_kin(z, q0=-0.55, j0=1):

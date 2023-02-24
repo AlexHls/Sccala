@@ -3,29 +3,15 @@ import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.stats as st
 
 import george
 from george import kernels
-import emcee
+from ultranest import ReactiveNestedSampler
+from ultranest.plot import PredictionBand
+from tqdm import tqdm
 
-
-def velocity_conversion(x, rest=4861):
-    """Converts wavelength into velocity with relativistic
-    Doppler formula
-
-    Parameters
-    ----------
-    x : float
-        wavelength to convert
-    rest : float
-        restwavelength w.r.t to which to convert
-
-    Returns
-    -------
-    vel : float
-        velocity in m/s
-    """
-    return 299792458 * (rest**2 - x**2) / (rest**2 + x**2)
+from sccala.utillib.aux import velocity_conversion
 
 
 class LineFit:
@@ -161,6 +147,7 @@ class LineFit:
         self.lines = {
             "halpha-ae": [6250, 6650, 6563, True],
             "hbeta": [4550, 4900, 4861, False],
+            "si-ii": [5900, 6450, 6355, False],
         }
         return
 
@@ -173,8 +160,9 @@ class LineFit:
         ae_feature=False,
         noisefit=True,
         hodlrsolver=True,
-        size=10000,
+        size=1000,
         diagnostic=None,
+        num_live_points=800,
     ):
         """
         Fits a specific line to the spectrum. Lines can either be
@@ -200,10 +188,13 @@ class LineFit:
         hodlrsolver : bool
             Determines if george.HODLRSolver is to be used. Default: True
         size : int
-            Number of flux predictions to be drawn. Default: 10000
+            Number of flux predictions to be drawn. Total number of samples
+            drawn is <size>^2. Default: 100
         diagnostic : str
             Determines if diagnostic plots are to be saved in specified
             directory. Default: False
+        num_live_points : float
+            Number of live points used in sampling routine. Default: 800
 
         Returns
         -------
@@ -235,6 +226,8 @@ class LineFit:
             flux = self.flux[cutting_range]
             if self.error is not None:
                 error = self.error[cutting_range]
+            else:
+                error = None
             try:
                 if wav[np.argmin(flux)] < rest:
                     break
@@ -252,68 +245,91 @@ class LineFit:
         # Length scale of correlations spanning 5 bins
         corr_scale = np.mean(np.diff(wav))
 
+        # Check that all data is defined correctly
+        assert error is not None, "No error found..."
+        assert size > 1, "Size needs to be larger than 1..."
+
         # Define kernels
         if noisefit:
             # Kernel1 for the actual long scale peak/ absorbtion minimum
             kernel1 = np.var(flux) * kernels.ExpSquaredKernel(scale)
             # Kernel2 for the (correlated) noise
-            kernel2 = np.var(flux) * kernels.ExpSquaredKernel(corr_scale)
+            kernel2 = np.var(flux) * kernels.Matern32Kernel(corr_scale)
             kernel = kernel1 + kernel2
         else:
             kernel = np.var(flux) * kernels.ExpSquaredKernel(scale)
+            kernel1 = None
+            kernel2 = None
 
         # Set-up GP
         if hodlrsolver:
-            gp = george.GP(kernel, solver=george.HODLRSolver)
+            solver = george.HODLRSolver
         else:
-            gp = george.GP(kernel)
+            solver = george.BasicSolver
+        gp = george.GP(kernel, solver=solver)
         gp.compute(wav, error)
+        if noisefit:
+            gp_signal = george.GP(kernel1, solver=solver)
+            gp_signal.compute(wav, error)
+            parameters = ["log_var", "l", "log_var_corr", "l_corr"]
+        else:
+            gp_signal = george.GP(kernel, solver=solver)
+            gp_signal.compute(wav, error)
+            parameters = ["log_var", "l"]
 
-        # Emcee sampling
-        def lnprob(p):
-            if noisefit:
-                if p[3] > corr_scale:
-                    return -np.inf
-            gp.set_parameter_vector(p)
-            return gp.log_likelihood(flux, quiet=True) + gp.log_prior()
+        if noisefit:
 
-        initial = gp.get_parameter_vector()
-        ndim, nwalkers = len(initial), 32
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
-        sampler.reset()
+            def prior_transform(cube):
+                params = cube.copy()
+                # Variance prior -> Half Gaussian prior
+                params[0] = np.log(st.halfnorm.ppf(cube[0], scale=1) ** 2)
+                # l prior -> InvGamma prior
+                params[1] = np.log(
+                    st.invgamma.ppf(
+                        cube[1], 2.9385366780066273, scale=207.54330815610572
+                    )
+                    ** 2
+                )
+                # Variance prior -> Half Gaussian prior
+                params[2] = np.log(st.halfnorm.ppf(cube[2], scale=0.1) ** 2)
+                # l prior -> InvGamma prior
+                params[3] = np.log(
+                    st.loguniform.ppf(cube[3], corr_scale, 4 * corr_scale) * 2
+                )
+                return params
 
-        try:
-            print("Running first burn-in...")
-            p0 = initial + 1e-8 * np.random.randn(nwalkers, ndim)
-            p0, lp, _ = sampler.run_mcmc(p0, 400)
+        else:
 
-            print("Running second burn-in...")
-            p0 = p0[np.argmax(lp)] + 1e-8 * np.random.randn(nwalkers, ndim)
-            sampler.reset()
-            p0, _, _ = sampler.run_mcmc(p0, 800)
-            sampler.reset()
+            def prior_transform(cube):
+                params = cube.copy()
+                # Variance prior -> Half Gaussian prior
+                params[0] = np.log(st.halfnorm.ppf(cube[0], scale=1) ** 2)
+                # l prior -> InvGamma prior
+                params[1] = np.log(
+                    st.invgamma.ppf(
+                        cube[1], 2.9385366780066273, scale=207.54330815610572
+                    )
+                    ** 2
+                )
+                return params
 
-            print("Running production...")
-            sampler.run_mcmc(p0, 1000)
-        except ValueError:
-            warnings.warn("ValueError occured, skipping second burn-in...")
-            ndim, nwalkers = len(initial), 32
-            sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
-            print("Running first burn-in...")
-            p0 = initial + 1e-8 * np.random.randn(nwalkers, ndim)
-            p0, _, _ = sampler.run_mcmc(p0, 400)
-            sampler.reset()
-            print("Running production...")
-            sampler.run_mcmc(p0, 1000)
+        def log_likelihood(params):
+            # Update the kernel and compute the lnlikelihood.
+            gp.set_parameter_vector(params)
+            return gp.log_likelihood(flux, quiet=True)
+
+        sampler = ReactiveNestedSampler(parameters, log_likelihood, prior_transform)
+        sampler.run(
+            min_num_live_points=num_live_points, viz_callback=False, show_status=False
+        )
 
         # The positions where the prediction should be computed.
         x = np.linspace(min(wav), max(wav), len(wav) * 10)
 
         # Draw from samples to get peak estimate
-        samples = sampler.flatchain
         minima = []
-        flux_pred = []
-        avg_noise = []
+        fits = []
+        fits_noise = []
         ae_avg = []
         mins = []
         maxs = []
@@ -321,33 +337,46 @@ class LineFit:
         # Minima cutoff from wavelenth minimum
         lowcut = 30
 
+        # Subsamples from which results are drawn
+        subsample = np.random.randint(len(sampler.results["samples"][:, 0]), size=size)
+
         print("Predicting flux...")
         # Mask to ensure only minima in the middle region are selected
         mask = np.logical_and(x > min(wav) + lowcut, x < rest)
         xmin = x[mask]
-        for s in samples[np.random.randint(len(samples), size=size)]:
+        for s in tqdm(sampler.results["samples"][subsample]):
             gp.set_parameter_vector(s)
             if noisefit:
-                mu = gp.predict(flux, x, return_cov=False, kernel=kernel1)
-                mu_noise = gp.predict(flux, wav, return_cov=False, kernel=kernel2)
+                gp_signal.set_parameter_vector(s[:2])
             else:
-                mu = gp.predict(flux, x, return_cov=False, kernel=kernel)
-                mu_noise = np.zeros_like(flux)
+                gp_signal.set_parameter_vector(s)
+
+            fit = gp_signal.sample_conditional(flux, x, size=10)
+            if noisefit:
+                fit_full = gp.sample_conditional(flux, x, size=10)
+                fits_noise.extend(fit_full - fit)
+            else:
+                fits_noise.extend(np.zeros_like(fit))
             try:
-                minind = np.argmin(mu[mask])
+                minind = np.argmin(fit[:, mask], axis=1)
+                if len(minind) == 0:
+                    continue
                 # Calculate absorption to emission line ratio
                 if ae_feature:
-                    mi = np.min(mu[mask])
-                    ma = np.max(mu[np.logical_and(x > min(wav) + lowcut, x < cr_high)])
-                    mins.append(mi)
-                    maxs.append(ma)
+                    mi = np.min(fit[:, mask], axis=1)
+                    ma = np.max(
+                        fit[:, np.logical_and(x > min(wav) + lowcut, x < cr_high)],
+                        axis=1,
+                    )
+                    mins.extend(mi)
+                    maxs.extend(ma)
                     ae = mi / ma
-                    ae_avg.append(ae)
-                minima.append(xmin[minind])
+                    ae_avg.extend(ae)
+                for ind in minind:
+                    minima.append(xmin[ind])
             except ValueError:
                 warnings.warn("ValueError occured during minima detection. Skipping...")
-            flux_pred.append(mu)
-            avg_noise.append(mu_noise)
+            fits.extend(fit)
 
         # Calculate median and sigmas
         median = np.percentile(minima, 50)
@@ -360,8 +389,8 @@ class LineFit:
         min_error_upper = plusonesigma - median
 
         results = {
-            "flux_pred": flux_pred,
-            "avg_noise": avg_noise,
+            "flux_pred": fits,
+            "avg_noise": fits_noise,
             "minima": minima,
             "mins": mins,
             "maxs": maxs,
@@ -476,29 +505,23 @@ class LineFit:
                 capsize=0,
                 label="Data",
                 mec="none",
-                alpha=0.3,
             )
 
-            for ind in range(min([len(flux_pred), 50])):
-                if ind == min([len(flux_pred), 50]) - 1:
-                    ax2.plot(
-                        x, flux_pred[ind], color="#4682b4", label="Flux prediction"
-                    )
-                    ax2.axhline(mins[ind], color="red", label="Absorbtion minima")
-                    ax2.axhline(maxs[ind], color="tab:green", label="Emission maxima")
+            plt.sca(ax=ax2)
+            band = PredictionBand(x)
+            for i in range(len(flux_pred)):
+                band.add(flux_pred[i])
+            for i in range(min([len(flux_pred), 50])):
+                if i == min([len(flux_pred), 50]) - 1:
+                    ax2.axhline(mins[i], color="red", label="Absorbtion minima")
+                    ax2.axhline(maxs[i], color="tab:green", label="Emission maxima")
                 else:
-                    ax2.plot(x, flux_pred[ind], color="#4682b4", alpha=0.1)
-                    ax2.axhline(mins[ind], color="red", alpha=0.1)
-                    ax2.axhline(maxs[ind], color="tab:green", alpha=0.1)
+                    ax2.axhline(mins[i], color="red", alpha=0.1)
+                    ax2.axhline(maxs[i], color="tab:green", alpha=0.1)
+            band.line(color="#4682b4", label="Flux prediction")
+            band.shade(color="#4682b4", alpha=0.3)
+            band.shade(q=0.49, color="#4682b4", alpha=0.2)
 
-            ax2.errorbar(
-                self.wav[cutting_range],
-                self.flux[cutting_range] - np.mean(avg_noise, axis=0),
-                yerr=self.error[cutting_range],
-                fmt=".k",
-                capsize=0,
-                label="Noise subtracted data",
-            )
             ax2.axvline(
                 min(self.wav[cutting_range]) + lowcut, color="k", ls="--", alpha=0.3
             )
@@ -510,12 +533,25 @@ class LineFit:
             ax2.set_xlim([min(x), max(x)])
             ax2.grid(which="major")
 
-            ax3.plot(
-                self.wav[cutting_range],
-                np.mean(avg_noise, axis=0),
-                "k",
-                label="Average Subtracted Noise",
+            velocity, vel_err_lower, vel_err_upper = self.get_results(line)
+            ax2.set_title(
+                "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n a/e: {:.2e} +{:.2e}/ -{:.2e}".format(
+                    median,
+                    min_error_upper,
+                    min_error_lower,
+                    velocity,
+                    vel_err_upper,
+                    vel_err_lower,
+                )
             )
+
+            plt.sca(ax=ax3)
+            band_noise = PredictionBand(x)
+            for i in range(len(avg_noise)):
+                band_noise.add(avg_noise[i])
+            band_noise.line(color="k", label="Average Subtracted Noise")
+            band_noise.shade(color="k", alpha=0.3)
+            band_noise.shade(q=0.49, color="k", alpha=0.2)
             ax3.legend()
             ax3.set_xlabel(r"Wavelength($\AA$)")
             ax3.set_ylabel("Flux (arb. unit)")
@@ -535,7 +571,7 @@ class LineFit:
                 color="red",
                 label=r"1$\sigma$ (68.26%)",
             )
-            ax1.axvline(median, color="red", label="Weighted Median")
+            ax1.axvline(median, color="red", label="Median")
             ax1.set_ylabel("Found minima")
 
             ax1.legend()
@@ -564,20 +600,18 @@ class LineFit:
                 capsize=0,
                 label="Data",
                 mec="none",
-                alpha=0.3,
             )
 
+            plt.sca(ax=ax2)
+            band = PredictionBand(x)
+            for i in range(len(flux_pred)):
+                band.add(flux_pred[i])
             for ind in range(min([len(flux_pred), 50])):
-                ax2.plot(x, flux_pred[ind], color="#4682b4", alpha=0.1)
                 ax2.axvline(minima[ind], color="red", alpha=0.1)
-            ax2.errorbar(
-                self.wav[cutting_range],
-                self.flux[cutting_range] - np.mean(avg_noise, axis=0),
-                yerr=self.error[cutting_range],
-                fmt=".k",
-                capsize=0,
-                label="Denoised",
-            )
+            band.line(color="#4682b4", label="Flux prediction")
+            band.shade(color="#4682b4", alpha=0.3)
+            band.shade(q=0.49, color="#4682b4", alpha=0.2)
+
             ax2.axvline(min(self.wav) + lowcut, color="k", ls="--", alpha=0.3)
             ax2.axvline(4861, color="k", ls="--", alpha=0.3)
             ax2.set_xlabel(r"Wavelength ($\AA$)")
@@ -588,36 +622,24 @@ class LineFit:
 
             velocity, vel_err_lower, vel_err_upper = self.get_results(line)
 
-            if ae_feature:
-                ax2.set_title(
-                    "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n a/e: {:.2e} +{:.2e}/ -{:.2e}".format(
-                        median,
-                        min_error_upper,
-                        min_error_lower,
-                        velocity,
-                        vel_err_upper,
-                        vel_err_lower,
-                    )
+            ax2.set_title(
+                "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n Velocity: {:.2f} +{:.2f}/ -{:.2f} km/s".format(
+                    median,
+                    min_error_upper,
+                    min_error_lower,
+                    velocity / 1000,
+                    vel_err_upper / 1000,
+                    vel_err_lower / 1000,
                 )
-            else:
-                ax2.set_title(
-                    "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n Velocity: {:.2f} +{:.2f}/ -{:.2f} km/s".format(
-                        median,
-                        min_error_upper,
-                        min_error_lower,
-                        velocity / 1000,
-                        vel_err_upper / 1000,
-                        vel_err_lower / 1000,
-                    )
-                )
-
-            ax3 = plt.subplot(133)
-            ax3.plot(
-                self.wav[cutting_range],
-                np.mean(avg_noise, axis=0),
-                "k",
-                label="Average Subtracted Noise",
             )
+
+            plt.sca(ax=ax3)
+            band_noise = PredictionBand(x)
+            for i in range(len(avg_noise)):
+                band_noise.add(avg_noise[i])
+            band_noise.line(color="k", label="Average Subtracted Noise")
+            band_noise.shade(color="k", alpha=0.3)
+            band_noise.shade(q=0.49, color="k", alpha=0.2)
             ax3.legend()
             ax3.set_xlabel(r"Wavelength($\AA$)")
             ax3.set_ylabel("Flux (arb. unit)")

@@ -137,8 +137,8 @@ def cli():
         "-s",
         "--sample_size",
         help="Number of samples drawn from posterior during sample prediction."
-        " Total number of samples is <size>^3.",
-        default=50,
+        " Default: 1000",
+        default=1000,
         type=int,
     )
     parser.add_argument(
