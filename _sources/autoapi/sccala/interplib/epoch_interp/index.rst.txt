@@ -17,7 +17,7 @@ Classes
 
 
 
-.. py:class:: EpochDataSet(data, data_error, tkde, red, mjd, snname='', errorfloor=0.0, errorscale=1.0, reg_min=20.0, reg_max=60.0, extrapolate=5.0)
+.. py:class:: EpochDataSet(data, data_error, tkde, red, mjd, snname='', errorfloor=0.0, errorscale=1.0, reg_min=20.0, reg_max=60.0, extrapolate=5.0, size=50, num_live_points=800, disable_mean_fit=False, disable_white_noise_fit=False, ignore_toe_uncertainty=False)
 
    Class wrapping data time series and providing
    interpolation functionality

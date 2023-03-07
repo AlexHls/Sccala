@@ -1,0 +1,66 @@
+:py:mod:`sccala.interplib.interpolators`
+========================================
+
+.. py:module:: sccala.interplib.interpolators
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   sccala.interplib.interpolators.LC_Interpolator
+   sccala.interplib.interpolators.Vel_Interpolator
+   sccala.interplib.interpolators.AE_Interpolator
+
+
+
+
+.. py:class:: LC_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=False, disable_white_noise_fit=False)
+
+   .. py:method:: log_likelihood(params)
+
+
+   .. py:method:: prior_transform(cube)
+
+
+   .. py:method:: sample_posterior(num_live_points=800)
+
+
+   .. py:method:: predict_from_posterior(t_pred, tkde=None, toe=0.0, size=1000)
+
+
+
+.. py:class:: Vel_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=True, disable_white_noise_fit=True)
+
+   .. py:method:: log_likelihood(params)
+
+
+   .. py:method:: prior_transform(cube)
+
+
+   .. py:method:: sample_posterior(num_live_points=800)
+
+
+   .. py:method:: predict_from_posterior(t_pred, tkde=None, toe=0.0, size=1000, no_reject=False)
+
+
+
+.. py:class:: AE_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=True, disable_white_noise_fit=True)
+
+   .. py:method:: log_likelihood(params)
+
+
+   .. py:method:: prior_transform(cube)
+
+
+   .. py:method:: sample_posterior(num_live_points=800)
+
+
+   .. py:method:: predict_from_posterior(t_pred, tkde=None, toe=0.0, size=1000, no_reject=False)
+
+
+

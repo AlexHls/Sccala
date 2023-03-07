@@ -106,6 +106,12 @@
 <h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.utillib.aux.prior_tune" title="sccala.utillib.aux.prior_tune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prior_tune</span></code></a>(l, u)</p></td>
+<td><p>Function to fune tune inverse gamma function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#sccala.utillib.aux.velocity_conversion" title="sccala.utillib.aux.velocity_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">velocity_conversion</span></code></a>(x[, rest])</p></td>
+<td><p>Converts wavelength into velocity with relativistic</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#sccala.utillib.aux.distmod_kin" title="sccala.utillib.aux.distmod_kin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distmod_kin</span></code></a>(z[, q0, j0])</p></td>
 <td><p></p></td>
 </tr>
@@ -126,6 +132,37 @@
 </tr>
 </tbody>
 </table>
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.utillib.aux.prior_tune">
+<span class="sig-prename descclassname"><span class="pre">sccala.utillib.aux.</span></span><span class="sig-name descname"><span class="pre">prior_tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.utillib.aux.prior_tune" title="Permalink to this definition"></a></dt>
+<dd><p>Function to fune tune inverse gamma function
+parameters following the example of
+<a class="reference external" href="https://betanalpha.github.io/assets/case_studies/gaussian_processes.html#323_Informative_Prior_Model">https://betanalpha.github.io/assets/case_studies/gaussian_processes.html#323_Informative_Prior_Model</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.utillib.aux.velocity_conversion">
+<span class="sig-prename descclassname"><span class="pre">sccala.utillib.aux.</span></span><span class="sig-name descname"><span class="pre">velocity_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4861</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.utillib.aux.velocity_conversion" title="Permalink to this definition"></a></dt>
+<dd><p>Converts wavelength into velocity with relativistic
+Doppler formula</p>
+<section id="parameters">
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>x<span class="classifier">float</span></dt><dd><p>wavelength to convert</p>
+</dd>
+<dt>rest<span class="classifier">float</span></dt><dd><p>restwavelength w.r.t to which to convert</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>vel<span class="classifier">float</span></dt><dd><p>velocity in m/s</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="sccala.utillib.aux.distmod_kin">
 <span class="sig-prename descclassname"><span class="pre">sccala.utillib.aux.</span></span><span class="sig-name descname"><span class="pre">distmod_kin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-0.55</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.utillib.aux.distmod_kin" title="Permalink to this definition"></a></dt>
@@ -152,8 +189,8 @@ x : array_like[nsamples,]</p>
 <dt>weights<span class="classifier">Optional[array_like[nsamples,]]</span></dt><dd><p>An optional weight corresponding to each sample. These</p>
 </dd>
 </dl>
-<section id="returns">
-<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h4>
+<section id="id1">
+<h4>Returns<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h4>
 <dl class="simple">
 <dt>quantiles<span class="classifier">array_like[nquantiles,]</span></dt><dd><p>The sample quantiles computed at <code class="docutils literal notranslate"><span class="pre">q</span></code>.</p>
 </dd>

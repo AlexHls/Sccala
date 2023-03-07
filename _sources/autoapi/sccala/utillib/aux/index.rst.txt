@@ -13,6 +13,8 @@ Functions
 
 .. autoapisummary::
 
+   sccala.utillib.aux.prior_tune
+   sccala.utillib.aux.velocity_conversion
    sccala.utillib.aux.distmod_kin
    sccala.utillib.aux.quantile
    sccala.utillib.aux.convert_to_flux
@@ -20,6 +22,31 @@ Functions
    sccala.utillib.aux.nullify_output
    sccala.utillib.aux.split_list
 
+
+
+.. py:function:: prior_tune(l, u)
+
+   Function to fune tune inverse gamma function
+   parameters following the example of
+   https://betanalpha.github.io/assets/case_studies/gaussian_processes.html#323_Informative_Prior_Model
+
+
+.. py:function:: velocity_conversion(x, rest=4861)
+
+   Converts wavelength into velocity with relativistic
+   Doppler formula
+
+   Parameters
+   ----------
+   x : float
+       wavelength to convert
+   rest : float
+       restwavelength w.r.t to which to convert
+
+   Returns
+   -------
+   vel : float
+       velocity in m/s
 
 
 .. py:function:: distmod_kin(z, q0=-0.55, j0=1)

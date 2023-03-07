@@ -16,32 +16,6 @@ Classes
 
 
 
-Functions
-~~~~~~~~~
-
-.. autoapisummary::
-
-   sccala.speclib.linefit.velocity_conversion
-
-
-
-.. py:function:: velocity_conversion(x, rest=4861)
-
-   Converts wavelength into velocity with relativistic
-   Doppler formula
-
-   Parameters
-   ----------
-   x : float
-       wavelength to convert
-   rest : float
-       restwavelength w.r.t to which to convert
-
-   Returns
-   -------
-   vel : float
-       velocity in m/s
-
 
 .. py:class:: LineFit(wav, flux, error, numcode=100)
 
@@ -93,7 +67,7 @@ Functions
       been overwritten
 
 
-   .. py:method:: fit_line(line, cr_low=None, cr_high=None, rest=None, ae_feature=False, noisefit=True, hodlrsolver=True, size=10000, diagnostic=None)
+   .. py:method:: fit_line(line, cr_low=None, cr_high=None, rest=None, ae_feature=False, noisefit=True, hodlrsolver=True, size=1000, diagnostic=None, num_live_points=800)
 
       Fits a specific line to the spectrum. Lines can either be
       choosen from the predefined set or specified manually
@@ -118,10 +92,13 @@ Functions
       hodlrsolver : bool
           Determines if george.HODLRSolver is to be used. Default: True
       size : int
-          Number of flux predictions to be drawn. Default: 10000
+          Number of flux predictions to be drawn. Total number of samples
+          drawn is <size>^2. Default: 100
       diagnostic : str
           Determines if diagnostic plots are to be saved in specified
           directory. Default: False
+      num_live_points : float
+          Number of live points used in sampling routine. Default: 800
 
       Returns
       -------
