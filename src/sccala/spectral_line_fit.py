@@ -102,22 +102,23 @@ def main(args):
                 "'noisefit' should be 'True' or 'False', but it is %s" % noisefit[i]
             )
 
-        try:
-            print("ID: %s" % str(sid))
-            print("Noisefit: ", nf)
-            print("HODLR solver: ", hodlrsolver)
-            fit.fit_line(
-                line[i],
-                noisefit=nf,
-                diagnostic=diag_path,
-                size=10000,
-                hodlrsolver=hodlrsolver,
-            )
-        except ValueError as e:
-            warnings.warn(
-                "Encountered error '%s' for ID %s, skipping..." % (str(e), str(sid))
-            )
-            continue
+        # try:
+        print("ID: %s" % str(sid))
+        print("Noisefit: ", nf)
+        print("HODLR solver: ", hodlrsolver)
+        fit.fit_line(
+            line[i],
+            noisefit=nf,
+            diagnostic=diag_path,
+            size=args.sample_size,
+            hodlrsolver=hodlrsolver,
+            num_live_points=args.num_live_points,
+        )
+        # except ValueError as e:
+        #    warnings.warn(
+        #        "Encountered error '%s' for ID %s, skipping..." % (str(e), str(sid))
+        #    )
+        #    continue
 
         peak_loc, peak_error_lower, peak_error_upper = fit.get_results(line[i])
 
@@ -163,6 +164,21 @@ def cli():
         help="Path to list with spectra and lines to be fitted",
     )
 
+    parser.add_argument(
+        "-s",
+        "--sample_size",
+        help="Number of samples drawn from posterior during sample prediction."
+        " Default: 1000",
+        default=1000,
+        type=int,
+    )
+    parser.add_argument(
+        "-n",
+        "--num_live_points",
+        help="Number of live points used during hyperparameter optimization",
+        default=800,
+        type=int,
+    )
     parser.add_argument(
         "--cr_low",
         help="Changes the lower boundary of the lines to be fitted",

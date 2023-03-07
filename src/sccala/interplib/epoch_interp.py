@@ -2,13 +2,13 @@ import os
 import warnings
 
 import numpy as np
-from numpy.random import default_rng
 import matplotlib.pyplot as plt
 
-import emcee
-import george
-from george import kernels
-
+from sccala.interplib.interpolators import (
+    LC_Interpolator,
+    Vel_Interpolator,
+    AE_Interpolator,
+)
 from sccala.utillib.aux import convert_to_flux, convert_to_mag
 
 
@@ -31,6 +31,11 @@ class EpochDataSet:
         reg_min=20.0,
         reg_max=60.0,
         extrapolate=5.0,
+        size=50,
+        num_live_points=800,
+        disable_mean_fit=False,
+        disable_white_noise_fit=False,
+        ignore_toe_uncertainty=False,
     ):
         """
         Initialize EpochDataSet
@@ -86,7 +91,7 @@ class EpochDataSet:
         self.reg_max = reg_max
         self.extrapolate = extrapolate
 
-        self.toe = np.percentile(tkde, 50.0)
+        self.toe = float(np.percentile(tkde, 50.0))
 
         # Confert dates to restframe
         self.time = (mjd - self.toe) / (1 + red)
@@ -112,13 +117,18 @@ class EpochDataSet:
         self.mjd = self.mjd[mask]
 
         # results
-        self.data_pred = None
         self.data_int = None
+
+        # Sampling parameters
+        self.size = size
+        self.num_live_points = num_live_points
+        self.disable_mean_fit = disable_mean_fit
+        self.disable_white_noise_fit = disable_white_noise_fit
+        self.ignore_toe_uncertainty = ignore_toe_uncertainty
 
         return
 
     def get_results(self):
-
         if self.data_int is None:
             raise ValueError("No interpolated values found")
 
@@ -237,8 +247,21 @@ class EpochDataSet:
                 label="{:.1f} days".format(self.dates[plotind]),
             )
 
-            for v in self.data_pred[:100]:
-                ax2.plot(self.x_pred, np.array(v) / conv, color="k", alpha=0.05)
+            ax2.plot(self.dates, self.median / conv, color="k", label="Prediction")
+            ax2.fill_between(
+                self.dates,
+                self.minusonesigma / conv,
+                self.plusonesigma / conv,
+                color="k",
+                alpha=0.3,
+            )
+            ax2.fill_between(
+                self.dates,
+                self.minustwosigma / conv,
+                self.plustwosigma / conv,
+                color="k",
+                alpha=0.1,
+            )
 
             # Plot flux
             if flux_interp:
@@ -266,13 +289,26 @@ class EpochDataSet:
                     label="{:.1f} days".format(self.dates[plotind]),
                 )
 
-                for v in self.data_pred[:100]:
-                    ax3.plot(
-                        self.x_pred,
-                        convert_to_flux(np.array(v)) / conv,
-                        color="k",
-                        alpha=0.05,
-                    )
+                ax3.plot(
+                    self.dates,
+                    convert_to_flux(self.median) / conv,
+                    color="k",
+                    label="Prediction",
+                )
+                ax3.fill_between(
+                    self.dates,
+                    convert_to_flux(self.minusonesigma) / conv,
+                    convert_to_flux(self.plusonesigma) / conv,
+                    color="k",
+                    alpha=0.3,
+                )
+                ax3.fill_between(
+                    self.dates,
+                    convert_to_flux(self.minustwosigma) / conv,
+                    convert_to_flux(self.plustwosigma) / conv,
+                    color="k",
+                    alpha=0.1,
+                )
 
         ax2.errorbar(
             x=self.time,
@@ -429,95 +465,65 @@ class EpochDataSet:
             data = self.data
             data_error = self.data_error
 
-        if target == "halpha-ae":
-            kernel = np.var(data) * kernels.PolynomialKernel(
-                log_sigma2=np.var(data), order=3
+        if "phot" in target:
+            interpolator = LC_Interpolator(
+                data,
+                data_error,
+                self.time,
+                disable_mean_fit=self.disable_mean_fit,
+                disable_white_noise_fit=self.disable_white_noise_fit,
             )
+            interpolator.sample_posterior(num_live_points=self.num_live_points)
+
+            if self.ignore_toe_uncertainty:
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=None, toe=self.toe, size=self.size
+                )
+            else:
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=self.tkde, toe=self.toe, size=self.size
+                )
+        elif target == "halpha-ae":
+            interpolator = AE_Interpolator(
+                data,
+                data_error,
+                self.time,
+                disable_mean_fit=self.disable_mean_fit,
+                disable_white_noise_fit=self.disable_white_noise_fit,
+            )
+            interpolator.sample_posterior(num_live_points=self.num_live_points)
+
+            if self.ignore_toe_uncertainty:
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=None, toe=self.toe, size=self.size
+                )
+            else:
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=self.tkde, toe=self.toe, size=self.size
+                )
+        elif target:
+            interpolator = Vel_Interpolator(
+                data,
+                data_error,
+                self.time,
+                disable_mean_fit=self.disable_mean_fit,
+                disable_white_noise_fit=self.disable_white_noise_fit,
+            )
+            interpolator.sample_posterior(num_live_points=self.num_live_points)
+
+            if self.ignore_toe_uncertainty:
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=None, toe=self.toe, size=self.size
+                )
+            else:
+                data_int = interpolator.predict_from_posterior(
+                    date, tkde=self.tkde, toe=self.toe, size=self.size
+                )
         else:
-            kernel = np.var(data) * kernels.ExpSquaredKernel(1000)
+            raise NotImplementedError("Target has no implemented interpolator")
 
-        model = george.GP(
-            kernel=kernel,
-        )
-
-        try:
-            model.compute(self.time, data_error)
-        except np.linalg.LinAlgError:
-            warnings.warn("LinAlgError occured, modifying data_error...")
-            model.compute(self.time, data_error * 2)
-
-        # Emcee sampling
-        def lnprob(p):
-            model.set_parameter_vector(p)
-            return model.log_likelihood(self.data, quiet=True) + model.log_prior()
-
-        initial = model.get_parameter_vector()
-        ndim, nwalkers = len(initial), 32
-        sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
-
-        try:
-            print("Running first burn-in...")
-            p0 = initial + 1e-8 * np.random.randn(nwalkers, ndim)
-            p0, lp, _ = sampler.run_mcmc(p0, 400)
-
-            print("Running second burn-in...")
-            p0 = p0[np.argmax(lp)] + 1e-8 * np.random.randn(nwalkers, ndim)
-            sampler.reset()
-            p0, _, _ = sampler.run_mcmc(p0, 400)
-
-            print("Running production...")
-            sampler.run_mcmc(p0, 800)
-        except ValueError:
-            warnings.warn("ValueError occured, skipping second burn-in...")
-            ndim, nwalkers = len(initial), 32
-            sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
-            print("Running first burn-in...")
-            p0 = initial + 1e-8 * np.random.randn(nwalkers, ndim)
-            p0, _, _ = sampler.run_mcmc(p0, 400)
-            sampler.reset()
-            print("Running production...")
-            sampler.run_mcmc(p0, 800)
-
-        x_pred = np.linspace(min(date), max([max(date), 45, max(self.time)]), 100)
-        self.x_pred = x_pred
-
-        samples = sampler.flatchain
-
-        # Draw time from toe prior
-        size = 125
-        rng = default_rng()
-        uni_rng = rng.uniform(size=size)
-
-        data_int = []
-        data_pred = []
-        for s in samples[np.random.randint(len(samples), size=size)]:
-            model.set_parameter_vector(s)
-            d = model.predict(data, x_pred, return_cov=False)
-
-            # Rule to skip "0-fits"
-            if np.mean(d) < 1 and target != "halpha-ae" and "phot" not in target:
-                continue
-            # Reject curve if values increase
-            if (
-                any(np.sign(np.diff(d)) == 1)
-                and target != "halpha-ae"
-                and "phot" not in target
-                and not no_reject
-            ):
-                continue
-            # Reject negative a/e
-            if any(np.sign(d) < 0.0) and target == "halpha-ae":
-                continue
-
-            data_pred.append(d)
-            for num in uni_rng:
-                toe_rnd = np.percentile(self.tkde, num * 100)
-                t = date + (self.toe - toe_rnd)
-                dint = model.predict(data, t, return_cov=False)
-                data_int.append(dint)
-
-            # If no matching curves are found, start excluding data
-            # until interpolation is successful
+        # If no matching curves are found, start excluding data
+        # until interpolation is successful
         if len(data_int) <= 3:
             warnings.warn("No valid parameters found, excluding datapoints...")
             self.reg_min = self.time[0] + 0.1
@@ -533,13 +539,11 @@ class EpochDataSet:
                 flux_interp=flux_interp,
             )
 
-        # Convert data back before exporting/ saving
         if flux_interp:
             self.data_int = convert_to_mag(np.array(data_int))
-            self.data_pred = convert_to_mag(np.array(data_pred))
         else:
             self.data_int = np.array(data_int)
-            self.data_pred = np.array(data_pred)
+
         self.get_results()
 
         if diagnostic:

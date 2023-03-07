@@ -19,6 +19,13 @@ def main(args):
     flux_interp = args.fluxinterp
     no_overwrite = args.nooverwrite
 
+    # Sampling parameter
+    size = args.sample_size
+    num_live_points = args.num_live_points
+    disable_mean_fit = args.disable_mean_fit
+    disable_white_noise_fit = args.disable_white_noise_fit
+    ignore_toe_uncertainty = args.ignore_toe_uncertainty
+
     if not isinstance(bands, list):
         bands = [bands]
 
@@ -100,6 +107,11 @@ def main(args):
             reg_min=reg_min,
             reg_max=reg_max,
             extrapolate=extrapolate,
+            size=size,
+            num_live_points=num_live_points,
+            disable_mean_fit=disable_mean_fit,
+            disable_white_noise_fit=disable_white_noise_fit,
+            ignore_toe_uncertainty=ignore_toe_uncertainty,
         )
 
         mag_int, mag_int_error_lower, mag_int_error_upper, dates = mag_set.data_interp(
@@ -152,7 +164,37 @@ def cli():
     )
     parser.add_argument("bands", nargs="+", help="Photometric band(s) to be fit")
     parser.add_argument(
-        "-r", "--rules", help="File containing velocity interpolation rules"
+        "-s",
+        "--sample_size",
+        help="Number of samples drawn from posterior during sample prediction."
+        " Total number of samples is <size>^3.",
+        default=50,
+        type=int,
+    )
+    parser.add_argument(
+        "-n",
+        "--num_live_points",
+        help="Number of live points used during hyperparameter optimization",
+        default=800,
+        type=int,
+    )
+    parser.add_argument(
+        "-r", "--rules", help="File containing photometry interpolation rules"
+    )
+    parser.add_argument(
+        "--disable_mean_fit",
+        help="Disables mean fit in Gaussian Process",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--disable_white_noise_fit",
+        help="Disables white noise fit in Gaussian Process",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--ignore_toe_uncertainty",
+        help="Ignores ToE uncertainty during sample prediction",
+        action="store_true",
     )
     parser.add_argument(
         "-f",

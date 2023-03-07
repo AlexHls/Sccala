@@ -18,6 +18,13 @@ def main(args):
     no_reject = args.noreject
     no_overwrite = args.nooverwrite
 
+    # Sampling parameter
+    size = args.sample_size
+    num_live_points = args.num_live_points
+    disable_mean_fit = not args.enable_mean_fit
+    disable_white_noise_fit = not args.enable_white_noise_fit
+    ignore_toe_uncertainty = args.ignore_toe_uncertainty
+
     diag_path = os.path.join(pa.get_diag_path(), snname)
     if not os.path.exists(diag_path):
         os.makedirs(diag_path)
@@ -71,6 +78,11 @@ def main(args):
         reg_min=reg_min,
         reg_max=reg_max,
         extrapolate=extrapolate,
+        size=size,
+        num_live_points=num_live_points,
+        disable_mean_fit=disable_mean_fit,
+        disable_white_noise_fit=disable_white_noise_fit,
+        ignore_toe_uncertainty=ignore_toe_uncertainty,
     )
 
     vel_int, vel_int_error_lower, vel_int_error_upper, dates = vel_set.data_interp(
@@ -122,10 +134,39 @@ def cli():
         help="Line velocity to be fit",
     )
     parser.add_argument(
-        "-r", "--rules", help="File containing velocity interpolation rules"
+        "-s",
+        "--sample_size",
+        help="Number of samples drawn from posterior during sample prediction."
+        " Default: 1000",
+        default=1000,
+        type=int,
     )
     parser.add_argument(
         "-n",
+        "--num_live_points",
+        help="Number of live points used during hyperparameter optimization",
+        default=800,
+        type=int,
+    )
+    parser.add_argument(
+        "-r", "--rules", help="File containing velocity interpolation rules"
+    )
+    parser.add_argument(
+        "--enable_mean_fit",
+        help="Enables mean fit in Gaussian Process",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--enable_white_noise_fit",
+        help="Enables white noise fit in Gaussian Process",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--ignore_toe_uncertainty",
+        help="Ignores ToE uncertainty during sample prediction",
+        action="store_true",
+    )
+    parser.add_argument(
         "--noreject",
         action="store_true",
         help="When flag is passed, increasing values in the velocity fit will not be rejected.",
