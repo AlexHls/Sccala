@@ -25,6 +25,25 @@ def calculate_vega_zp(filter):
     )
 
 
+def calculate_lambda_eff(spec_wav, spec_flux, filter):
+    """
+    Calculate effective wavelength from spectral flux.
+
+    :param spec_wav: np.array of floats
+        wavelength values of spectrum
+    :param spec_flux: np.array of floats
+        spectral flux
+    :param filter: BaseFilter
+        filter object on which the magnitude is to be calculated
+    """
+
+    lambda_eff = integrate.simpson(
+        spec_flux * filter.interpolate(spec_wav) * spec_wav**2, spec_wav
+    ) / integrate.simpson(spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav)
+
+    return lambda_eff
+
+
 def calculate_vega_magnitude(
     spec_wav, spec_flux, filter, spec_err=None, error_method="analytic", error_n=100
 ):
@@ -144,6 +163,10 @@ class BaseFilterCurve(object):
         __doc__ = calculate_vega_magnitude.__doc__
         return calculate_vega_magnitude(spec_wav, spec_flux, self, spec_err=spec_err)
 
+    def calculate_lambda_eff(self, spec_wav, spec_flux):
+        __doc__ = calculate_lambda_eff.__doc__
+        return calculate_lambda_eff(spec_wav, spec_flux, self)
+
 
 class FilterCurve(BaseFilterCurve):
     def __repr__(self):
@@ -207,6 +230,11 @@ class FilterSet(object):
                 ]
             ).T
             return mags, mags_err
+
+    def calculate_lambda_effs(self, spec_wav, spec_flux):
+        return [
+            item.calculate_lambda_eff(spec_wav, spec_flux) for item in self.filter_set
+        ]
 
 
 class MagnitudeSet(FilterSet):
