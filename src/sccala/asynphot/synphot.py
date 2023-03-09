@@ -232,9 +232,9 @@ class FilterSet(object):
             return mags, mags_err
 
     def calculate_lambda_effs(self, spec_wav, spec_flux):
-        return [
-            item.calculate_lambda_eff(spec_wav, spec_flux) for item in self.filter_set
-        ]
+        return np.array(
+            [item.calculate_lambda_eff(spec_wav, spec_flux) for item in self.filter_set]
+        )
 
 
 class MagnitudeSet(FilterSet):

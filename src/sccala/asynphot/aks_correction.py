@@ -4,20 +4,17 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from scipy import integrate
 from scipy import interpolate
-import scipy.optimize as op
 import matplotlib.pyplot as plt
+import matplotlib
 
 from dust_extinction.parameter_averages import F19
 from specutils import Spectrum1D
 from astropy import units as u
-import george
-from george import kernels
 
 from sccala.interplib import interpolators as it
 import sccala.asynphot.synphot as base
-from sccala.utillib.const import C_AA, H_ERG
+from sccala.libio import get_paths as pa
 
 
 # Get SN metadata
@@ -56,17 +53,19 @@ def get_sn_phot(photometry_file):
 
 
 # Get SN spectra
-def get_sn_spectra(snname, modelpath="Models", check_spectra=True, rej_100=True):
+def get_sn_spectra(
+    snname, delimiter=",", modelpath="Models", check_spectra=True, rej_100=True
+):
     info = pd.read_csv(os.path.join(modelpath, snname, snname + "_info.csv"))
     model = info["File"].to_list()
-    for i in range(len(Model)):
+    for i in range(len(model)):
         model[i] = os.path.join("Models", str(snname), model[i])
     epoch_mod = info["JD"].to_numpy() - 2400000.5 - info["MJD_Explosion"].to_numpy()
     # Exclude spectra with insufficient wavelength coverage
     if check_spectra:
         mask = []
         for i, mod in enumerate(model):
-            data = np.genfromtxt(mod, delimiter="  ").T
+            data = np.genfromtxt(mod, delimiter=delimiter).T
             if max(data[0]) < 9200 or min(data[0]) > 4700:
                 mask.append(i)
         model = np.delete(model, mask)
@@ -188,7 +187,7 @@ def warp_spectrum(offset, lambda_effs, wav, flux, filters, kind="linear"):
     return mags_warp, flux_warp
 
 
-def main(
+def aks_correction(
     snname,
     photometry_file,
     filter_in,
@@ -196,14 +195,19 @@ def main(
     epoch_region=None,
     lsb=[0, 0],
     maxiter=10,
+    save_plots=True,
+    save_results=True,
+    delimiter=",",
+    disable_mean_fit=False,
 ):
+    matplotlib.use("TkAgg")
     # SN data
     a_v, z_hel, mjd_explo = get_sn_info(snname)
 
     # SN photometry
     phot_data = get_sn_phot(photometry_file=photometry_file)
 
-    model, epoch_mod = get_sn_spectra(snname)
+    model, epoch_mod = get_sn_spectra(snname, delimiter=delimiter)
 
     # Update mjd to time after explosion
     phot_data["mjd"] -= mjd_explo
@@ -211,9 +215,9 @@ def main(
     # Drop data that is outside the epoch region
     if epoch_region:
         inds = phot_data[
-            ((phot_data.mjd > min(epoch_region)) | (phot_data.mjd < max(epoch_region)))
-        ]
-        phot_data.drop(inds)
+            ((phot_data.mjd < min(epoch_region)) | (phot_data.mjd > max(epoch_region)))
+        ].index
+        phot_data = phot_data.drop(inds)
 
     # Select spectral epochs that are covered by photometry
     ep_mask = np.logical_and(
@@ -236,7 +240,7 @@ def main(
     # Make sure that only observed bands are on input filters
     for i, f in enumerate(filters_in):
         _, _, filter_name = re.split("/|\.", f.filter_id)
-        if filter_name not in bands:
+        if filter_name not in bands_obs:
             filter_in.remove(filter_name)
             warnings.warn(
                 "Could not find %s in observed photometry. This might"
@@ -254,23 +258,25 @@ def main(
     for band in bands:
         m = phot_data.mag[band].to_numpy()
         em = phot_data.emag[band].to_numpy()
-        time = phot_data.mjd[band].to_numpy()
+        time = phot_data.mjd.to_numpy()
 
         # Remove potential NaN values
         # Assumes that if a magnitude is missing, the rest is
         # missing as well and vice versa.
-        m = m[~np.isnan(m)]
         em = em[~np.isnan(m)]
         time = time[~np.isnan(m)]
+        m = m[~np.isnan(m)]
 
-        mag[band], emag[band], mjd[band] = mag_interp(time, m, em, epoch_mod)
+        mag[band], emag[band], mjd[band] = mag_interp(
+            time, m, em, epoch_mod, visualize=False
+        )
 
     ### Calibrate spectra ###
     wav_mod_warped = []
     flux_mod_warped = []
     for i in range(len(model)):
         # Load spectrum
-        wav_mod, flux_mod = np.genfromtxt(model[i]).T
+        wav_mod, flux_mod = np.genfromtxt(model[i], delimiter=delimiter).T
 
         # Remove IR part
         mask = np.logical_and(wav_mod < 16000, wav_mod > 1500)
@@ -289,13 +295,13 @@ def main(
         # Extend spectra to prevent interpolation problems
         wav_blank_low = np.arange(1500, min(wav_mod))
         wav_blank_upper = np.arange(max(wav_mod), 16000)
-        wav_mod = np.concatenate((wav_blank_low, wav_mod, wav_blank_upper), axis=None)
+        #        wav_mod = np.concatenate((wav_blank_low, wav_mod, wav_blank_upper), axis=None)
 
-        flux_blank_low = np.zeros_like(wav_blank_low)
-        flux_blank_upper = np.zeros_like(wav_blank_upper)
-        flux_mod = np.concatenate(
-            (flux_blank_low, flux_mod, flux_blank_upper), axis=None
-        )
+        flux_blank_low = np.zeros_like(wav_blank_low) + 1e-10 * flux_mod[0]
+        flux_blank_upper = np.zeros_like(wav_blank_upper) + 1e-10 * flux_mod[-1]
+        #        flux_mod = np.concatenate(
+        #            (flux_blank_low, flux_mod, flux_blank_upper), axis=None
+        #        )
 
         # Put the rest frame model into the observed frame
         wav_mod_obs = wav_mod * (1 + z_hel)
@@ -315,9 +321,11 @@ def main(
         else:
             filter_ind = np.argmin(np.abs(lambda_effs - 5455))
 
-        m_v = filter_in[filter_ind].calculate_vega_magnitude(wav_mod_obs, flux_mod_obs)
+        m_v = filters_in.calculate_vega_magnitudes(wav_mod_obs, flux_mod_obs)[
+            filter_ind
+        ]
 
-        coeff_norm = (10 ** (-0.4 * mag[filter_ind][i])) / (10 ** (-0.4 * m_v))
+        coeff_norm = (10 ** (-0.4 * mag[bands[filter_ind]][i])) / (10 ** (-0.4 * m_v))
         flux_mod_obs = flux_mod_obs * coeff_norm
 
         # Calculate synthetic magnitudes
@@ -326,7 +334,7 @@ def main(
         # For each filter compare observed photometry to synthetic magnitudes
         offset = []
         for j, band in enumerate(bands):
-            delta = mag[j][i] - mag_syn[j]
+            delta = mag[band][i] - mag_syn[j]
             offset.append(10 ** (-0.4 * delta))
 
         mags_warp, flux_warp = warp_spectrum(
@@ -335,7 +343,9 @@ def main(
 
         # Compare warped magnitudes with observed photometry.
         # Require less than 0.05 mag difference
-        while False in (np.abs(mag[:][i] - mags_warp) < 0.05):
+        while False in (
+            np.abs(np.array([mag[b][i] for b in bands]) - mags_warp) < 0.05
+        ):
             maxiter = maxiter - 1
             if maxiter <= 0:
                 print("Did not converge...")
@@ -344,7 +354,7 @@ def main(
             # Calculate new offsets
             offset = []
             for j, band in enumerate(bands):
-                delta = mag[j][i] - mag_warp[j]
+                delta = mag[band][i] - mags_warp[j]
                 offset.append(10 ** (-0.4 * delta))
 
             mags_warp, flux_warp = warp_spectrum(
@@ -356,23 +366,26 @@ def main(
         flux_mod_warped.append(flux_warp)
 
         print("Observed photometry:")
-        print(mag[:][i])
+        print([mag[b][i] for b in bands])
         print("Photometry after flux corection:")
         print(mags_warp)
 
     ### Calculate the actual AKS correction ###
     aks_corr = {}
+    filter_choice = []
     for j, band in enumerate(bands):
         aks_corr[band] = []
         for i in range(len(model)):
             # Synthetic magnitude of warped spectrum in observed frame
-            m_obs = filters_in[i].calculate_vega_magnitude(wav_mod_obs, flux_mod_warped)
+            m_obs = filters_in.calculate_vega_magnitudes(
+                wav_mod_warped[i], flux_mod_warped[i]
+            )[j]
 
             # Remove Milky Way extinction
-            flux_mod_avg = f19_unred(wav_mod_obs, flux_mod_warped, a_v)
+            flux_mod_avg = f19_unred(wav_mod_warped[i], flux_mod_warped[i], a_v)
 
             # Put the warped spectrum in the restframe
-            wav_mod_rest = wav_mod_obs / (1 + z_hel)
+            wav_mod_rest = wav_mod_warped[i] / (1 + z_hel)
             flux_mod_rest_avg = flux_mod_avg * (1 + z_hel)
 
             ### K-correction ###
@@ -390,19 +403,105 @@ def main(
             ind_lambda_eff_out = np.argmin(np.abs(lambda_effs_out - lambda_eff_rest))
             print(
                 "Observed %s band filter corresponds to restframe %s band filter"
-                % (band, filter_out[ind_lambda_eff_out])
+                % (filter_in[j], filter_out[ind_lambda_eff_out])
             )
+            if i == 0:
+                # Only store the first filter pair. For most SNe, this should be the
+                # same for all epochs
+                filter_choice.append((filter_in[j], filter_out[ind_lambda_eff_out]))
 
             # Synthetic magnitude of the warped spectrum in the rest frame
             # corrected for AvG in the output filter
-            m_out = filters_out[ind_lambda_eff_out].calculate_vega_magnitude(
+            m_out = filters_out.calculate_vega_magnitudes(
                 wav_mod_rest, flux_mod_rest_avg
-            )
+            )[ind_lambda_eff_out]
 
             ### AKS correction ###
             aks = m_obs - m_out
             aks_corr[band].append(aks)
 
-    ### Interpolate AKS corrections back to the photometry epochs
+    ### Interpolate AKS corrections back to the photometry epochs ###
+    aks_corr_phot = {}
+    aks_corr_phot_err = {}
+    for band in bands:
+        aks_interp = it.AKS_Interpolator(
+            aks_corr[band], epoch_mod, disable_mean_fit=disable_mean_fit
+        )
+        aks_interp.sample_posterior(num_live_points=400)
+        data_int = aks_interp.predict_from_posterior(phot_data.mjd.to_numpy())
+        aks_corr_phot[band] = np.mean(data_int, axis=0)
+        aks_corr_phot_err[band] = np.std(data_int, axis=0)
 
-    return
+        ### Save diagnostic plots ###
+        if save_plots:
+            fig, ax = plt.subplots(1, 1)
+            ax.plot(
+                epoch_mod,
+                aks_corr[band],
+                label="Spectral epochs",
+                linestyle="",
+                marker="x",
+            )
+            ax.errorbar(
+                phot_data.mjd.to_numpy(),
+                aks_corr_phot[band],
+                yerr=aks_corr_phot_err[band],
+                marker=".",
+                color="tab:orange",
+                capsize=0,
+                label="Photometry epochs",
+            )
+            ax.fill_between(
+                phot_data.mjd.to_numpy(),
+                aks_corr_phot[band] + aks_corr_phot_err[band],
+                aks_corr_phot[band] - aks_corr_phot_err[band],
+                color="tab:orange",
+                alpha=0.3,
+            )
+            ax.set_title("%s | %s band" % (snname, band))
+            ax.legend()
+            ax.set_xlabel("Epoch")
+            ax.set_ylabel("AKS correction (mag)")
+
+            diag_path = os.path.join(pa.get_diag_path(), snname)
+            if not os.path.exists(diag_path):
+                os.mkdir(diag_path)
+            fig.savefig(
+                os.path.join(diag_path, "{:s}_{:s}_band_AKS.png".format(snname, band)),
+                bbox_inches="tight",
+            )
+
+    ### Save results ###
+    if save_results:
+        for i in range(len(filter_choice)):
+            _, instr_in, f_in = re.split("/|\.", filter_choice[i][0])
+            _, instr_out, f_out = re.split("/|\.", filter_choice[i][1])
+            band = bands[i]
+            data_out = {}
+            data_out["time"] = phot_data.mjd.to_numpy()
+            data_out["mag"] = phot_data.mag[band].to_numpy() - aks_corr_phot[band]
+            data_out["emag"] = np.sqrt(
+                phot_data.emag[band].to_numpy() ** 2 + aks_corr_phot_err[band] ** 2
+            )
+            data_out["AKS"] = aks_corr_phot[band]
+            data_out["AKS_err"] = aks_corr_phot_err[band]
+
+            df = pd.DataFrame(data_out)
+            res_path = pa.get_res_path()
+            res_path = os.path.join(res_path, "aks_corr")
+            if not os.path.exists(res_path):
+                os.mkdir(res_path)
+            df.to_csv(
+                os.path.join(
+                    res_path,
+                    "%s_%s_to_%s_%s.csv"
+                    % (
+                        instr_in,
+                        f_in,
+                        instr_out,
+                        f_out,
+                    ),
+                )
+            )
+
+    return aks_corr_phot, aks_corr_phot_err
