@@ -192,6 +192,7 @@ def aks_correction(
     photometry_file,
     filter_in,
     filter_out,
+    output=None,
     epoch_region=None,
     lsb=[0, 0],
     maxiter=10,
@@ -199,6 +200,7 @@ def aks_correction(
     save_results=True,
     delimiter=",",
     disable_mean_fit=False,
+    inspect_phot_interp=False,
 ):
     matplotlib.use("TkAgg")
     # SN data
@@ -268,7 +270,7 @@ def aks_correction(
         m = m[~np.isnan(m)]
 
         mag[band], emag[band], mjd[band] = mag_interp(
-            time, m, em, epoch_mod, visualize=False
+            time, m, em, epoch_mod, visualize=inspect_phot_interp
         )
 
     ### Calibrate spectra ###
@@ -291,17 +293,6 @@ def aks_correction(
         # If model file name contains 'dered', redden spectrum again
         if "dered" in model[i]:
             flux_mod = f19_unred(wav_mod, flux_mod, a_v, redden=True)
-
-        # Extend spectra to prevent interpolation problems
-        wav_blank_low = np.arange(1500, min(wav_mod))
-        wav_blank_upper = np.arange(max(wav_mod), 16000)
-        #        wav_mod = np.concatenate((wav_blank_low, wav_mod, wav_blank_upper), axis=None)
-
-        flux_blank_low = np.zeros_like(wav_blank_low) + 1e-10 * flux_mod[0]
-        flux_blank_upper = np.zeros_like(wav_blank_upper) + 1e-10 * flux_mod[-1]
-        #        flux_mod = np.concatenate(
-        #            (flux_blank_low, flux_mod, flux_blank_upper), axis=None
-        #        )
 
         # Put the rest frame model into the observed frame
         wav_mod_obs = wav_mod * (1 + z_hel)
@@ -478,7 +469,7 @@ def aks_correction(
             _, instr_out, f_out = re.split("/|\.", filter_choice[i][1])
             band = bands[i]
             data_out = {}
-            data_out["time"] = phot_data.mjd.to_numpy()
+            data_out["time"] = phot_data.mjd.to_numpy() + mjd_explo
             data_out["mag"] = phot_data.mag[band].to_numpy() - aks_corr_phot[band]
             data_out["emag"] = np.sqrt(
                 phot_data.emag[band].to_numpy() ** 2 + aks_corr_phot_err[band] ** 2
@@ -503,5 +494,25 @@ def aks_correction(
                     ),
                 )
             )
+
+    if output:
+        data_out = {}
+        data_out["MJD"] = phot_data.mjd.to_numpy() + mjd_explo
+        for i in range(len(filter_choice)):
+            _, _, f_out = re.split("/|\.", filter_choice[i][1])
+            band = bands[i]
+            data_out[f_out] = phot_data.mag[band].to_numpy() - aks_corr_phot[band]
+            data_out[f_out + "err"] = np.sqrt(
+                phot_data.emag[band].to_numpy() ** 2 + aks_corr_phot_err[band] ** 2
+            )
+
+        df = pd.DataFrame(data_out)
+        # Drop rows where all photometry bands are empty
+        inds = df.loc[:, df.columns != "MJD"].dropna(how="all").index
+        df = df.loc[inds]
+        # Write output
+        if not os.path.exists(os.path.split(output)[0]):
+            os.mkdir(os.path.split(output)[0])
+        df.to_csv(output, index=False)
 
     return aks_corr_phot, aks_corr_phot_err

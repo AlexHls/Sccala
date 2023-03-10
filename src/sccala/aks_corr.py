@@ -1,4 +1,5 @@
 import argparse
+from matplotlib.pyplot import inspect
 
 import numpy as np
 
@@ -14,6 +15,7 @@ def main(args):
         args.photometry_file,
         filter_in,
         filter_out,
+        output=args.output,
         epoch_region=args.epoch_region,
         lsb=args.lsb,
         maxiter=args.maxiter,
@@ -21,6 +23,7 @@ def main(args):
         save_results=(not args.disable_output),
         delimiter=args.delimiter,
         disable_mean_fit=args.disable_mean_fit,
+        inspect_phot_interp=args.inspect_phot_interp,
     )
     return
 
@@ -42,6 +45,11 @@ def cli():
         "filter_out", help="Path to a text file containing list of output filters."
     )
 
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="File where corrected photometry of all bands is to be save.",
+    )
     parser.add_argument(
         "--epoch_region",
         help="Region form which to take photometry for correction.",
@@ -79,6 +87,11 @@ def cli():
         "--delimiter",
         help="Delimiter used in the model files. Needs to be consistent for all files.",
         default=",",
+    )
+    parser.add_argument(
+        "--inspect_phot_interp",
+        help="If flag is given, photometry interpolation plots will be shown interactively.",
+        action="store_true",
     )
 
     args = parser.parse_args()
