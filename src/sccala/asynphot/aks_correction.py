@@ -193,8 +193,9 @@ def aks_correction(
     filter_in,
     filter_out,
     output=None,
+    modelpath="Models",
     epoch_region=None,
-    lsb=[0, 0],
+    lsb=[0.0, 0.0],
     maxiter=10,
     save_plots=True,
     save_results=True,
@@ -202,14 +203,72 @@ def aks_correction(
     disable_mean_fit=False,
     inspect_phot_interp=False,
 ):
+    """
+    Do a full AKS correction on input photometry. Corrects any number of
+    input filter bands to specified output filter bands. Only works if
+    the input photometry only consits of photometry taken by the same
+    instrument. Using multiple instruments might lead to unexpected results.
+
+    Parameters
+    ----------
+    snname : str
+        Name of the SN to be corrected. The model spectra used in the
+        correction need to be stored under the same name in the model
+        directory specified by the modelpath option.
+    photometry_file : str
+        Path to the input file containing the photometry data. Data
+        should be formatted similar to the output files of the OSC.
+    filter_in : str
+        Path to a text file containing the names of the intput filters
+        which are to be used for the correction.
+    filter_out : str
+        Path to a text file containing the names of the output filters
+        which are to be used for the correction.
+    output : str
+        Name of the output file where the corrected photometry is stored.
+        Default: None
+    modelpath : str
+        Path of the direcotry where the model spectra used in the
+        correction. Should have a similar directory structure to
+        the Data directory. Default: 'Models'
+    epoch_region : list or Tuple
+        Epoch range from which input photometry is considered. Data
+        outside this range is discarded. Default: None
+    lsb : list or Tuple
+        Extrapolation rules to consider spectra outside the specified
+        epoch_range. Default: '[0.0, 0.0]'
+    maxiter : int
+        Maximum number of iteration to adjust flux density to match
+        observed photometry.
+    save_plots : bool
+        If True, diagnostic plots showing interpolated AKS correction
+        values will be saved in the diagnostic directory. Default: True
+    save_results : bool
+        If True, detailed AKS correction results will be stored in
+        the results directory. A separate file will be stored for
+        each filter band. Default: True
+    delimiter : str
+        Delimiter used in the model spectra. Default: ','
+    disable_mean_fit : bool
+        If True, mean fit will be disabled in photometry interpolation.
+        Default: False
+    inspect_phot_interp : bool
+        If True, interactive plots will be show to verify that
+        photometry was interpolated correctly. Default: False
+
+    Returns
+    -------
+    aks_corr_phot, aks_corr_phot_err
+    """
+
     matplotlib.use("TkAgg")
     # SN data
-    a_v, z_hel, mjd_explo = get_sn_info(snname)
+    a_v, z_hel, mjd_explo = get_sn_info(snname, modelpath=modelpath)
 
     # SN photometry
     phot_data = get_sn_phot(photometry_file=photometry_file)
 
-    model, epoch_mod = get_sn_spectra(snname, delimiter=delimiter)
+    model, epoch_mod = get_sn_spectra(snname, delimiter=delimiter, modelpath=modelpath)
 
     # Update mjd to time after explosion
     phot_data["mjd"] -= mjd_explo

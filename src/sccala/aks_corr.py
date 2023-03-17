@@ -51,6 +51,12 @@ def cli():
         help="File where corrected photometry of all bands is to be save.",
     )
     parser.add_argument(
+        "-m"
+        "--modelpath",
+        help="Path to the directory where the model spectra are stored.",
+        default="Models",
+    )
+    parser.add_argument(
         "--epoch_region",
         help="Region form which to take photometry for correction.",
         nargs=2,
