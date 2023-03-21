@@ -1,6 +1,7 @@
 import os
 import re
 import warnings
+from george.kernels import BaseDotProductKernel
 
 import numpy as np
 import pandas as pd
@@ -59,7 +60,7 @@ def get_sn_spectra(
     info = pd.read_csv(os.path.join(modelpath, snname, snname + "_info.csv"))
     model = info["File"].to_list()
     for i in range(len(model)):
-        model[i] = os.path.join("Models", str(snname), model[i])
+        model[i] = os.path.join(modelpath, str(snname), model[i])
     epoch_mod = info["JD"].to_numpy() - 2400000.5 - info["MJD_Explosion"].to_numpy()
     # Exclude spectra with insufficient wavelength coverage
     if check_spectra:

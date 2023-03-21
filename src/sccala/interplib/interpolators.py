@@ -212,12 +212,7 @@ class AKS_Interpolator:
         for s in tqdm(self.sampler.results["samples"][subsample]):
             self.gp.set_parameter_vector(s)
             dint = self.gp.sample_conditional(self.data, t_pred, size=10)
-            for d in dint:
-                # Reject negative AKS values
-                if any(np.sign(d) < 0.0):
-                    continue
-                else:
-                    data_int.append(d)
+            data_int.extend(dint)
 
         return np.array(data_int)
 

@@ -16,6 +16,7 @@ def main(args):
         filter_in,
         filter_out,
         output=args.output,
+        modelpath=args.modelpath,
         epoch_region=args.epoch_region,
         lsb=args.lsb,
         maxiter=args.maxiter,
@@ -51,7 +52,7 @@ def cli():
         help="File where corrected photometry of all bands is to be save.",
     )
     parser.add_argument(
-        "-m"
+        "-m",
         "--modelpath",
         help="Path to the directory where the model spectra are stored.",
         default="Models",
