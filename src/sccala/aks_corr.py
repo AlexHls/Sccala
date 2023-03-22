@@ -66,6 +66,7 @@ def cli():
     parser.add_argument(
         "--lsb",
         help="Extrapolation rules. Is used to select spectra in photometry range.",
+        nargs=2,
         default=[0.0, 0.0],
         type=float,
     )
