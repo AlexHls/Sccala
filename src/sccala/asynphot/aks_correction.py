@@ -67,8 +67,13 @@ def get_sn_spectra(
         mask = []
         for i, mod in enumerate(model):
             data = np.genfromtxt(mod, delimiter=delimiter).T
-            if max(data[0]) < 9200 or min(data[0]) > 4700:
-                mask.append(i)
+            try:
+                if max(data[0]) < 9200 or min(data[0]) > 4700:
+                    mask.append(i)
+            except TypeError:
+                raise TypeError(
+                    "TypeError detected. Most likely you specified the delimiter incorrectly..."
+                )
         model = np.delete(model, mask)
         epoch_mod = np.delete(epoch_mod, mask)
     if rej_100:
@@ -289,9 +294,10 @@ def aks_correction(
         "Neglecting %d spectra due to extrapolation restriction..."
         % (len(model) - len(model[ep_mask]))
     )
+    print("Before:", epoch_mod)
     model = model[ep_mask]
     epoch_mod = epoch_mod[ep_mask]
-    print(epoch_mod)
+    print("After:", epoch_mod)
 
     # Load filters
     filters_in = base.FilterSet(filter_in)

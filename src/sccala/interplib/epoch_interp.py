@@ -3,6 +3,7 @@ import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
 from sccala.interplib.interpolators import (
     LC_Interpolator,
@@ -10,6 +11,8 @@ from sccala.interplib.interpolators import (
     AE_Interpolator,
 )
 from sccala.utillib.aux import convert_to_flux, convert_to_mag
+
+matplotlib.use("TkAgg")
 
 
 class EpochDataSet:
