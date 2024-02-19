@@ -19,6 +19,7 @@ Classes
 
 .. py:class:: SccalaSCM(file, calib='CALIB', blind=True, blindkey='HUBBLE')
 
+
    .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, save_warmup=False, quiet=False, init=None, classic=False)
 
       Samples the posterior for the given data and model

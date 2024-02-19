@@ -25,11 +25,24 @@ Functions
 .. autoapisummary::
 
    sccala.asynphot.synphot.calculate_vega_zp
+   sccala.asynphot.synphot.calculate_lambda_eff
    sccala.asynphot.synphot.calculate_vega_magnitude
 
 
 
 .. py:function:: calculate_vega_zp(filter)
+
+
+.. py:function:: calculate_lambda_eff(spec_wav, spec_flux, filter)
+
+   Calculate effective wavelength from spectral flux.
+
+   :param spec_wav: np.array of floats
+       wavelength values of spectrum
+   :param spec_flux: np.array of floats
+       spectral flux
+   :param filter: BaseFilter
+       filter object on which the magnitude is to be calculated
 
 
 .. py:function:: calculate_vega_magnitude(spec_wav, spec_flux, filter, spec_err=None, error_method='analytic', error_n=100)
@@ -58,6 +71,7 @@ Functions
 
 .. py:class:: BaseFilterCurve(wav, trans, interpolation_kind='linear', filter_id=None)
 
+
    Bases: :py:obj:`object`
 
    .. py:method:: load_filter(filter_id=None, interpolation_kind='linear')
@@ -70,8 +84,12 @@ Functions
    .. py:method:: calculate_vega_magnitude(spec_wav, spec_flux, spec_err=None)
 
 
+   .. py:method:: calculate_lambda_eff(spec_wav, spec_flux)
+
+
 
 .. py:class:: FilterCurve(wav, trans, interpolation_kind='linear', filter_id=None)
+
 
    Bases: :py:obj:`BaseFilterCurve`
 
@@ -82,6 +100,7 @@ Functions
 
 
 .. py:class:: FilterSet(filter_set, interpolation_kind='linear')
+
 
    Bases: :py:obj:`object`
 
@@ -106,8 +125,12 @@ Functions
    .. py:method:: calculate_vega_magnitudes(spec_wav, spec_flux, spec_err=None)
 
 
+   .. py:method:: calculate_lambda_effs(spec_wav, spec_flux)
+
+
 
 .. py:class:: MagnitudeSet(filter_set, magnitudes, magnitude_uncertainties=None, interpolation_kind='linear')
+
 
    Bases: :py:obj:`FilterSet`
 

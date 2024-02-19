@@ -13,6 +13,7 @@ Classes
 .. autoapisummary::
 
    sccala.interplib.interpolators.LC_Interpolator
+   sccala.interplib.interpolators.AKS_Interpolator
    sccala.interplib.interpolators.Vel_Interpolator
    sccala.interplib.interpolators.AE_Interpolator
 
@@ -20,6 +21,7 @@ Classes
 
 
 .. py:class:: LC_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=False, disable_white_noise_fit=False)
+
 
    .. py:method:: log_likelihood(params)
 
@@ -34,7 +36,24 @@ Classes
 
 
 
+.. py:class:: AKS_Interpolator(data, t_grid, uncertainty=0.004, num_live_points=400, disable_mean_fit=False)
+
+
+   .. py:method:: log_likelihood(params)
+
+
+   .. py:method:: prior_transform(cube)
+
+
+   .. py:method:: sample_posterior(num_live_points=800)
+
+
+   .. py:method:: predict_from_posterior(t_pred, size=1000)
+
+
+
 .. py:class:: Vel_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=True, disable_white_noise_fit=True)
+
 
    .. py:method:: log_likelihood(params)
 
@@ -50,6 +69,7 @@ Classes
 
 
 .. py:class:: AE_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=True, disable_white_noise_fit=True)
+
 
    .. py:method:: log_likelihood(params)
 

@@ -19,6 +19,7 @@ Classes
 
 .. py:class:: LineFit(wav, flux, error, numcode=100)
 
+
    Base class encapsulating line fits of a spectrum
 
    .. py:method:: __get_builtin_lines__()

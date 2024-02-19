@@ -24,6 +24,7 @@ Submodules
    :titlesonly:
    :maxdepth: 1
 
+   aks_corr/index.rst
    collect_scm_data/index.rst
    deblind/index.rst
    gen_testdata/index.rst
