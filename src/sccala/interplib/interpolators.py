@@ -136,6 +136,87 @@ class LC_Interpolator:
         return np.array(data_int)
 
 
+class AKS_Interpolator:
+    def __init__(
+        self,
+        data,
+        t_grid,
+        uncertainty=0.004,
+        num_live_points=400,
+        disable_mean_fit=False,
+    ):
+        self.data = np.array(data)
+        self.t_grid = np.array(t_grid)
+        self.uncertainty = uncertainty
+        self.num_live_points = num_live_points
+        self.disable_mean_fit = disable_mean_fit
+
+        # Setup kernel
+        kernel = np.var(data) * kernels.ExpSquaredKernel(25**2)
+        mean_model = ConstantModel(self.data.mean())
+        self.parameters = []
+        if not self.disable_mean_fit:
+            self.parameters.append("mean")
+            mean_model = ConstantModel(self.data.mean())
+        else:
+            mean_model = None
+        self.parameters.extend(["log_var", "l"])
+        self.gp = george.GP(
+            kernel,
+            mean=mean_model,
+            fit_mean=(not self.disable_mean_fit),
+        )
+        self.gp.compute(self.t_grid, self.uncertainty)
+
+    def log_likelihood(self, params):
+        # Update the kernel and compute the log_likelihood.
+        self.gp.set_parameter_vector(params)
+
+        return self.gp.log_likelihood(self.data, quiet=True)
+
+    def prior_transform(self, cube):
+        # the argument, cube, consists of values from 0 to 1
+        # we have to convert them to physical scales
+
+        params = cube.copy()
+        if self.disable_mean_fit:
+            params[0] = np.log(st.halfnorm.ppf(cube[1], scale=0.2) ** 2)
+            params[1] = np.log(
+                st.invgamma.ppf(cube[1], 4.62908952, scale=110.33659801) ** 2
+            )
+        else:
+            params[0] = cube[0] * 6 - 3
+            params[1] = np.log(st.halfnorm.ppf(cube[1], scale=0.2) ** 2)
+            params[2] = np.log(
+                st.invgamma.ppf(cube[2], 4.62908952, scale=110.33659801) ** 2
+            )
+
+        return params
+
+    def sample_posterior(self, num_live_points=800):
+        self.sampler = ReactiveNestedSampler(
+            self.parameters, self.log_likelihood, self.prior_transform
+        )
+        self.result = self.sampler.run(
+            min_num_live_points=num_live_points, viz_callback=False, show_status=False
+        )
+
+        return self.sampler
+
+    def predict_from_posterior(self, t_pred, size=1000):
+        data_int = []
+        subsample = np.random.randint(
+            len(self.sampler.results["samples"][:, 0]), size=size
+        )
+        print("Predicting AKS values...")
+        for s in tqdm(self.sampler.results["samples"][subsample]):
+            self.gp.set_parameter_vector(s)
+            dint = self.gp.sample_conditional(self.data, t_pred, size=10)
+            data_int.extend(dint)
+
+        return np.array(data_int)
+
+
 class Vel_Interpolator:
     def __init__(
         self,
