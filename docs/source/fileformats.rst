@@ -62,29 +62,29 @@ In case you only have the ToE date without any probability, you can manually cre
     import cloudpickle
 
     def manual_toe(snname, toe, toeerr):
-    """Function to manually create *TimeKDE.pkl if e.g. phase matching fails
+        """Function to manually create *TimeKDE.pkl if e.g. phase matching fails
 
-    Parameters
-    ----------
-    snname : String
-        Name of SN to be analyzed
-    toe : float
-        Time of explosion in MJD
-    toeerr : float
-        Uncertainty of time of explosion
+        Parameters
+        ----------
+        snname : String
+            Name of SN to be analyzed
+        toe : float
+            Time of explosion in MJD
+        toeerr : float
+            Uncertainty of time of explosion
 
-    Returns
-    -------
-    none
-    """
-    minima = np.random.normal(toe, toeerr, 100000)
-    kernel = stats.gaussian_kde(minima, bw_method="silverman")
+        Returns
+        -------
+        none
+        """
+        minima = np.random.normal(toe, toeerr, 100000)
+        kernel = stats.gaussian_kde(minima, bw_method="silverman")
 
-    # Adapt the path if needed
-    with open("Data/" + snname + "/" + snname + "TimeKDE.pkl", "wb") as f:
-        cloudpickle.dump(kernel, f)
+        # Adapt the path if needed
+        with open("Data/" + snname + "/" + snname + "TimeKDE.pkl", "wb") as f:
+            cloudpickle.dump(kernel, f)
 
-    return None
+        return None
 
 .. note::
    The ToE has to be stored as the MJD in the observer frame. The ToE will be subtracted, e.g., from the stored MJD of the spectra.
