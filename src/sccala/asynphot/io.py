@@ -44,7 +44,7 @@ def byte_to_literal_strings(dataframe):
     strings and returns an improved dataframe.
     """
     # Select the str columns:
-    str_df = dataframe.select_dtypes([np.object])
+    str_df = dataframe.select_dtypes([object])
 
     if not str_df.empty:
         # Convert all of them into unicode strings
