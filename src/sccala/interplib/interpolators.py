@@ -328,7 +328,7 @@ class Vel_Interpolator:
         subsample = np.random.randint(
             len(self.sampler.results["samples"][:, 0]), size=size
         )
-        print("Predicting lightcurves...")
+        print("Predicting velocities...")
         for s in tqdm(self.sampler.results["samples"][subsample]):
             self.gp.set_parameter_vector(s)
             if tkde is not None:
@@ -470,7 +470,7 @@ class AE_Interpolator:
         subsample = np.random.randint(
             len(self.sampler.results["samples"][:, 0]), size=size
         )
-        print("Predicting lightcurves...")
+        print("Predicting a/e values...")
         for s in tqdm(self.sampler.results["samples"][subsample]):
             self.gp.set_parameter_vector(s)
             if tkde is not None:
