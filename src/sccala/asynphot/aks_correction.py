@@ -267,7 +267,10 @@ def aks_correction(
     aks_corr_phot, aks_corr_phot_err
     """
 
-    matplotlib.use("TkAgg")
+    try:
+        matplotlib.use("TkAgg")
+    except ImportError:
+        pass
     # SN data
     a_v, z_hel, mjd_explo = get_sn_info(snname, modelpath=modelpath)
 
