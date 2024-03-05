@@ -57,9 +57,10 @@ Here, Sccala expects a `scipy.stats.gaussian_kde` object stored with `cloudpickl
 In case you only have the ToE date without any probability, you can manually create the KDE using e.g. the following function:
 ::
 
+    import os
+    import cloudpickle
     import numpy as np
     from scipy import stats
-    import cloudpickle
 
     def manual_toe(snname, toe, toeerr):
         """Function to manually create *TimeKDE.pkl if e.g. phase matching fails
@@ -81,7 +82,7 @@ In case you only have the ToE date without any probability, you can manually cre
         kernel = stats.gaussian_kde(minima, bw_method="silverman")
 
         # Adapt the path if needed
-        with open("Data/" + snname + "/" + snname + "TimeKDE.pkl", "wb") as f:
+        with open(os.path.join("Data", snname, snname + "_TimeKDE.pkl"), "wb") as f:
             cloudpickle.dump(kernel, f)
 
         return None
