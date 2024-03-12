@@ -347,12 +347,13 @@ class EpochDataSet:
         ax2.grid(which="minor", axis="both", linestyle="--")
 
         ax2.set_xlim([max([ax2.get_xlim()[0], 0]), max([65.0, max(self.time)])])
-        lims = ax2.get_xlim()
-        curr_data = np.where((self.time > lims[0]) & (self.time < lims[1]))[0]
-        ax2.set_ylim(
-            (self.data - self.data_error)[curr_data].min() / conv * 0.5,
-            (self.data - self.data_error)[curr_data].max() / conv * 1.5,
-        )
+        if "phot" not in target:
+            lims = ax2.get_xlim()
+            curr_data = np.where((self.time > lims[0]) & (self.time < lims[1]))[0]
+            ax2.set_ylim(
+                (self.data - self.data_error)[curr_data].min() / conv * 0.5,
+                (self.data - self.data_error)[curr_data].max() / conv * 1.5,
+            )
 
         if "phot" in target:
             ax2.invert_yaxis()
