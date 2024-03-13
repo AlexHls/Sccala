@@ -226,7 +226,12 @@ def load_data(
                 "%s_%s_%s_InterpolationResults.csv" % (sn, instrument[i], mag[i]),
             )
         )
-        mags = df[df["Date"] == date[i]][mag[i]].to_numpy()[0]
+        try:
+            mags = df[df["Date"] == date[i]][mag[i]].to_numpy()[0]
+        except IndexError:
+            raise ValueError(
+                "No data found for %s at date %f in %s" % (sn, date[i], mag[i])
+            )
         mags_err_lower = df[df["Date"] == date[i]]["%s_err_lower" % mag[i]].to_numpy()[
             0
         ]
