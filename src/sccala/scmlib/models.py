@@ -48,16 +48,16 @@ class NHHubbleFreeSCM(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[4] obs[sn_idx]; // Observed SN properties
-                vector[4] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
-                real ae_sys[sn_idx]; // Systematic ae uncertainties
+                array[sn_idx] vector[4] obs; // Observed SN properties
+                array[sn_idx] vector[4] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
+                array[sn_idx] real ae_sys; // Systematic ae uncertainties
                 real vel_avg; // Normalisation constans
                 real col_avg;
                 real ae_avg;
-                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+                array[sn_idx] real log_dist_mod // Pre-computed, redshift dependent, Hubble-free distance moduli
             }
             parameters {
                 real Mi; // Absolute Hubble-free Magnitude
@@ -67,9 +67,9 @@ class NHHubbleFreeSCM(SCM_Model):
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
             }
             transformed parameters{
-                real mag_true[sn_idx];
+                array[sn_idx] real mag_true;
                 real sigma_int;
-                real sigma_tot[sn_idx];
+                array[sn_idx] real sigma_tot;
                 for (i in 1:sn_idx) {
                     sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) /obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]) + gamma^2 *  (errors[i][4] + ae_sys[i]));
                     mag_true[i] = Mi - alpha * log10(obs[i][2] / vel_avg) + beta * (obs[i][3] - col_avg) + gamma * (obs[i][4] - ae_avg) + 5 * log_dist_mod[i];
@@ -129,25 +129,25 @@ class NHHubbleSCM(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[4] obs[sn_idx]; // Observed SN properties
-                vector[4] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
-                real ae_sys[sn_idx]; // Systematic ae uncertainties
+                array[sn_idx] vector[4] obs; // Observed SN properties
+                array[sn_idx] vector[4] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
+                array[sn_idx] real ae_sys; // Systematic ae uncertainties
                 real vel_avg; // Normalisation constants
                 real col_avg;
                 real ae_avg;
-                real log_dist_mod[sn_idx];
+                array[sn_idx] real log_dist_mod;
                 int<lower=0> calib_sn_idx;
-                vector[4] calib_obs[calib_sn_idx]; // Observed SN properties
-                vector[4] calib_errors[calib_sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real calib_mag_sys[calib_sn_idx]; // Systematic magnitude uncertainties
-                real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
-                real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
-                real calib_ae_sys[calib_sn_idx]; // Systematic ae uncertainties
-                real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
-                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                array[calib_sn_idx] vector[4] calib_obs; // Observed SN properties
+                array[calib_sn_idx] vector[4] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties
+                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties
+                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties
+                array[calib_sn_idx] real calib_ae_sys; // Systematic ae uncertainties
+                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators
+                array[calib_sn_idx] int<lower=0> calib_dset_idx; // Index of the calibrator dataset
                 int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
@@ -157,15 +157,15 @@ class NHHubbleSCM(SCM_Model):
                 real beta; // Color correction strength
                 real gamma; // a/e correction strength
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
-                real<lower=-3,upper=0> calib_log_sigma[num_calib_dset]; // Unexplained calibrator intrinsic scatter
+                array[num_calib_dset] real<lower=-3,upper=0> calib_log_sigma; // Unexplained calibrator intrinsic scatter
             }
             transformed parameters{
-                real mag_true[sn_idx];
+                array[sn_idx] real mag_true;
                 real sigma_int;
-                real sigma_tot[sn_idx];
-                real calib_mag_true[calib_sn_idx];
-                real calib_sigma_int[num_calib_dset];
-                real calib_sigma_tot[calib_sn_idx];
+                array[sn_idx] real sigma_tot;
+                array[calib_sn_idx] real calib_mag_true;
+                array[num_calib_dset] real calib_sigma_int;
+                array[calib_sn_idx] real calib_sigma_tot;
                 for (i in 1:sn_idx) {
                     sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]) + gamma^2 *  (errors[i][4] + ae_sys[i]));
                     mag_true[i] = obs[i][1] + alpha * log10(obs[i][2] / vel_avg) - beta * (obs[i][3] - col_avg) - gamma * (obs[i][4] - ae_avg) - 5 * log_dist_mod[i] + 5 * log10(H0) - 25;
@@ -242,25 +242,25 @@ class NHHubbleSCMSimple(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[4] obs[sn_idx]; // Observed SN properties
-                vector[4] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
-                real ae_sys[sn_idx]; // Systematic ae uncertainties
+                array[sn_idx] vector[4] obs; // Observed SN properties
+                array[sn_idx] vector[4] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
+                array[sn_idx] real ae_sys; // Systematic ae uncertainties
                 real vel_avg; // Normalisation constants
                 real col_avg;
                 real ae_avg;
-                real log_dist_mod[sn_idx];
+                array[sn_idx] real log_dist_mod;
                 int<lower=0> calib_sn_idx;
-                vector[4] calib_obs[calib_sn_idx]; // Observed SN properties
-                vector[4] calib_errors[calib_sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real calib_mag_sys[calib_sn_idx]; // Systematic magnitude uncertainties
-                real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
-                real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
-                real calib_ae_sys[calib_sn_idx]; // Systematic ae uncertainties
-                real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
-                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                array[calib_sn_idx] vector[4] calib_obs; // Observed SN properties
+                array[calib_sn_idx] vector[4] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties
+                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties
+                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties
+                array[calib_sn_idx] real calib_ae_sys; // Systematic ae uncertainties
+                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators
+                array[calib_sn_idx] int<lower=0> calib_dset_idx; // Index of the calibrator dataset
                 int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
@@ -272,12 +272,12 @@ class NHHubbleSCMSimple(SCM_Model):
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
             }
             transformed parameters{
-                real mag_true[sn_idx];
+                array[sn_idx] real mag_true;
                 real sigma_int;
-                real sigma_tot[sn_idx];
-                real calib_mag_true[calib_sn_idx];
-                real calib_sigma_int[num_calib_dset];
-                real calib_sigma_tot[calib_sn_idx];
+                array[sn_idx] real sigma_tot;
+                array[calib_sn_idx] real calib_mag_true;
+                array[num_calib_dset]real calib_sigma_int;
+                array[calib_sn_idx]real calib_sigma_tot;
                 for (i in 1:sn_idx) {
                     sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]) + gamma^2 *  (errors[i][4] + ae_sys[i]));
                     mag_true[i] = obs[i][1] + alpha * log10(obs[i][2] / vel_avg) - beta * (obs[i][3] - col_avg) - gamma * (obs[i][4] - ae_avg) - 5 * log_dist_mod[i] + 5 * log10(H0) - 25;
@@ -449,25 +449,25 @@ class HubbleSCM(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[4] obs[sn_idx]; // Observed SN properties
-                vector[4] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
-                real ae_sys[sn_idx]; // Systematic ae uncertainties
+                array[sn_idx] vector[4] obs; // Observed SN properties
+                array[sn_idx] vector[4] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
+                array[sn_idx] real ae_sys; // Systematic ae uncertainties
                 real vel_avg; // Normalisation constans
                 real col_avg;
                 real ae_avg;
-                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
                 int<lower=0> calib_sn_idx;
-                vector[4] calib_obs[calib_sn_idx]; // Observed SN properties
-                vector[4] calib_errors[calib_sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real calib_mag_sys[calib_sn_idx]; // Systematic magnitude uncertainties
-                real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
-                real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
-                real calib_ae_sys[calib_sn_idx]; // Systematic ae uncertainties
-                real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
-                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                array[calib_sn_idx] vector[4] calib_obs[calib_sn_idx]; // Observed SN properties
+                array[calib_sn_idx] vector[4] calib_errors[calib_sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
+                array[calib_sn_idx] real calib_mag_sys[calib_sn_idx]; // Systematic magnitude uncertainties
+                array[calib_sn_idx] real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
+                array[calib_sn_idx] real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
+                array[calib_sn_idx] real calib_ae_sys[calib_sn_idx]; // Systematic ae uncertainties
+                array[calib_sn_idx] real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
+                array[calib_sn_idx] int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
                 int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
@@ -484,24 +484,24 @@ class HubbleSCM(SCM_Model):
                 real<lower=0> rv; // Dispersion of latent velocity
                 real<lower=0> rc; // Dispersion of latent color
                 real<lower=0> ra; // Dispersion of latent a/e
-                real<lower=0> calib_vs[num_calib_dset]; // Mean of latent velocity
-                real calib_cs[num_calib_dset]; // Mean of latent color
-                real<lower=0> calib_as[num_calib_dset]; // Mean of latent a/e
-                real<lower=0> calib_rv[num_calib_dset]; // Dispersion of latent velocity
-                real<lower=0> calib_rc[num_calib_dset]; // Dispersion of latent color
-                real<lower=0> calib_ra[num_calib_dset]; // Dispersion of latent a/e
-                real<lower=0> v_true[sn_idx]; // Modeled latent velocities (cannot be negative)
-                real c_true[sn_idx]; // Modeled latent color
-                real<lower=0> a_true[sn_idx]; // Modeled latent a/e (cannot be negative)
-                real<lower=0> calib_v_true[calib_sn_idx]; // Modeled latent velocities (cannot be negative)
-                real calib_c_true[calib_sn_idx]; // Modeled latent color
-                real<lower=0> calib_a_true[calib_sn_idx]; // Modeled latent a/e (cannot be negative)
+                array[num_calib_dset] real<lower=0> calib_vs; // Mean of latent velocity
+                array[num_calib_dset] real calib_cs; // Mean of latent color
+                array[num_calib_dset] real<lower=0> calib_as; // Mean of latent a/e
+                array[num_calib_dset] real<lower=0> calib_rv; // Dispersion of latent velocity
+                array[num_calib_dset] real<lower=0> calib_rc; // Dispersion of latent color
+                array[num_calib_dset] real<lower=0> calib_ra; // Dispersion of latent a/e
+                array[sn_idx] real<lower=0> v_true; // Modeled latent velocities (cannot be negative)
+                array[sn_idx] real c_true; // Modeled latent color
+                array[sn_idx] real<lower=0> a_true; // Modeled latent a/e (cannot be negative)
+                array[calib_sn_idx] eal<lower=0> calib_v_true; // Modeled latent velocities (cannot be negative)
+                array[calib_sn_idx] eal calib_c_true; // Modeled latent color
+                array[calib_sn_idx] eal<lower=0> calib_a_true; // Modeled latent a/e (cannot be negative)
             }
             transformed parameters{
-                real mag_true[sn_idx];
-                real calib_mag_true[calib_sn_idx];
+                array[sn_idx] real mag_true;
+                array[calib_sn_idx] real calib_mag_true;
                 real sigma_int;
-                real calib_sigma_int[num_calib_dset];
+                array[num_calib_dset] real calib_sigma_int;
                 sigma_int = 10 ^ log_sigma;
                 for (i in 1:num_calib_dset) {
                     calib_sigma_int[i] = 10 ^ calib_log_sigma[i];
@@ -568,14 +568,14 @@ class HubbleSCM(SCM_Model):
     def set_initial_conditions(self, init=None):
         if init is None:
             self.init = {
-                "vs": [7500e3],
-                "rv": [1000e3],
+                "vs": 7500e3,
+                "rv": 1000e3,
                 "v_true": [7500e3] * self.data["sn_idx"],
                 "calib_v_true": [7500e3] * self.data["calib_sn_idx"],
             }
             for i in range(self.data["num_calib_dset"]):
-                self.init["calib_vs.%d" % (i + 1)] = [7500e3]
-                self.init["calib_rv.%d" % (i + 1)] = [1000e3]
+                self.init["calib_vs.%d" % (i + 1)] = 7500e3
+                self.init["calib_rv.%d" % (i + 1)] = 1000e3
         else:
             self.init = init
         return
@@ -607,14 +607,14 @@ class ClassicNHHubbleFreeSCM(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[3] obs[sn_idx]; // Observed SN properties
-                vector[3] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
+                array[sn_idx] vector[3] obs; // Observed SN properties
+                array[sn_idx] vector[3] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
                 real vel_avg; // Normalisation constans
                 real col_avg;
-                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
             }
             parameters {
                 real Mi; // Absolute Hubble-free Magnitude
@@ -623,9 +623,9 @@ class ClassicNHHubbleFreeSCM(SCM_Model):
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
             }
             transformed parameters{
-                real mag_true[sn_idx];
+                array[sn_idx] real mag_true;
                 real sigma_int;
-                real sigma_tot[sn_idx];
+                array[sn_idx] real sigma_tot;
                 for (i in 1:sn_idx) {
                     sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) /obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]));
                     mag_true[i] = Mi - alpha * log10(obs[i][2] / vel_avg) + beta * (obs[i][3] - col_avg) + 5 * log_dist_mod[i];
@@ -681,22 +681,22 @@ class ClassicNHHubbleSCM(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[3] obs[sn_idx]; // Observed SN properties
-                vector[3] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
+                array[sn_idx] vector[3] obs; // Observed SN properties
+                array[sn_idx] vector[3] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
                 real vel_avg; // Normalisation constants
                 real col_avg;
-                real log_dist_mod[sn_idx];
+                array[sn_idx] real log_dist_mod;
                 int<lower=0> calib_sn_idx;
-                vector[3] calib_obs[calib_sn_idx]; // Observed SN properties
-                vector[3] calib_errors[calib_sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real calib_mag_sys[calib_sn_idx]; // Systematic magnitude uncertainties
-                real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
-                real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
-                real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
-                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                array[calib_sn_idx] vector[3] calib_obs; // Observed SN properties
+                array[calib_sn_idx] vjector[3] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties
+                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties
+                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties
+                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators
+                array[calib_sn_idx] int<lower=0> calib_dset_idx; // Index of the calibrator dataset
                 int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
@@ -705,15 +705,15 @@ class ClassicNHHubbleSCM(SCM_Model):
                 real alpha; // Velocity correction strength
                 real beta; // Color correction strength
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
-                real<lower=-3,upper=0> calib_log_sigma[num_calib_dset]; // Unexplained intrinsic scatter
+                array[num_calib_dset] real<lower=-3,upper=0> calib_log_sigma; // Unexplained intrinsic scatter
             }
             transformed parameters{
-                real mag_true[sn_idx];
+                array[sn_idx] real mag_true;
                 real sigma_int;
-                real sigma_tot[sn_idx];
-                real calib_mag_true[calib_sn_idx];
-                real calib_sigma_int[num_calib_dset];
-                real calib_sigma_tot[calib_sn_idx];
+                array[sn_idx] real sigma_tot;
+                array[calib_sn_idx] real calib_mag_true;
+                array[num_calib_dset] real calib_sigma_int;
+                array[calib_sn_idx] real calib_sigma_tot;
                 for (i in 1:sn_idx) {
                     sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]));
                     mag_true[i] = obs[i][1] + alpha * log10(obs[i][2] / vel_avg) - beta * (obs[i][3] - col_avg) - 5 * log_dist_mod[i] + 5 * log10(H0) - 25;
@@ -787,22 +787,22 @@ class ClassicNHHubbleSCMSimple(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[3] obs[sn_idx]; // Observed SN properties
-                vector[3] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
+                array[sn_idx] vector[3] obs; // Observed SN properties
+                array[sn_idx] vector[3] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
                 real vel_avg; // Normalisation constants
                 real col_avg;
-                real log_dist_mod[sn_idx];
+                array[sn_idx] real log_dist_mod;
                 int<lower=0> calib_sn_idx;
-                vector[3] calib_obs[calib_sn_idx]; // Observed SN properties
-                vector[3] calib_errors[calib_sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real calib_mag_sys[calib_sn_idx]; // Systematic magnitude uncertainties
-                real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
-                real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
-                real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
-                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                array[calib_sn_idx] vector[3] calib_obs; // Observed SN properties
+                array[calib_sn_idx] vector[3] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties
+                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties
+                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties
+                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators
+                array[calib_sn_idx] int<lower=0> calib_dset_idx; // Index of the calibrator dataset
                 int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
@@ -813,12 +813,12 @@ class ClassicNHHubbleSCMSimple(SCM_Model):
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
             }
             transformed parameters{
-                real mag_true[sn_idx];
+                array[sn_idx] real mag_true;
                 real sigma_int;
-                real sigma_tot[sn_idx];
-                real calib_mag_true[calib_sn_idx];
-                real calib_sigma_int[num_calib_dset];
-                real calib_sigma_tot[calib_sn_idx];
+                array[sn_idx] real sigma_tot;
+                array[calib_sn_idx] real calib_mag_true;
+                array[num_calib_dset] real calib_sigma_int;
+                array[calib_sn_idx] real calib_sigma_tot;
                 for (i in 1:sn_idx) {
                     sigma_tot[i] = sqrt((errors[i][1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2] + vel_sys[i])+ beta^2 * (errors[i][3] + col_sys[i]));
                     mag_true[i] = obs[i][1] + alpha * log10(obs[i][2] / vel_avg) - beta * (obs[i][3] - col_avg) - 5 * log_dist_mod[i] + 5 * log10(H0) - 25;
@@ -876,14 +876,14 @@ class ClassicHubbleFreeSCM(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[3] obs[sn_idx]; // Observed SN properties
-                vector[3] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
+                array[sn_idx] vector[3] obs; // Observed SN properties
+                array[sn_idx] vector[3] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
                 real vel_avg; // Normalisation constans
                 real col_avg;
-                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
             }
             parameters {
                 real Mi; // Absolute Hubble-free Magnitude
@@ -894,11 +894,11 @@ class ClassicHubbleFreeSCM(SCM_Model):
                 real cs; // Mean of latent color
                 real<lower=0> rv; // Dispersion of latent velocity
                 real<lower=0> rc; // Dispersion of latent color
-                real <lower=0> v_true[sn_idx]; // Modeled latent velocities (cannot be negative)
-                real c_true[sn_idx]; // Modeled latent color
+                array[sn_idx] real <lower=0> v_true; // Modeled latent velocities (cannot be negative)
+                array[sn_idx] real c_true; // Modeled latent color
             }
             transformed parameters{
-                real mag_true[sn_idx];
+                array[sn_idx] real mag_true;
                 real sigma_int;
                 sigma_int = 10 ^ log_sigma;
                 for (i in 1:sn_idx) {
@@ -933,8 +933,8 @@ class ClassicHubbleFreeSCM(SCM_Model):
     def set_initial_conditions(self, init=None):
         if init is None:
             self.init = {
-                "vs": [7500e3],
-                "rv": [1000e3],
+                "vs": 7500e3,
+                "rv": 1000e3,
                 "v_true": [7500e3] * self.data["sn_idx"],
             }
         else:
@@ -974,22 +974,22 @@ class ClassicHubbleSCM(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[3] obs[sn_idx]; // Observed SN properties
-                vector[3] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
+                array[sn_idx] ector[3] obs; // Observed SN properties
+                array[sn_idx] ector[3] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] eal mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] eal vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] eal col_sys; // Systematic color uncertainties
                 real vel_avg; // Normalisation constans
                 real col_avg;
-                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
                 int<lower=0> calib_sn_idx;
-                vector[3] calib_obs[calib_sn_idx]; // Observed SN properties
-                vector[3] calib_errors[calib_sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real calib_mag_sys[calib_sn_idx]; // Systematic magnitude uncertainties
-                real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
-                real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
-                real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
-                int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                array[calib_sn_idx] vector[3] calib_obs; // Observed SN properties
+                array[calib_sn_idx] vector[3] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties
+                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties
+                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties
+                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators
+                array[calib_sn_idx] int<lower=0> calib_dset_idx; // Index of the calibrator dataset
                 int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
@@ -998,25 +998,25 @@ class ClassicHubbleSCM(SCM_Model):
                 real alpha; // Velocity correction strength
                 real beta; // Color correction strength
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
-                real<lower=-3,upper=0> calib_log_sigma[num_calib_dset]; // Unexplained intrinsic scatter
+                array[num_calib_dset] real<lower=-3,upper=0> calib_log_sigma; // Unexplained intrinsic scatter
                 real<lower=0> vs; // Mean of latent velocity
                 real cs; // Mean of latent color
                 real<lower=0> rv; // Dispersion of latent velocity
                 real<lower=0> rc; // Dispersion of latent color
-                real<lower=0> calib_vs[num_calib_dset]; // Mean of latent velocity
-                real calib_cs[num_calib_dset]; // Mean of latent color
-                real<lower=0> calib_rv[num_calib_dset]; // Dispersion of latent velocity
-                real<lower=0> calib_rc[num_calib_dset]; // Dispersion of latent color
-                real<lower=0> v_true[sn_idx]; // Modeled latent velocities (cannot be negative)
-                real c_true[sn_idx]; // Modeled latent color
-                real<lower=0> calib_v_true[calib_sn_idx]; // Modeled latent velocities (cannot be negative)
-                real calib_c_true[calib_sn_idx]; // Modeled latent color
+                array[num_calib_dset] real<lower=0> calib_vs; // Mean of latent velocity
+                array[num_calib_dset] real calib_cs; // Mean of latent color
+                array[num_calib_dset] real<lower=0> calib_rv; // Dispersion of latent velocity
+                array[num_calib_dset] real<lower=0> calib_rc; // Dispersion of latent color
+                array[sn_idx] real<lower=0> v_true; // Modeled latent velocities (cannot be negative)
+                array[sn_idx] real c_true; // Modeled latent color
+                array[calib_sn_idx] real<lower=0> calib_v_true; // Modeled latent velocities (cannot be negative)
+                array[calib_sn_idx] real calib_c_true; // Modeled latent color
             }
             transformed parameters{
-                real mag_true[sn_idx];
-                real calib_mag_true[calib_sn_idx];
+                array[sn_idx] real mag_true;
+                array[calib_sn_idx] real calib_mag_true;
                 real sigma_int;
-                real calib_sigma_int[num_calib_dset];
+                array[num_calib_dset] real calib_sigma_int;
                 sigma_int = 10 ^ log_sigma;
                 for (i in 1:num_calib_dset) {
                     calib_sigma_int[i] = 10 ^ calib_log_sigma[i];
@@ -1079,14 +1079,14 @@ class ClassicHubbleSCM(SCM_Model):
     def set_initial_conditions(self, init=None):
         if init is None:
             self.init = {
-                "vs": [7500e3],
-                "rv": [1000e3],
+                "vs": 7500e3,
+                "rv": 1000e3,
                 "v_true": [7500e3] * self.data["sn_idx"],
                 "calib_v_true": [7500e3] * self.data["calib_sn_idx"],
             }
             for i in range(self.data["num_calib_dset"]):
-                self.init["calib_vs.%d" % (i + 1)] = [7500e3]
-                self.init["calib_rv.%d" % (i + 1)] = [1000e3]
+                self.init["calib_vs.%d" % (i + 1)] = 7500e3
+                self.init["calib_rv.%d" % (i + 1)] = 1000e3
         else:
             self.init = init
         return
