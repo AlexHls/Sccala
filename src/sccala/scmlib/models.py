@@ -338,16 +338,16 @@ class HubbleFreeSCM(SCM_Model):
         self.model = """
             data {
                 int<lower=0> sn_idx;
-                vector[4] obs[sn_idx]; // Observed SN properties
-                vector[4] errors[sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                real mag_sys[sn_idx]; // Systematic magnitude uncertainties
-                real vel_sys[sn_idx]; // Systematic velocity uncertainties
-                real col_sys[sn_idx]; // Systematic color uncertainties
-                real ae_sys[sn_idx]; // Systematic ae uncertainties
+                array[sn_idx] vector[4] obs; // Observed SN properties
+                array[sn_idx] vector[4] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
+                array[sn_idx] real vel_sys; // Systematic velocity uncertainties
+                array[sn_idx] real col_sys; // Systematic color uncertainties
+                array[sn_idx] real ae_sys; // Systematic ae uncertainties
                 real vel_avg; // Normalisation constans
                 real col_avg;
                 real ae_avg;
-                real log_dist_mod[sn_idx]; // Pre-computed, redshift dependent, Hubble-free distance moduli
+                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
             }
             parameters {
                 real Mi; // Absolute Hubble-free Magnitude
@@ -361,12 +361,12 @@ class HubbleFreeSCM(SCM_Model):
                 real<lower=0> rv; // Dispersion of latent velocity
                 real<lower=0> rc; // Dispersion of latent color
                 real<lower=0> ra; // Dispersion of latent a/e
-                real <lower=0> v_true[sn_idx]; // Modeled latent velocities (cannot be negative)
-                real c_true[sn_idx]; // Modeled latent color
-                real <lower=0> a_true[sn_idx]; // Modeled latent a/e (cannot be negative)
+                array[sn_idx] real <lower=0> v_true; // Modeled latent velocities (cannot be negative)
+                array[sn_idx] real c_true; // Modeled latent color
+                array[sn_idx] real <lower=0> a_true; // Modeled latent a/e (cannot be negative)
             }
             transformed parameters{
-                real mag_true[sn_idx];
+                array[sn_idx] real mag_true;
                 real sigma_int;
                 sigma_int = 10 ^ log_sigma;
                 for (i in 1:sn_idx) {
@@ -405,8 +405,8 @@ class HubbleFreeSCM(SCM_Model):
     def set_initial_conditions(self, init=None):
         if init is None:
             self.init = {
-                "vs": [7500e3],
-                "rv": [1000e3],
+                "vs": 7500e3,
+                "rv": 1000e3,
                 "v_true": [7500e3] * self.data["sn_idx"],
             }
         else:
