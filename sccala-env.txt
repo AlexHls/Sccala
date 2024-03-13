@@ -5,7 +5,7 @@ george
 emcee
 astropy
 specutils
-pystan
+pystan==3.9.0
 corner
 cloudpickle
 itsdangerous
