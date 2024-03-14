@@ -57,7 +57,7 @@ class NHHubbleFreeSCM(SCM_Model):
                 real vel_avg; // Normalisation constans
                 real col_avg;
                 real ae_avg;
-                array[sn_idx] real log_dist_mod // Pre-computed, redshift dependent, Hubble-free distance moduli
+                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
             }
             parameters {
                 real Mi; // Absolute Hubble-free Magnitude
