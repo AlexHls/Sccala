@@ -177,6 +177,8 @@ class SccalaSCM:
         chains=4,
         iters=1000,
         warmup=1000,
+        rho=1.0,
+        rho_calib=0.0,
         save_warmup=False,
         quiet=False,
         init=None,
@@ -198,6 +200,10 @@ class SccalaSCM:
             Number of iterations used in STAN fit. Default: 1000
         warmup : int
             Number of iterations used in STAN fit as warmup. Default: 1000
+        rho : float
+            Correlation between the color and magnitude uncertainties. Default: 1.0
+        rho_calib : float
+            Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0
         save_warmup : bool
             If True, warmup elements of chain will be saved as well. Default: False
         quiet : bool
@@ -243,15 +249,28 @@ class SccalaSCM:
             obs = np.array([self.mag, self.vel, self.col, self.ae]).T
 
             # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            errors = np.array(
-                [
-                    red_uncertainty + self.mag_err**2,
-                    self.vel_err**2,
-                    self.col_err**2,
-                    self.ae_err**2,
-                ]
-            ).T
-
+            errors = []
+            for i in range(len(self.mag)):
+                errors.append(
+                    np.array(
+                        [
+                            [
+                                red_uncertainty[i] + self.mag_err[i] ** 2,
+                                0,
+                                self.mag_err[i] * self.col_err[i] * rho,
+                                0,
+                            ],
+                            [0, self.vel_err[i] ** 2, 0, 0],
+                            [
+                                self.mag_err[i] * self.col_err[i] * rho,
+                                0,
+                                self.col_err[i] ** 2,
+                                0,
+                            ],
+                            [0, 0, 0, self.ae_err[i] ** 2],
+                        ]
+                    )
+                )
             model.data["ae_sys"] = self.ae_sys
             model.data["ae_avg"] = np.mean(self.ae)
         else:
@@ -259,13 +278,26 @@ class SccalaSCM:
             obs = np.array([self.mag, self.vel, self.col]).T
 
             # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            errors = np.array(
-                [
-                    red_uncertainty + self.mag_err**2,
-                    self.vel_err**2,
-                    self.col_err**2,
-                ]
-            ).T
+            errors = []
+            for i in range(len(self.mag)):
+                errors.append(
+                    np.array(
+                        [
+                            [
+                                red_uncertainty[i] + self.mag_err[i] ** 2,
+                                0,
+                                self.mag_err[i] * self.col_err[i] * rho,
+                            ],
+                            [0, self.vel_err[i] ** 2, 0],
+                            [
+                                self.mag_err[i] * self.col_err[i] * rho,
+                                0,
+                                self.col_err[i] ** 2,
+                            ],
+                        ]
+                    )
+                )
+            errors = np.array(errors)
 
         # Fill model data
         model.data["sn_idx"] = len(self.sn)

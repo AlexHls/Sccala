@@ -339,7 +339,7 @@ class HubbleFreeSCM(SCM_Model):
             data {
                 int<lower=0> sn_idx;
                 array[sn_idx] vector[4] obs; // Observed SN properties
-                array[sn_idx] vector[4] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] matrix[4,4] errors; // Associated uncertaintes (measurement, statistical, systematic)
                 array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
                 array[sn_idx] real vel_sys; // Systematic velocity uncertainties
                 array[sn_idx] real col_sys; // Systematic color uncertainties
@@ -393,7 +393,7 @@ class HubbleFreeSCM(SCM_Model):
                 a_true ~ normal(as,ra);
 
                 for (i in 1:sn_idx) {
-                    target +=  normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]', sqrt(errors[i] + [sigma_int^2, 0, 0, 0]'));
+                    target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]', errors[i] +[[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
                 }
             }
             """
@@ -877,7 +877,7 @@ class ClassicHubbleFreeSCM(SCM_Model):
             data {
                 int<lower=0> sn_idx;
                 array[sn_idx] vector[3] obs; // Observed SN properties
-                array[sn_idx] vector[3] errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[sn_idx] matrix[3,3] errors; // Associated uncertaintes (measurement, statistical, systematic)
                 array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
                 array[sn_idx] real vel_sys; // Systematic velocity uncertainties
                 array[sn_idx] real col_sys; // Systematic color uncertainties
@@ -921,7 +921,7 @@ class ClassicHubbleFreeSCM(SCM_Model):
                 c_true ~ normal(cs,rc);
 
                 for (i in 1:sn_idx) {
-                    target +=  normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i]]', sqrt(errors[i] + [sigma_int^2, 0, 0]'));
+                    target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i]]', errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0]]);
                 }
             }
             """
