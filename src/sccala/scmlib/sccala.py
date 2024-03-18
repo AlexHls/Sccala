@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 from tqdm import trange
 
 from sccala.scmlib.models import *
-from sccala.utillib.aux import *
-from sccala.utillib.const import *
+from sccala.utillib.aux import distmod_kin, quantile, split_list
+from sccala.utillib.const import C_LIGHT
 
 
 class SccalaSCM:
@@ -170,6 +170,73 @@ class SccalaSCM:
 
     # TODO various methods to modify (add/ delete SNe) and display loaded data
 
+    @property
+    def redshift_uncertainty(self):
+        red_uncertainty = (
+            (
+                self.red_err
+                * 5
+                * (1 + self.red)
+                / (self.red * (1 + 0.5 * self.red) * np.log(10))
+            )
+            ** 2
+            + (
+                300
+                / C_LIGHT
+                * 5
+                * (1 + self.red)
+                / (self.red * (1 + 0.5 * self.red) * np.log(10))
+            )
+            ** 2
+            + (0.055 * self.red) ** 2
+        )
+        return red_uncertainty
+
+    def get_error_matrix(self, classic=False, rho=1.0, rho_calib=0.0):
+        errors = []
+        if not classic:
+            for i in range(len(self.mag)):
+                errors.append(
+                    np.array(
+                        [
+                            [
+                                self.red_uncertainty + self.mag_err[i] ** 2,
+                                0,
+                                self.mag_err[i] * self.col_err[i] * rho,
+                                0,
+                            ],
+                            [0, self.vel_err[i] ** 2, 0, 0],
+                            [
+                                self.mag_err[i] * self.col_err[i] * rho,
+                                0,
+                                self.col_err[i] ** 2,
+                                0,
+                            ],
+                            [0, 0, 0, self.ae_err[i] ** 2],
+                        ]
+                    )
+                )
+        else:
+            for i in range(len(self.mag)):
+                errors.append(
+                    np.array(
+                        [
+                            [
+                                self.red_uncertainty + self.mag_err[i] ** 2,
+                                0,
+                                self.mag_err[i] * self.col_err[i] * rho,
+                            ],
+                            [0, self.vel_err[i] ** 2, 0],
+                            [
+                                self.mag_err[i] * self.col_err[i] * rho,
+                                0,
+                                self.col_err[i] ** 2,
+                            ],
+                        ]
+                    )
+                )
+        return np.array(errors)
+
     def sample(
         self,
         model,
@@ -225,79 +292,18 @@ class SccalaSCM:
         assert isinstance(iters, int), "'iters' has to by of type 'int'"
         assert isinstance(warmup, int), "'warmup' has to by of type 'int'"
 
-        red_uncertainty = (
-            (
-                self.red_err
-                * 5
-                * (1 + self.red)
-                / (self.red * (1 + 0.5 * self.red) * np.log(10))
-            )
-            ** 2
-            + (
-                300
-                / C_LIGHT
-                * 5
-                * (1 + self.red)
-                / (self.red * (1 + 0.5 * self.red) * np.log(10))
-            )
-            ** 2
-            + (0.055 * self.red) ** 2
-        )
+        errors = self.get_error_matrix(classic=classic, rho=rho, rho_calib=rho_calib)
 
         if not classic:
             # Observed values
             obs = np.array([self.mag, self.vel, self.col, self.ae]).T
 
             # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            errors = []
-            for i in range(len(self.mag)):
-                errors.append(
-                    np.array(
-                        [
-                            [
-                                red_uncertainty[i] + self.mag_err[i] ** 2,
-                                0,
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                            ],
-                            [0, self.vel_err[i] ** 2, 0, 0],
-                            [
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                                self.col_err[i] ** 2,
-                                0,
-                            ],
-                            [0, 0, 0, self.ae_err[i] ** 2],
-                        ]
-                    )
-                )
             model.data["ae_sys"] = self.ae_sys
             model.data["ae_avg"] = np.mean(self.ae)
         else:
             # Observed values
             obs = np.array([self.mag, self.vel, self.col]).T
-
-            # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            errors = []
-            for i in range(len(self.mag)):
-                errors.append(
-                    np.array(
-                        [
-                            [
-                                red_uncertainty[i] + self.mag_err[i] ** 2,
-                                0,
-                                self.mag_err[i] * self.col_err[i] * rho,
-                            ],
-                            [0, self.vel_err[i] ** 2, 0],
-                            [
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                                self.col_err[i] ** 2,
-                            ],
-                        ]
-                    )
-                )
-            errors = np.array(errors)
 
         # Fill model data
         model.data["sn_idx"] = len(self.sn)
@@ -402,6 +408,8 @@ class SccalaSCM:
         chains=2,
         iters=1000,
         warmup=1000,
+        rho=1.0,
+        rho_calib=0.0,
         save_warmup=False,
         save_chains=False,
         init=None,
@@ -504,53 +512,17 @@ class SccalaSCM:
             if not os.path.exists(log_dir):
                 os.makedirs(log_dir)
 
-        red_uncertainty = (
-            (
-                self.red_err
-                * 5
-                * (1 + self.red)
-                / (self.red * (1 + 0.5 * self.red) * np.log(10))
-            )
-            ** 2
-            + (
-                300
-                / C_LIGHT
-                * 5
-                * (1 + self.red)
-                / (self.red * (1 + 0.5 * self.red) * np.log(10))
-            )
-            ** 2
-            + (0.055 * self.red) ** 2
-        )
+        errors = self.get_error_matrix(classic=classic, rho=rho)
 
         if not classic:
             # Observed values
             obs = np.array([self.mag, self.vel, self.col, self.ae]).T
-
-            # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            errors = np.array(
-                [
-                    red_uncertainty + self.mag_err**2,
-                    self.vel_err**2,
-                    self.col_err**2,
-                    self.ae_err**2,
-                ]
-            ).T
 
             model.data["ae_sys"] = self.ae_sys
             model.data["ae_avg"] = np.mean(self.ae)
         else:
             # Observed values
             obs = np.array([self.mag, self.vel, self.col]).T
-
-            # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            errors = np.array(
-                [
-                    red_uncertainty + self.mag_err**2,
-                    self.vel_err**2,
-                    self.col_err**2,
-                ]
-            ).T
 
         # Fill model data
         model.data["sn_idx"] = len(self.sn)
