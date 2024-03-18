@@ -23,6 +23,8 @@ def load_data(
     vel_sys=None,
     col_sys=None,
     ae_sys=None,
+    rho=1.0,
+    rho_calib=0.0,
 ):
     """
     Loads all the necessary data for the scm and bundles it
@@ -67,6 +69,11 @@ def load_data(
         Systematic color uncertainty added to all SNe. Default: None
     ae_sys : float or None
         Systematic ae uncertainty added to all SNe. Default: None
+    rho : float
+        Correlation between the color and magnitude uncertainties. Default: 1.0
+    rho_calib : float
+        Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0
+
 
     Returns
     -------
@@ -277,7 +284,7 @@ def load_data(
         datadict["col"].append(col0 - col1)
         # TODO: Add correlation parameter
         datadict["col_err"].append(
-            np.sqrt(col0_err**2 + col1_err**2 - 2 * col0_err * col1_err)
+            np.sqrt(col0_err**2 + col1_err**2 - 2 * rho * col0_err * col1_err)
         )
 
         # Velocity
@@ -403,7 +410,9 @@ def load_data(
 
             # Color
             datadict["col"].append(col0 - col1)
-            datadict["col_err"].append(np.sqrt(col0_err**2 + col1_err**2))
+            datadict["col_err"].append(
+                np.sqrt(col0_err**2 + col1_err**2 - 2 * rho_calib * col0_err * col1_err)
+            )
 
             # Velocity
             df = pd.read_csv(
