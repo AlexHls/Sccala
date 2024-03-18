@@ -171,7 +171,7 @@ class SccalaSCM:
     # TODO various methods to modify (add/ delete SNe) and display loaded data
 
     @property
-    def redshift_uncertainty(self):
+    def red_uncertainty(self):
         red_uncertainty = (
             (
                 self.red_err
@@ -200,7 +200,7 @@ class SccalaSCM:
                     np.array(
                         [
                             [
-                                self.red_uncertainty + self.mag_err[i] ** 2,
+                                self.red_uncertainty[i] + self.mag_err[i] ** 2,
                                 0,
                                 self.mag_err[i] * self.col_err[i] * rho,
                                 0,
@@ -222,7 +222,7 @@ class SccalaSCM:
                     np.array(
                         [
                             [
-                                self.red_uncertainty + self.mag_err[i] ** 2,
+                                self.red_uncertainty[i] + self.mag_err[i] ** 2,
                                 0,
                                 self.mag_err[i] * self.col_err[i] * rho,
                             ],
