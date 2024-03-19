@@ -86,7 +86,7 @@ class EpochDataSet:
 
         self.data = np.array(data)
         self.data_error = np.array(data_error)
-        self.tkde = np.array(tkde)
+        self.tkde = tkde
         self.mjd = np.array(mjd)
 
         self.snname = snname
@@ -97,7 +97,7 @@ class EpochDataSet:
         self.reg_max = reg_max
         self.extrapolate = extrapolate
 
-        self.toe = float(np.percentile(tkde, 50.0))
+        self.toe = float(np.percentile(tkde.resample(10000), 50.0))
 
         # Confert dates to restframe
         self.time = (mjd - self.toe) / (1 + red)
@@ -242,8 +242,16 @@ class EpochDataSet:
                 color="red",
             )
             ax2.axhline(self.median[plotind] / conv, color="red")
-            lower = self.dates[plotind] + self.toe - np.percentile(self.tkde, 15.87)
-            upper = self.dates[plotind] + self.toe - np.percentile(self.tkde, 84.13)
+            lower = (
+                self.dates[plotind]
+                + self.toe
+                - np.percentile(self.tkde.resample(10000), 15.87)
+            )
+            upper = (
+                self.dates[plotind]
+                + self.toe
+                - np.percentile(self.tkde.resample(10000), 84.13)
+            )
             ax2.axvspan(
                 lower, upper, alpha=0.3, color="blue", label="1$\sigma$ (68.26%)"
             )
