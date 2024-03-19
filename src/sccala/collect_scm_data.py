@@ -24,6 +24,7 @@ def main(args):
     ae_sys = args.ae_sys
     rho = args.rho
     rho_calib = args.rho_calib
+    error_mode = args.error_mode
 
     df = sl.load_data(
         sne_list,
@@ -41,6 +42,7 @@ def main(args):
         ae_sys=ae_sys,
         rho=rho,
         rho_calib=rho_calib,
+        error_mode=error_mode,
     )
 
     return df
@@ -131,6 +133,12 @@ def cli():
         help="Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0",
         default=0.0,
         type=float,
+    )
+    parser.add_argument(
+        "--error_mode",
+        help="Mode to calculate asymmetric errors. Default: mean",
+        default="mean",
+        choices=["mean", "max", "min"],
     )
 
     args = parser.parse_args()

@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 
 from sccala.libio import get_paths as pa
+from sccala.utillib.aux import calc_single_error
 
 
 def load_data(
@@ -25,6 +26,7 @@ def load_data(
     ae_sys=None,
     rho=1.0,
     rho_calib=0.0,
+    error_mode="mean",
 ):
     """
     Loads all the necessary data for the scm and bundles it
@@ -73,13 +75,16 @@ def load_data(
         Correlation between the color and magnitude uncertainties. Default: 1.0
     rho_calib : float
         Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0
-
+    error_mode : str
+        Mode used to calculate single value error from asymmetric errors. Default: "mean"
 
     Returns
     -------
     scm_data : pd.DataFrame
         DataFrame containing all the data necessary for the standardisation
     """
+
+    assert error_mode in ["mean", "max", "min"], "Invalid error mode"
 
     datadict = {
         "SN": [],
@@ -246,7 +251,9 @@ def load_data(
             0
         ]
         datadict["mag"].append(mags)
-        datadict["mag_err"].append(max(mags_err_lower, mags_err_upper))
+        datadict["mag_err"].append(
+            calc_single_error(mags_err_lower, mags_err_upper, error_mode)
+        )
 
         # Color 0
         df = pd.read_csv(
@@ -262,7 +269,7 @@ def load_data(
         col0_err_upper = df[df["Date"] == date[i]][
             "%s_err_upper" % col[i][0]
         ].to_numpy()[0]
-        col0_err = max(col0_err_lower, col0_err_upper)
+        col0_err = calc_single_error(col0_err_lower, col0_err_upper, error_mode)
 
         # Color 1
         df = pd.read_csv(
@@ -278,7 +285,7 @@ def load_data(
         col1_err_upper = df[df["Date"] == date[i]][
             "%s_err_upper" % col[i][1]
         ].to_numpy()[0]
-        col1_err = max(col1_err_lower, col1_err_upper)
+        col1_err = calc_single_error(col1_err_lower, col1_err_upper, error_mode)
 
         # Color
         datadict["col"].append(col0 - col1)
@@ -298,7 +305,7 @@ def load_data(
         vel = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
         vel_err_lower = df[df["Date"] == date[i]]["ErrorLower"].to_numpy()[0]
         vel_err_upper = df[df["Date"] == date[i]]["ErrorUpper"].to_numpy()[0]
-        vel_err = max(vel_err_lower, vel_err_upper)
+        vel_err = calc_single_error(vel_err_lower, vel_err_upper, error_mode)
         datadict["vel"].append(vel)
         datadict["vel_err"].append(vel_err)
 
@@ -312,7 +319,7 @@ def load_data(
         ae = df[df["Date"] == date[i]]["VelInt"].to_numpy()[0]
         ae_err_lower = df[df["Date"] == date[i]]["ErrorLower"].to_numpy()[0]
         ae_err_upper = df[df["Date"] == date[i]]["ErrorUpper"].to_numpy()[0]
-        ae_err = max(ae_err_lower, ae_err_upper)
+        ae_err = calc_single_error(ae_err_lower, ae_err_upper, error_mode)
         datadict["ae"].append(ae)
         datadict["ae_err"].append(ae_err)
 
@@ -372,7 +379,9 @@ def load_data(
                 "%s_err_upper" % calib_mag[i]
             ].to_numpy()[0]
             datadict["mag"].append(mags)
-            datadict["mag_err"].append(max(mags_err_lower, mags_err_upper))
+            datadict["mag_err"].append(
+                calc_single_error(mags_err_lower, mags_err_upper, error_mode)
+            )
 
             # Color 0
             df = pd.read_csv(
@@ -389,7 +398,7 @@ def load_data(
             col0_err_upper = df[df["Date"] == calib_date[i]][
                 "%s_err_upper" % calib_col[i][0]
             ].to_numpy()[0]
-            col0_err = max(col0_err_lower, col0_err_upper)
+            col0_err = calc_single_error(col0_err_lower, col0_err_upper, error_mode)
 
             # Color 1
             df = pd.read_csv(
@@ -406,7 +415,7 @@ def load_data(
             col1_err_upper = df[df["Date"] == calib_date[i]][
                 "%s_err_upper" % calib_col[i][1]
             ].to_numpy()[0]
-            col1_err = max(col1_err_lower, col1_err_upper)
+            col1_err = calc_single_error(col1_err_lower, col1_err_upper, error_mode)
 
             # Color
             datadict["col"].append(col0 - col1)
@@ -425,7 +434,7 @@ def load_data(
             vel = df[df["Date"] == calib_date[i]]["VelInt"].to_numpy()[0]
             vel_err_lower = df[df["Date"] == calib_date[i]]["ErrorLower"].to_numpy()[0]
             vel_err_upper = df[df["Date"] == calib_date[i]]["ErrorUpper"].to_numpy()[0]
-            vel_err = max(vel_err_lower, vel_err_upper)
+            vel_err = calc_single_error(vel_err_lower, vel_err_upper, error_mode)
             datadict["vel"].append(vel)
             datadict["vel_err"].append(vel_err)
 
@@ -439,7 +448,7 @@ def load_data(
             ae = df[df["Date"] == calib_date[i]]["VelInt"].to_numpy()[0]
             ae_err_lower = df[df["Date"] == calib_date[i]]["ErrorLower"].to_numpy()[0]
             ae_err_upper = df[df["Date"] == calib_date[i]]["ErrorUpper"].to_numpy()[0]
-            ae_err = max(ae_err_lower, ae_err_upper)
+            ae_err = calc_single_error(ae_err_lower, ae_err_upper, error_mode)
             datadict["ae"].append(ae)
             datadict["ae_err"].append(ae_err)
 
