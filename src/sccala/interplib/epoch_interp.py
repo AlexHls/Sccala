@@ -216,7 +216,7 @@ class EpochDataSet:
                 color="red",
                 label="Median",
             )
-            ax1.set_xlabel("v(t={:.1f})d) (km/s)".format(self.dates[plotind]))
+            ax1.set_xlabel("v(t={:.1f}d) (km/s)".format(self.dates[plotind]))
             ax1.set_title(
                 r"v({:.1f}) = {:.2f} +{:.2f}/ -{:.2f} km/s | {:s}".format(
                     self.dates[plotind],
