@@ -289,9 +289,13 @@ def load_data(
 
         # Color
         datadict["col"].append(col0 - col1)
-        # TODO: Add correlation parameter
         datadict["col_err"].append(
-            np.sqrt(col0_err**2 + col1_err**2 - 2 * rho * col0_err * col1_err)
+            np.max(
+                [
+                    np.sqrt(col0_err**2 + col1_err**2 - 2 * rho * col0_err * col1_err),
+                    0.001,
+                ]
+            )
         )
 
         # Velocity
@@ -420,7 +424,16 @@ def load_data(
             # Color
             datadict["col"].append(col0 - col1)
             datadict["col_err"].append(
-                np.sqrt(col0_err**2 + col1_err**2 - 2 * rho_calib * col0_err * col1_err)
+                np.max(
+                    [
+                        np.sqrt(
+                            col0_err**2
+                            + col1_err**2
+                            - 2 * rho_calib * col0_err * col1_err
+                        ),
+                        0.001,
+                    ]
+                )
             )
 
             # Velocity
