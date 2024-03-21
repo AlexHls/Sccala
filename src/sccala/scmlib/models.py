@@ -460,14 +460,14 @@ class HubbleSCM(SCM_Model):
                 real ae_avg;
                 array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
                 int<lower=0> calib_sn_idx;
-                array[calib_sn_idx] vector[4] calib_obs[calib_sn_idx]; // Observed SN properties
-                array[calib_sn_idx] vector[4] calib_errors[calib_sn_idx]; // Associated uncertaintes (measurement, statistical, systematic)
-                array[calib_sn_idx] real calib_mag_sys[calib_sn_idx]; // Systematic magnitude uncertainties
-                array[calib_sn_idx] real calib_vel_sys[calib_sn_idx]; // Systematic velocity uncertainties
-                array[calib_sn_idx] real calib_col_sys[calib_sn_idx]; // Systematic color uncertainties
-                array[calib_sn_idx] real calib_ae_sys[calib_sn_idx]; // Systematic ae uncertainties
-                array[calib_sn_idx] real calib_dist_mod[calib_sn_idx]; // Distance moduli of calibrators
-                array[calib_sn_idx] int<lower=0> calib_dset_idx[calib_sn_idx]; // Index of the calibrator dataset
+                array[calib_sn_idx] vector[4] calib_obs; // Observed SN properties
+                array[calib_sn_idx] vector[4] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)
+                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties
+                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties
+                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties
+                array[calib_sn_idx] real calib_ae_sys; // Systematic ae uncertainties
+                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators
+                array[calib_sn_idx] int<lower=0> calib_dset_idx; // Index of the calibrator dataset
                 int<lower=0> num_calib_dset; // Number of calibrator datasets
             }
             parameters {
@@ -477,7 +477,7 @@ class HubbleSCM(SCM_Model):
                 real beta; // Color correction strength
                 real gamma; // a/e correction strength
                 real<lower=-3,upper=0> log_sigma; // Unexplained intrinsic scatter
-                real<lower=-3,upper=0> calib_log_sigma[num_calib_dset]; // Unexplained intrinsic scatter
+                array[num_calib_dset] real<lower=-3,upper=0> calib_log_sigma; // Unexplained intrinsic scatter
                 real<lower=0> vs; // Mean of latent velocity
                 real cs; // Mean of latent color
                 real<lower=0> as; // Mean of latent a/e
@@ -493,9 +493,9 @@ class HubbleSCM(SCM_Model):
                 array[sn_idx] real<lower=0> v_true; // Modeled latent velocities (cannot be negative)
                 array[sn_idx] real c_true; // Modeled latent color
                 array[sn_idx] real<lower=0> a_true; // Modeled latent a/e (cannot be negative)
-                array[calib_sn_idx] eal<lower=0> calib_v_true; // Modeled latent velocities (cannot be negative)
-                array[calib_sn_idx] eal calib_c_true; // Modeled latent color
-                array[calib_sn_idx] eal<lower=0> calib_a_true; // Modeled latent a/e (cannot be negative)
+                array[calib_sn_idx] real<lower=0> calib_v_true; // Modeled latent velocities (cannot be negative)
+                array[calib_sn_idx] real calib_c_true; // Modeled latent color
+                array[calib_sn_idx] real<lower=0> calib_a_true; // Modeled latent a/e (cannot be negative)
             }
             transformed parameters{
                 array[sn_idx] real mag_true;
