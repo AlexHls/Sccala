@@ -95,7 +95,7 @@ def cli():
     parser.add_argument(
         "-t",
         "--time",
-        help="Wallclock time (in h) of parent job. Once 95% of the Wallclock time has passed no new iteration will be started. Default: 24.0",
+        help="Wallclock time (in h) of parent job. Once 95 percent of the Wallclock time has passed no new iteration will be started. Default: 24.0",
         default=24.0,
         type=float,
     )
