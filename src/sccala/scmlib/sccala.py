@@ -10,8 +10,8 @@ import stan
 import matplotlib.pyplot as plt
 from tqdm import trange
 
-from sccala.scmlib.models import *
-from sccala.utillib.aux import distmod_kin, quantile, split_list
+from sccala.scmlib.models import SCM_Model
+from sccala.utillib.aux import distmod_kin, quantile, split_list, nullify_output
 from sccala.utillib.const import C_LIGHT
 
 
