@@ -589,9 +589,13 @@ class SccalaSCM:
                 restart_files = ["restart_%03d.dat" % i for i in range(size)]
             found_restart = False
         else:
-            assert (
-                len(restart_files) == size
-            ), "Mismatch between number of restart files and ranks"
+            assert len(restart_files) == size, (
+                "Mismatch between number of restart files (%d) and ranks (%d)"
+                % (
+                    len(restart_files),
+                    size,
+                )
+            )
             restart_files.sort()
             found_restart = True
 
