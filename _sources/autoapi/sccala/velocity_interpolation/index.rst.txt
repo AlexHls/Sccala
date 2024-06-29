@@ -1,15 +1,11 @@
-:py:mod:`sccala.velocity_interpolation`
-=======================================
+sccala.velocity_interpolation
+=============================
 
 .. py:module:: sccala.velocity_interpolation
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,10 +13,10 @@ Functions
    sccala.velocity_interpolation.cli
 
 
+Module Contents
+---------------
 
 .. py:function:: main(args)
 
-
 .. py:function:: cli()
-
 

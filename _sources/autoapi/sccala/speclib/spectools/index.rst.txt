@@ -1,21 +1,19 @@
-:py:mod:`sccala.speclib.spectools`
-==================================
+sccala.speclib.spectools
+========================
 
 .. py:module:: sccala.speclib.spectools
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    sccala.speclib.spectools.calculate_flux_error
 
 
+Module Contents
+---------------
 
 .. py:function:: calculate_flux_error(datfile, stdev=4, size=1000, loc=75, scale=50)
 

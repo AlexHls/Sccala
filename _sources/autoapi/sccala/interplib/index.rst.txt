@@ -1,16 +1,16 @@
-:py:mod:`sccala.interplib`
-==========================
+sccala.interplib
+================
 
 .. py:module:: sccala.interplib
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   epoch_interp/index.rst
-   interpolators/index.rst
+   /autoapi/sccala/interplib/epoch_interp/index
+   /autoapi/sccala/interplib/interpolators/index
 
 

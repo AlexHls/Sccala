@@ -1,15 +1,11 @@
-:py:mod:`sccala.sccala_scm`
-===========================
+sccala.sccala_scm
+=================
 
 .. py:module:: sccala.sccala_scm
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,10 +13,10 @@ Functions
    sccala.sccala_scm.cli
 
 
+Module Contents
+---------------
 
 .. py:function:: main(args)
 
-
 .. py:function:: cli()
-
 

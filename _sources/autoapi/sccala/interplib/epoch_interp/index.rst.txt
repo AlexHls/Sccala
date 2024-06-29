@@ -1,27 +1,25 @@
-:py:mod:`sccala.interplib.epoch_interp`
-=======================================
+sccala.interplib.epoch_interp
+=============================
 
 .. py:module:: sccala.interplib.epoch_interp
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    sccala.interplib.epoch_interp.EpochDataSet
 
 
-
+Module Contents
+---------------
 
 .. py:class:: EpochDataSet(data, data_error, tkde, red, mjd, snname='', errorfloor=0.0, errorscale=1.0, reg_min=20.0, reg_max=60.0, extrapolate=5.0, size=50, num_live_points=800, disable_mean_fit=False, disable_white_noise_fit=False, ignore_toe_uncertainty=False)
 
-
    Class wrapping data time series and providing
    interpolation functionality
+
 
    .. py:method:: get_results()
 
@@ -32,9 +30,11 @@ Classes
       If beginning is True, first element is removed, otherwise last.
 
 
+
    .. py:method:: diagnostic_plot(diagnostic, target, flux_interp=False)
 
       Plots the output of the interpolation
+
 
 
    .. py:method:: data_interp(target, step=0.1, date_low=None, date_high=None, diagnostic=None, no_reject=False, flux_interp=False)

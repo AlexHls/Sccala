@@ -1,46 +1,52 @@
-:py:mod:`sccala`
-================
+sccala
+======
 
 .. py:module:: sccala
 
 
 Subpackages
 -----------
-.. toctree::
-   :titlesonly:
-   :maxdepth: 3
 
-   asynphot/index.rst
-   interplib/index.rst
-   libio/index.rst
-   scmlib/index.rst
-   speclib/index.rst
-   utillib/index.rst
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/sccala/asynphot/index
+   /autoapi/sccala/interplib/index
+   /autoapi/sccala/libio/index
+   /autoapi/sccala/scmlib/index
+   /autoapi/sccala/speclib/index
+   /autoapi/sccala/utillib/index
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   aks_corr/index.rst
-   collect_scm_data/index.rst
-   deblind/index.rst
-   gen_testdata/index.rst
-   photometry_interpolation/index.rst
-   project_init/index.rst
-   sccala_bootstrap/index.rst
-   sccala_scm/index.rst
-   spectral_line_fit/index.rst
-   synthetic_photometry/index.rst
-   velocity_interpolation/index.rst
+   /autoapi/sccala/aks_corr/index
+   /autoapi/sccala/collect_scm_data/index
+   /autoapi/sccala/deblind/index
+   /autoapi/sccala/gen_testdata/index
+   /autoapi/sccala/photometry_interpolation/index
+   /autoapi/sccala/project_init/index
+   /autoapi/sccala/sccala_bootstrap/index
+   /autoapi/sccala/sccala_scm/index
+   /autoapi/sccala/spectral_line_fit/index
+   /autoapi/sccala/synthetic_photometry/index
+   /autoapi/sccala/velocity_interpolation/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   sccala.cwd
 
 
 Package Contents
 ----------------
 
 .. py:data:: cwd
-
-   
 

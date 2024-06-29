@@ -1,16 +1,16 @@
-:py:mod:`sccala.libio`
-======================
+sccala.libio
+============
 
 .. py:module:: sccala.libio
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   get_paths/index.rst
-   scm_loader/index.rst
+   /autoapi/sccala/libio/get_paths/index
+   /autoapi/sccala/libio/scm_loader/index
 
 

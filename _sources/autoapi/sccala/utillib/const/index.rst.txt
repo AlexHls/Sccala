@@ -1,7 +1,17 @@
-:py:mod:`sccala.utillib.const`
-==============================
+sccala.utillib.const
+====================
 
 .. py:module:: sccala.utillib.const
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   sccala.utillib.const.C_LIGHT
+   sccala.utillib.const.H_ERG
+   sccala.utillib.const.C_AA
 
 
 Module Contents
@@ -10,14 +20,10 @@ Module Contents
 .. py:data:: C_LIGHT
    :value: 299792.458
 
-   
 
 .. py:data:: H_ERG
    :value: 6.62607015e-27
 
-   
 
 .. py:data:: C_AA
-
-   
 

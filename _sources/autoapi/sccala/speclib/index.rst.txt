@@ -1,16 +1,16 @@
-:py:mod:`sccala.speclib`
-========================
+sccala.speclib
+==============
 
 .. py:module:: sccala.speclib
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   linefit/index.rst
-   spectools/index.rst
+   /autoapi/sccala/speclib/linefit/index
+   /autoapi/sccala/speclib/spectools/index
 
 

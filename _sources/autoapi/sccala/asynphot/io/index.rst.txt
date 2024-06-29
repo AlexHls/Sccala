@@ -1,15 +1,11 @@
-:py:mod:`sccala.asynphot.io`
-============================
+sccala.asynphot.io
+==================
 
 .. py:module:: sccala.asynphot.io
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -18,6 +14,8 @@ Functions
    sccala.asynphot.io.byte_to_literal_strings
 
 
+Module Contents
+---------------
 
 .. py:function:: load_transmission_data(filter_id)
 
@@ -31,7 +29,6 @@ Functions
 
 
 .. py:function:: df_from_votable(votable_path)
-
 
 .. py:function:: byte_to_literal_strings(dataframe)
 

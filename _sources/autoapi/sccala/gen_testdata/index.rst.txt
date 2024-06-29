@@ -1,15 +1,11 @@
-:py:mod:`sccala.gen_testdata`
-=============================
+sccala.gen_testdata
+===================
 
 .. py:module:: sccala.gen_testdata
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -18,6 +14,8 @@ Functions
    sccala.gen_testdata.cli
 
 
+Module Contents
+---------------
 
 .. py:function:: gen_testdata(zrange, save, size=250, plots=False, hubble=False, zrange_hubble=(0.001, 0.005), hubble_size=25, h0=70.0)
 
@@ -56,7 +54,5 @@ Functions
 
 .. py:function:: main(args)
 
-
 .. py:function:: cli()
-
 

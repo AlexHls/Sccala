@@ -1,16 +1,16 @@
-:py:mod:`sccala.scmlib`
-=======================
+sccala.scmlib
+=============
 
 .. py:module:: sccala.scmlib
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   models/index.rst
-   sccala/index.rst
+   /autoapi/sccala/scmlib/models/index
+   /autoapi/sccala/scmlib/sccala/index
 
 

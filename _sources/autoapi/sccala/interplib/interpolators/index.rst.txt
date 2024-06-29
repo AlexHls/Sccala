@@ -1,86 +1,97 @@
-:py:mod:`sccala.interplib.interpolators`
-========================================
+sccala.interplib.interpolators
+==============================
 
 .. py:module:: sccala.interplib.interpolators
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
+   sccala.interplib.interpolators.Interpolator
    sccala.interplib.interpolators.LC_Interpolator
    sccala.interplib.interpolators.AKS_Interpolator
    sccala.interplib.interpolators.Vel_Interpolator
    sccala.interplib.interpolators.AE_Interpolator
 
 
+Module Contents
+---------------
+
+.. py:class:: Interpolator
+
+   .. py:method:: get_toe_rnd(tkde, toe_samples, toe=0.0)
+
+
+   .. py:method:: sample_posterior(num_live_points=800)
+
+
+   .. py:method:: log_likelihood(params)
+
+
+   .. py:method:: reject_invalid(data_int, dint, no_reject)
+
+
+   .. py:method:: check_sample_size(size, toe_samples)
+
+
+   .. py:method:: predict_from_posterior(t_pred, tkde=None, toe=0.0, size=100, no_reject=False, toe_samples=25)
+
+
+   .. py:method:: _print_predicting()
 
 
 .. py:class:: LC_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=False, disable_white_noise_fit=False)
 
-
-   .. py:method:: log_likelihood(params)
+   Bases: :py:obj:`Interpolator`
 
 
    .. py:method:: prior_transform(cube)
 
 
-   .. py:method:: sample_posterior(num_live_points=800)
-
-
-   .. py:method:: predict_from_posterior(t_pred, tkde=None, toe=0.0, size=1000)
-
+   .. py:method:: _print_predicting()
 
 
 .. py:class:: AKS_Interpolator(data, t_grid, uncertainty=0.004, num_live_points=400, disable_mean_fit=False)
 
-
-   .. py:method:: log_likelihood(params)
+   Bases: :py:obj:`Interpolator`
 
 
    .. py:method:: prior_transform(cube)
 
 
-   .. py:method:: sample_posterior(num_live_points=800)
+   .. py:method:: _print_predicting()
 
 
    .. py:method:: predict_from_posterior(t_pred, size=1000)
 
 
-
 .. py:class:: Vel_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=True, disable_white_noise_fit=True)
 
-
-   .. py:method:: log_likelihood(params)
+   Bases: :py:obj:`Interpolator`
 
 
    .. py:method:: prior_transform(cube)
 
 
-   .. py:method:: sample_posterior(num_live_points=800)
+   .. py:method:: reject_invalid(data_int, dint, no_reject)
 
 
-   .. py:method:: predict_from_posterior(t_pred, tkde=None, toe=0.0, size=1000, no_reject=False)
-
+   .. py:method:: _print_predicting()
 
 
 .. py:class:: AE_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=True, disable_white_noise_fit=True)
 
+   Bases: :py:obj:`Interpolator`
 
-   .. py:method:: log_likelihood(params)
+
+   .. py:method:: reject_invalid(data_int, dint, no_reject)
 
 
    .. py:method:: prior_transform(cube)
 
 
-   .. py:method:: sample_posterior(num_live_points=800)
-
-
-   .. py:method:: predict_from_posterior(t_pred, tkde=None, toe=0.0, size=1000, no_reject=False)
-
+   .. py:method:: _print_predicting()
 
 

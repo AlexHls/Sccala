@@ -1,21 +1,19 @@
-:py:mod:`sccala.asynphot.calibration`
-=====================================
+sccala.asynphot.calibration
+===========================
 
 .. py:module:: sccala.asynphot.calibration
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    sccala.asynphot.calibration.get_vega_spectrum
 
 
+Module Contents
+---------------
 
 .. py:function:: get_vega_spectrum(vega_file=None)
 

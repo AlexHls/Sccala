@@ -1,15 +1,11 @@
-:py:mod:`sccala.asynphot.integrate`
-===================================
+sccala.asynphot.integrate
+=========================
 
 .. py:module:: sccala.asynphot.integrate
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,9 +13,10 @@ Functions
    sccala.asynphot.integrate.mod_simpson
 
 
+Module Contents
+---------------
 
 .. py:function:: _basic_mod_simpson(y, start, stop, x, dx, axis)
-
 
 .. py:function:: mod_simpson(y, x=None, dx=1.0, axis=-1, even='avg')
 

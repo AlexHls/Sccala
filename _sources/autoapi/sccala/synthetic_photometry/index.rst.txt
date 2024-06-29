@@ -1,15 +1,11 @@
-:py:mod:`sccala.synthetic_photometry`
-=====================================
+sccala.synthetic_photometry
+===========================
 
 .. py:module:: sccala.synthetic_photometry
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -18,6 +14,8 @@ Functions
    sccala.synthetic_photometry.cli
 
 
+Module Contents
+---------------
 
 .. py:function:: get_synthetic_photometry(i, sid, sn, spec_id, filters)
 
@@ -26,7 +24,5 @@ Functions
 
 .. py:function:: main(args)
 
-
 .. py:function:: cli()
-
 

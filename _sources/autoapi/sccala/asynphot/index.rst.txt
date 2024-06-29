@@ -1,27 +1,33 @@
-:py:mod:`sccala.asynphot`
-=========================
+sccala.asynphot
+===============
 
 .. py:module:: sccala.asynphot
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   aks_correction/index.rst
-   calibration/index.rst
-   config/index.rst
-   integrate/index.rst
-   io/index.rst
-   synphot/index.rst
+   /autoapi/sccala/asynphot/aks_correction/index
+   /autoapi/sccala/asynphot/calibration/index
+   /autoapi/sccala/asynphot/config/index
+   /autoapi/sccala/asynphot/integrate/index
+   /autoapi/sccala/asynphot/io/index
+   /autoapi/sccala/asynphot/synphot/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   sccala.asynphot.file
 
 
 Package Contents
 ----------------
 
 .. py:data:: file
-
-   
 

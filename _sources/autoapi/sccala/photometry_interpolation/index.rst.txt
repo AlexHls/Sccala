@@ -1,15 +1,11 @@
-:py:mod:`sccala.photometry_interpolation`
-=========================================
+sccala.photometry_interpolation
+===============================
 
 .. py:module:: sccala.photometry_interpolation
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,10 +13,10 @@ Functions
    sccala.photometry_interpolation.cli
 
 
+Module Contents
+---------------
 
 .. py:function:: main(args)
 
-
 .. py:function:: cli()
-
 

@@ -1,15 +1,11 @@
-:py:mod:`sccala.sccala_bootstrap`
-=================================
+sccala.sccala_bootstrap
+=======================
 
 .. py:module:: sccala.sccala_bootstrap
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,10 +13,10 @@ Functions
    sccala.sccala_bootstrap.cli
 
 
+Module Contents
+---------------
 
 .. py:function:: main(args)
 
-
 .. py:function:: cli()
-
 

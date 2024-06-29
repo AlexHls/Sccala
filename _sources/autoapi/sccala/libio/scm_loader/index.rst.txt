@@ -1,23 +1,21 @@
-:py:mod:`sccala.libio.scm_loader`
-=================================
+sccala.libio.scm_loader
+=======================
 
 .. py:module:: sccala.libio.scm_loader
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    sccala.libio.scm_loader.load_data
 
 
+Module Contents
+---------------
 
-.. py:function:: load_data(sne_list, date, mag='I', col=('V', 'I'), calib_sne_list=None, calib_date=None, calib_mag='I', calib_col=('V', 'I'), instrument='Bessell12', export=False, mag_sys=None, vel_sys=None, col_sys=None, ae_sys=None)
+.. py:function:: load_data(sne_list, date, mag='I', col=('V', 'I'), calib_sne_list=None, calib_date=None, calib_mag='I', calib_col=('V', 'I'), instrument='Bessell12', export=False, mag_sys=None, vel_sys=None, col_sys=None, ae_sys=None, rho=1.0, rho_calib=0.0, error_mode='mean')
 
    Loads all the necessary data for the scm and bundles it
    into a pandas DataFrame
@@ -61,6 +59,12 @@ Functions
        Systematic color uncertainty added to all SNe. Default: None
    ae_sys : float or None
        Systematic ae uncertainty added to all SNe. Default: None
+   rho : float
+       Correlation between the color and magnitude uncertainties. Default: 1.0
+   rho_calib : float
+       Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0
+   error_mode : str
+       Mode used to calculate single value error from asymmetric errors. Default: "mean"
 
    Returns
    -------

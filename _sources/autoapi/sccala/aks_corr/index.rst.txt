@@ -1,15 +1,11 @@
-:py:mod:`sccala.aks_corr`
-=========================
+sccala.aks_corr
+===============
 
 .. py:module:: sccala.aks_corr
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,10 +13,10 @@ Functions
    sccala.aks_corr.cli
 
 
+Module Contents
+---------------
 
 .. py:function:: main(args)
 
-
 .. py:function:: cli()
-
 

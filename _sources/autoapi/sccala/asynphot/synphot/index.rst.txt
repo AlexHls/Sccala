@@ -1,14 +1,11 @@
-:py:mod:`sccala.asynphot.synphot`
-=================================
+sccala.asynphot.synphot
+=======================
 
 .. py:module:: sccala.asynphot.synphot
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -18,9 +15,8 @@ Classes
    sccala.asynphot.synphot.MagnitudeSet
 
 
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -29,9 +25,10 @@ Functions
    sccala.asynphot.synphot.calculate_vega_magnitude
 
 
+Module Contents
+---------------
 
 .. py:function:: calculate_vega_zp(filter)
-
 
 .. py:function:: calculate_lambda_eff(spec_wav, spec_flux, filter)
 
@@ -71,11 +68,12 @@ Functions
 
 .. py:class:: BaseFilterCurve(wav, trans, interpolation_kind='linear', filter_id=None)
 
-
    Bases: :py:obj:`object`
+
 
    .. py:method:: load_filter(filter_id=None, interpolation_kind='linear')
       :classmethod:
+
 
 
    .. py:method:: interpolate(wavelength)
@@ -87,11 +85,10 @@ Functions
    .. py:method:: calculate_lambda_eff(spec_wav, spec_flux)
 
 
-
 .. py:class:: FilterCurve(wav, trans, interpolation_kind='linear', filter_id=None)
 
-
    Bases: :py:obj:`BaseFilterCurve`
+
 
    .. py:method:: __repr__()
 
@@ -101,17 +98,16 @@ Functions
 
 .. py:class:: FilterSet(filter_set, interpolation_kind='linear')
 
-
    Bases: :py:obj:`object`
 
-   .. py:attribute:: next
-
-      
 
    .. py:method:: __iter__()
 
 
    .. py:method:: __next__()
+
+
+   .. py:attribute:: next
 
 
    .. py:method:: __getitem__(item)
@@ -122,17 +118,17 @@ Functions
       Return repr(self).
 
 
+
    .. py:method:: calculate_vega_magnitudes(spec_wav, spec_flux, spec_err=None)
 
 
    .. py:method:: calculate_lambda_effs(spec_wav, spec_flux)
 
 
-
 .. py:class:: MagnitudeSet(filter_set, magnitudes, magnitude_uncertainties=None, interpolation_kind='linear')
 
-
    Bases: :py:obj:`FilterSet`
+
 
    .. py:method:: __repr__()
 

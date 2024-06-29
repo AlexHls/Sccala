@@ -1,15 +1,11 @@
-:py:mod:`sccala.asynphot.config`
-================================
+sccala.asynphot.config
+======================
 
 .. py:module:: sccala.asynphot.config
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,6 +13,8 @@ Functions
    sccala.asynphot.config.get_vega_path
 
 
+Module Contents
+---------------
 
 .. py:function:: set_vega_spec(file)
 
@@ -26,5 +24,4 @@ Functions
 
 
 .. py:function:: get_vega_path()
-
 

@@ -1,16 +1,16 @@
-:py:mod:`sccala.utillib`
-========================
+sccala.utillib
+==============
 
 .. py:module:: sccala.utillib
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   aux/index.rst
-   const/index.rst
+   /autoapi/sccala/utillib/aux/index
+   /autoapi/sccala/utillib/const/index
 
 

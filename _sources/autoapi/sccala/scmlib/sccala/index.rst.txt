@@ -1,26 +1,29 @@
-:py:mod:`sccala.scmlib.sccala`
-==============================
+sccala.scmlib.sccala
+====================
 
 .. py:module:: sccala.scmlib.sccala
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    sccala.scmlib.sccala.SccalaSCM
 
 
-
+Module Contents
+---------------
 
 .. py:class:: SccalaSCM(file, calib='CALIB', blind=True, blindkey='HUBBLE')
 
+   .. py:property:: red_uncertainty
 
-   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, save_warmup=False, quiet=False, init=None, classic=False)
+
+   .. py:method:: get_error_matrix(classic=False, rho=1.0, rho_calib=0.0)
+
+
+   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, quiet=False, init=None, classic=False)
 
       Samples the posterior for the given data and model
 
@@ -37,6 +40,10 @@ Classes
           Number of iterations used in STAN fit. Default: 1000
       warmup : int
           Number of iterations used in STAN fit as warmup. Default: 1000
+      rho : float
+          Correlation between the color and magnitude uncertainties. Default: 1.0
+      rho_calib : float
+          Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0
       save_warmup : bool
           If True, warmup elements of chain will be saved as well. Default: False
       quiet : bool
@@ -52,7 +59,8 @@ Classes
           Result of the STAN sampling
 
 
-   .. py:method:: bootstrap(model, output, log_dir='log_dir', chains=2, iters=1000, warmup=1000, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True, restart=True, walltime=24.0)
+
+   .. py:method:: bootstrap(model, output, log_dir='log_dir', chains=2, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True, restart=True, walltime=24.0)
 
       Samples the posterior for the given data and model
 
@@ -97,9 +105,11 @@ Classes
           List containing 50th quantiles of each individual bootstrap step.
 
 
+
    .. py:method:: __save_samples__(df, log_dir='log_dir', norm=None)
 
       Exports sample data
+
 
 
    .. py:method:: cornerplot(save=None, classic=False)

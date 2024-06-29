@@ -1,15 +1,11 @@
-:py:mod:`sccala.asynphot.aks_correction`
-========================================
+sccala.asynphot.aks_correction
+==============================
 
 .. py:module:: sccala.asynphot.aks_correction
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -22,18 +18,16 @@ Functions
    sccala.asynphot.aks_correction.aks_correction
 
 
+Module Contents
+---------------
 
 .. py:function:: get_sn_info(snname, modelpath='Models')
 
-
 .. py:function:: get_sn_phot(photometry_file)
-
 
 .. py:function:: get_sn_spectra(snname, delimiter=',', modelpath='Models', check_spectra=True, rej_100=True)
 
-
 .. py:function:: mag_interp(mjd, mag, emag, spec_epoch, band=None, visualize=True)
-
 
 .. py:function:: f19_unred(wave, flux, av, **kwargs)
 
@@ -43,7 +37,6 @@ Functions
 
 
 .. py:function:: warp_spectrum(offset, lambda_effs, wav, flux, filters, kind='linear')
-
 
 .. py:function:: aks_correction(snname, photometry_file, filter_in, filter_out, output=None, modelpath='Models', epoch_region=None, lsb=[0.0, 0.0], maxiter=10, save_plots=True, save_results=True, delimiter=',', disable_mean_fit=False, inspect_phot_interp=False)
 

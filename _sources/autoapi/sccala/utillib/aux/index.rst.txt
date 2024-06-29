@@ -1,18 +1,15 @@
-:py:mod:`sccala.utillib.aux`
-============================
+sccala.utillib.aux
+==================
 
 .. py:module:: sccala.utillib.aux
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
+   sccala.utillib.aux.calc_single_error
    sccala.utillib.aux.prior_tune
    sccala.utillib.aux.velocity_conversion
    sccala.utillib.aux.distmod_kin
@@ -22,6 +19,13 @@ Functions
    sccala.utillib.aux.nullify_output
    sccala.utillib.aux.split_list
 
+
+Module Contents
+---------------
+
+.. py:function:: calc_single_error(err_low, err_high, mode='mean')
+
+   Calculates single error from asymmetric errors
 
 
 .. py:function:: prior_tune(l, u)
@@ -50,7 +54,6 @@ Functions
 
 
 .. py:function:: distmod_kin(z, q0=-0.55, j0=1)
-
 
 .. py:function:: quantile(x, q, weights=None)
 
@@ -90,7 +93,6 @@ Functions
 
 
 .. py:function:: nullify_output(suppress_stdout=True, suppress_stderr=True)
-
 
 .. py:function:: split_list(in_list, chunk_size)
 

@@ -1,15 +1,11 @@
-:py:mod:`sccala.deblind`
-========================
+sccala.deblind
+==============
 
 .. py:module:: sccala.deblind
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,10 +13,10 @@ Functions
    sccala.deblind.cli
 
 
+Module Contents
+---------------
 
 .. py:function:: main(args)
 
-
 .. py:function:: cli()
-
 

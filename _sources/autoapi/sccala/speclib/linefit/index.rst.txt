@@ -1,26 +1,24 @@
-:py:mod:`sccala.speclib.linefit`
-================================
+sccala.speclib.linefit
+======================
 
 .. py:module:: sccala.speclib.linefit
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    sccala.speclib.linefit.LineFit
 
 
-
+Module Contents
+---------------
 
 .. py:class:: LineFit(wav, flux, error, numcode=100)
 
-
    Base class encapsulating line fits of a spectrum
+
 
    .. py:method:: __get_builtin_lines__()
 
@@ -43,6 +41,7 @@ Classes
           Specifies if absorption to emission ratio is to be fit.
 
 
+
    .. py:method:: __modify_builtin_lines__(line, **kwargs)
 
       Modifies the builtin lines, e.g. changes the cr_ranges
@@ -62,10 +61,12 @@ Classes
               Specifies if absorption to emission ratio is to be fit.
 
 
+
    .. py:method:: __reset_builtin_lines__()
 
       Resets builtin lines in case their properties have
       been overwritten
+
 
 
    .. py:method:: fit_line(line, cr_low=None, cr_high=None, rest=None, ae_feature=False, noisefit=True, hodlrsolver=True, size=1000, diagnostic=None, num_live_points=800)
@@ -107,6 +108,7 @@ Classes
           Dictonary containing all the different fit quantities
 
 
+
    .. py:method:: diagnostic_plot(line, save)
 
       Creates a diagnostic plot of a line fit.
@@ -124,6 +126,7 @@ Classes
       -------
       fig : matplotlib figure object
           Diagnostic figure
+
 
 
    .. py:method:: get_results(line)
