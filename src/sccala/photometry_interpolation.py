@@ -60,7 +60,6 @@ def main(args):
     data_path = os.path.join(pa.get_data_path(), snname)
     with open(os.path.join(data_path, "{:s}_TimeKDE.pkl".format(snname)), "rb") as f:
         time_kde = cloudpickle.load(f)
-    tkde = time_kde.resample(size=10000)
 
     # Load redshift from info file
     info = pd.read_csv(os.path.join(data_path, "{:s}_info.csv".format(snname)))
@@ -98,7 +97,7 @@ def main(args):
         mag_set = epoch_interp.EpochDataSet(
             mag,
             mag_error,
-            tkde,
+            time_kde,
             red,
             mjd,
             snname=snname,

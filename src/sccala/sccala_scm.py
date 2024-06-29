@@ -47,6 +47,8 @@ def main(args):
         chains=args.chains,
         iters=args.iters,
         warmup=args.warmup,
+        rho=args.rho,
+        rho_calib=args.rho_calib,
         save_warmup=args.save_warmup,
         quiet=False,
         classic=args.classic,
@@ -96,6 +98,19 @@ def cli():
         help="Number of interations used as warmup in sampling procedure. Default: 1000",
         default=1000,
         type=int,
+    )
+    parser.add_argument(
+        "-r",
+        "--rho",
+        help="Correlation between the color and magnitude uncertainties. Default: 1.0",
+        default=1.0,
+        type=float,
+    )
+    parser.add_argument(
+        "--rho_calib",
+        help="Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0",
+        default=0.0,
+        type=float,
     )
     parser.add_argument(
         "-l",

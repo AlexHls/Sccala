@@ -9,6 +9,18 @@ import scipy.optimize as op
 from sccala.utillib.const import H_ERG, C_AA, C_LIGHT
 
 
+def calc_single_error(err_low, err_high, mode="mean"):
+    """
+    Calculates single error from asymmetric errors
+    """
+    if mode == "mean":
+        return (err_low + err_high) / 2
+    if mode == "max":
+        return max(err_low, err_high)
+    if mode == "min":
+        return min(err_low, err_high)
+
+
 def prior_tune(l, u):
     """
     Function to fune tune inverse gamma function
@@ -59,9 +71,7 @@ def velocity_conversion(x, rest=4861):
 
 def distmod_kin(z, q0=-0.55, j0=1):
     # Hubble constant free distance modulus d = d_L * H0 in kinematic expansion
-    return (C_LIGHT * z) * (
-        1 + (1 - q0) * z / 2 - (1 - q0 - 3 * q0**2 + j0) * z**2 / 6
-    )
+    return (C_LIGHT * z) * (1 + (1 - q0) * z / 2 - (1 - q0 - 3 * q0**2 + j0) * z**2 / 6)
 
 
 def quantile(x, q, weights=None):

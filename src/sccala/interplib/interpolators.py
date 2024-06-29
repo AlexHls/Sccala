@@ -1,7 +1,6 @@
 import warnings
 
 import numpy as np
-from numpy.random import default_rng
 import scipy.stats as st
 
 import george
@@ -11,7 +10,78 @@ from ultranest import ReactiveNestedSampler
 from tqdm import tqdm
 
 
-class LC_Interpolator:
+class Interpolator:
+    def __init__():
+        pass
+
+    def get_toe_rnd(self, tkde, toe_samples, toe=0.0):
+        if tkde is not None:
+            return np.array(tkde.resample(size=toe_samples)[0])
+        else:
+            return np.ones(toe_samples) * toe
+
+    def sample_posterior(self, num_live_points=800):
+        self.sampler = ReactiveNestedSampler(
+            self.parameters, self.log_likelihood, self.prior_transform
+        )
+        self.result = self.sampler.run(
+            min_num_live_points=num_live_points, viz_callback=False, show_status=False
+        )
+
+        return self.sampler
+
+    def log_likelihood(self, params):
+        # Update the kernel and compute the log_likelihood.
+        self.gp.set_parameter_vector(params)
+        like = self.gp.log_likelihood(self.data, quiet=True)
+        if np.isinf(like):
+            return -1e100
+        return like
+
+    def reject_invalid(self, data_int, dint, no_reject):
+        data_int.extend(dint)
+
+    def check_sample_size(self, size, toe_samples):
+        if size**2 < 1000:
+            warnings.warn(
+                "The sample size is too small, consider increasing the sample size."
+            )
+        if size % toe_samples != 0:
+            warnings.warn(
+                "The sample size is not divisible by the number of toe_samples."
+            )
+
+    def predict_from_posterior(
+        self, t_pred, tkde=None, toe=0.0, size=100, no_reject=False, toe_samples=25
+    ):
+        # This makes sure that data_int.append() works as intended
+        assert size > 1, "Insufficient size"
+        assert size > toe_samples, "Insufficient size"
+        self.check_sample_size(size, toe_samples)
+
+        data_int = []
+
+        subsample = np.random.randint(
+            len(self.sampler.results["samples"][:, 0]), size=size
+        )
+        self._print_predicting()
+        for s in tqdm(self.sampler.results["samples"][subsample]):
+            self.gp.set_parameter_vector(s)
+            toe_rnd = self.get_toe_rnd(tkde, toe_samples, toe)
+            for t_rnd in toe_rnd:
+                t = t_pred + (toe - t_rnd)
+                dint = self.gp.sample_conditional(
+                    self.data, t, size=int(size / toe_samples)
+                )
+            self.reject_invalid(data_int, dint, no_reject)
+
+        return np.array(data_int)
+
+    def _print_predicting(self):
+        print("Predicting values...")
+
+
+class LC_Interpolator(Interpolator):
     def __init__(
         self,
         data,
@@ -55,12 +125,6 @@ class LC_Interpolator:
             warnings.warn("LinAlgError occured, modifying data_error...")
             self.gp.compute(self.t_grid, self.data_error * 2)
 
-    def log_likelihood(self, params):
-        # Update the kernel and compute the log_likelihood.
-        self.gp.set_parameter_vector(params)
-
-        return self.gp.log_likelihood(self.data, quiet=True)
-
     def prior_transform(self, cube):
         # the argument, cube, consists of values from 0 to 1
         # we have to convert them to physical scales
@@ -97,46 +161,11 @@ class LC_Interpolator:
 
         return params
 
-    def sample_posterior(self, num_live_points=800):
-        self.sampler = ReactiveNestedSampler(
-            self.parameters, self.log_likelihood, self.prior_transform
-        )
-        self.result = self.sampler.run(
-            min_num_live_points=num_live_points, viz_callback=False, show_status=False
-        )
-
-        return self.sampler
-
-    def predict_from_posterior(self, t_pred, tkde=None, toe=0.0, size=1000):
-        # This makes sure that data_int.extend() works as intended
-        assert size > 1, "Insufficient size"
-
-        data_int = []
-
-        # Draw time from toe prior
-        rng = default_rng()
-        uni_rng = rng.uniform(size=25)
-
-        subsample = np.random.randint(
-            len(self.sampler.results["samples"][:, 0]), size=size
-        )
+    def _print_predicting(self):
         print("Predicting lightcurves...")
-        for s in tqdm(self.sampler.results["samples"][subsample]):
-            self.gp.set_parameter_vector(s)
-            if tkde is not None:
-                for num in uni_rng:
-                    toe_rnd = np.percentile(tkde, num * 100)
-                    t = t_pred + (toe - toe_rnd)
-                    dint = self.gp.sample_conditional(self.data, t, size=10)
-                    data_int.extend(dint)
-            else:
-                dint = self.gp.sample_conditional(self.data, t_pred, size=10)
-                data_int.extend(dint)
-
-        return np.array(data_int)
 
 
-class AKS_Interpolator:
+class AKS_Interpolator(Interpolator):
     def __init__(
         self,
         data,
@@ -168,12 +197,6 @@ class AKS_Interpolator:
         )
         self.gp.compute(self.t_grid, self.uncertainty)
 
-    def log_likelihood(self, params):
-        # Update the kernel and compute the log_likelihood.
-        self.gp.set_parameter_vector(params)
-
-        return self.gp.log_likelihood(self.data, quiet=True)
-
     def prior_transform(self, cube):
         # the argument, cube, consists of values from 0 to 1
         # we have to convert them to physical scales
@@ -193,22 +216,15 @@ class AKS_Interpolator:
 
         return params
 
-    def sample_posterior(self, num_live_points=800):
-        self.sampler = ReactiveNestedSampler(
-            self.parameters, self.log_likelihood, self.prior_transform
-        )
-        self.result = self.sampler.run(
-            min_num_live_points=num_live_points, viz_callback=False, show_status=False
-        )
-
-        return self.sampler
+    def _print_predicting(self):
+        print("Predicting AKS values...")
 
     def predict_from_posterior(self, t_pred, size=1000):
         data_int = []
         subsample = np.random.randint(
             len(self.sampler.results["samples"][:, 0]), size=size
         )
-        print("Predicting AKS values...")
+        self._print_predicting()
         for s in tqdm(self.sampler.results["samples"][subsample]):
             self.gp.set_parameter_vector(s)
             dint = self.gp.sample_conditional(self.data, t_pred, size=10)
@@ -217,7 +233,7 @@ class AKS_Interpolator:
         return np.array(data_int)
 
 
-class Vel_Interpolator:
+class Vel_Interpolator(Interpolator):
     def __init__(
         self,
         data,
@@ -261,12 +277,6 @@ class Vel_Interpolator:
             warnings.warn("LinAlgError occured, modifying data_error...")
             self.gp.compute(self.t_grid, self.data_error * 2)
 
-    def log_likelihood(self, params):
-        # Update the kernel and compute the log_likelihood.
-        self.gp.set_parameter_vector(params)
-
-        return self.gp.log_likelihood(self.data, quiet=True)
-
     def prior_transform(self, cube):
         # the argument, cube, consists of values from 0 to 1
         # we have to convert them to physical scales
@@ -303,56 +313,18 @@ class Vel_Interpolator:
 
         return params
 
-    def sample_posterior(self, num_live_points=800):
-        self.sampler = ReactiveNestedSampler(
-            self.parameters, self.log_likelihood, self.prior_transform
-        )
-        self.result = self.sampler.run(
-            min_num_live_points=num_live_points, viz_callback=False, show_status=False
-        )
-
-        return self.sampler
-
-    def predict_from_posterior(
-        self, t_pred, tkde=None, toe=0.0, size=1000, no_reject=False
-    ):
-        # This makes sure that data_int.append() works as intended
-        assert size > 1, "Insufficient size"
-
-        data_int = []
-
-        # Draw time from toe prior
-        rng = default_rng()
-        uni_rng = rng.uniform(size=25)
-
-        subsample = np.random.randint(
-            len(self.sampler.results["samples"][:, 0]), size=size
-        )
-        print("Predicting velocities...")
-        for s in tqdm(self.sampler.results["samples"][subsample]):
-            self.gp.set_parameter_vector(s)
-            if tkde is not None:
-                for num in uni_rng:
-                    toe_rnd = np.percentile(tkde, num * 100)
-                    t = t_pred + (toe - toe_rnd)
-                    dint = self.gp.sample_conditional(self.data, t, size=10)
-                    for d in dint:
-                        if any(np.sign(np.diff(d)) == 1) and not no_reject:
-                            continue
-                        else:
-                            data_int.append(d)
+    def reject_invalid(self, data_int, dint, no_reject):
+        for d in dint:
+            if any(np.sign(np.diff(d)) == 1) and not no_reject:
+                continue
             else:
-                dint = self.gp.sample_conditional(self.data, t_pred, size=10)
-                for d in dint:
-                    if any(np.sign(np.diff(d)) == 1) and not no_reject:
-                        continue
-                    else:
-                        data_int.append(d)
+                data_int.append(d)
 
-        return np.array(data_int)
+    def _print_predicting(self):
+        print("Predicting velocities...")
 
 
-class AE_Interpolator:
+class AE_Interpolator(Interpolator):
     def __init__(
         self,
         data,
@@ -401,13 +373,12 @@ class AE_Interpolator:
             warnings.warn("LinAlgError occured, modifying data_error...")
             self.gp.compute(self.t_grid, self.data_error * 2)
 
-    def log_likelihood(self, params):
-        # Update the kernel and compute the log_likelihood.
-        self.gp.set_parameter_vector(params)
-        like = self.gp.log_likelihood(self.data, quiet=True)
-        if np.isinf(like):
-            return -1e100
-        return like
+    def reject_invalid(self, data_int, dint, no_reject):
+        for d in dint:
+            if any(np.sign(d) < 0.0) and not no_reject:
+                continue
+            else:
+                data_int.append(d)
 
     def prior_transform(self, cube):
         # the argument, cube, consists of values from 0 to 1
@@ -445,50 +416,5 @@ class AE_Interpolator:
 
         return params
 
-    def sample_posterior(self, num_live_points=800):
-        self.sampler = ReactiveNestedSampler(
-            self.parameters, self.log_likelihood, self.prior_transform
-        )
-        self.result = self.sampler.run(
-            min_num_live_points=num_live_points, viz_callback=False, show_status=False
-        )
-
-        return self.sampler
-
-    def predict_from_posterior(
-        self, t_pred, tkde=None, toe=0.0, size=1000, no_reject=False
-    ):
-        # This makes sure that data_int.append() works as intended
-        assert size > 1, "Insufficient size"
-
-        data_int = []
-
-        # Draw time from toe prior
-        rng = default_rng()
-        uni_rng = rng.uniform(size=25)
-
-        subsample = np.random.randint(
-            len(self.sampler.results["samples"][:, 0]), size=size
-        )
+    def _print_predicting(self):
         print("Predicting a/e values...")
-        for s in tqdm(self.sampler.results["samples"][subsample]):
-            self.gp.set_parameter_vector(s)
-            if tkde is not None:
-                for num in uni_rng:
-                    toe_rnd = np.percentile(tkde, num * 100)
-                    t = t_pred + (toe - toe_rnd)
-                    dint = self.gp.sample_conditional(self.data, t, size=10)
-                    for d in dint:
-                        if any(np.sign(d) < 0.0) and not no_reject:
-                            continue
-                        else:
-                            data_int.append(d)
-            else:
-                dint = self.gp.sample_conditional(self.data, t_pred, size=10)
-                for d in dint:
-                    if any(np.sign(d) < 0.0) and not no_reject:
-                        continue
-                    else:
-                        data_int.append(d)
-
-        return np.array(data_int)
