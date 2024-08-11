@@ -34,11 +34,12 @@ class LineFit:
         """
 
         # Check if error has correct format
-        assert (
-            len(error) == len(flux) or len(error) == 1
-        ), "Length of error does not match length of flux: %d <-> %d" % (
-            len(error),
-            len(flux),
+        assert len(error) == len(flux) or len(error) == 1, (
+            "Length of error does not match length of flux: %d <-> %d"
+            % (
+                len(error),
+                len(flux),
+            )
         )
 
         self.wav = wav
@@ -468,14 +469,14 @@ class LineFit:
                 np.percentile(ae_avg, 97.72),
                 alpha=0.1,
                 color="red",
-                label="2$\sigma$ (95.44%)",
+                label=r"2$\sigma$ (95.44%)",
             )
             ax1.axvspan(
                 np.percentile(ae_avg, 15.87),
                 np.percentile(ae_avg, 84.13),
                 alpha=0.3,
                 color="red",
-                label="1$\sigma$ (68.26%)",
+                label=r"1$\sigma$ (68.26%)",
             )
             ax1.axvline(np.percentile(ae_avg, 50), color="red", label="Median")
 
@@ -527,7 +528,7 @@ class LineFit:
             )
             ax2.axvline(4861, color="k", ls="--", alpha=0.3)
             ax2.set_title(r"H$_\alpha$ line fit")
-            ax2.set_xlabel("Wavelength ($\AA$)")
+            ax2.set_xlabel(r"Wavelength ($\AA$)")
             ax2.set_ylabel("Flux (arb. unit)")
             ax2.legend()
             ax2.set_xlim([min(x), max(x)])
@@ -535,7 +536,7 @@ class LineFit:
 
             velocity, vel_err_lower, vel_err_upper = self.get_results(line)
             ax2.set_title(
-                "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n a/e: {:.2e} +{:.2e}/ -{:.2e}".format(
+                r"MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n a/e: {:.2e} +{:.2e}/ -{:.2e}".format(
                     median,
                     min_error_upper,
                     min_error_lower,
@@ -580,15 +581,13 @@ class LineFit:
             axes2_ticks = []
             for X in ax1_ticks:
                 # Velocity in km/s
-                vel_value = (
-                    299792458 * (4861**2 - X**2) / (4861**2 + X**2) / 1000
-                )
+                vel_value = 299792458 * (4861**2 - X**2) / (4861**2 + X**2) / 1000
                 axes2_ticks.append("%.0f" % vel_value)
 
             axes2.set_xticks(ax1_ticks)
             axes2.set_xbound(ax1.get_xbound())
             axes2.set_xticklabels(axes2_ticks)
-            ax1.set_xlabel("Wavelength ($\AA$)")
+            ax1.set_xlabel(r"Wavelength ($\AA$)")
             axes2.set_xlabel("Velocity (km/s)")
 
             # Plot fit with error band for peak position
@@ -623,7 +622,7 @@ class LineFit:
             velocity, vel_err_lower, vel_err_upper = self.get_results(line)
 
             ax2.set_title(
-                "MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n Velocity: {:.2f} +{:.2f}/ -{:.2f} km/s".format(
+                r"MinWavelength: {:.2f} +{:.2f}/ -{:.2f} $\AA$\n Velocity: {:.2f} +{:.2f}/ -{:.2f} km/s".format(
                     median,
                     min_error_upper,
                     min_error_lower,
