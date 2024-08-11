@@ -1,4 +1,9 @@
+import os
+
 import numpy as np
+
+
+from sccala.utillib.aux import NumpyEncoder
 
 
 class SCM_Model:
@@ -27,6 +32,31 @@ class SCM_Model:
         for key in list(df.keys()):
             print("%s = %.2e +/- %.2e" % (np.mean(df[key][0]), np.std(df[key][0])))
         return
+
+    def write_json(self, filename, path=""):
+        try:
+            import json
+        except ImportError:
+            print("json module not available")
+            return
+
+        with open(os.path.join(path, filename), "w") as f:
+            json.dump(self.data, f, cls=NumpyEncoder)
+
+        return os.path.join(path, filename)
+
+    def write_stan(self, filename, path=""):
+        # Check if file exists and if the contents are identical
+        # to the current to avoid re-compilation
+        if os.path.exists(os.path.join(path, filename)):
+            with open(os.path.join(path, filename), "r") as f:
+                if f.read() == self.model:
+                    print("Model already exists, skipping compilation...")
+                    return os.path.join(path, filename)
+
+        with open(os.path.join(path, filename), "w") as f:
+            f.write(self.model)
+        return os.path.join(path, filename)
 
 
 class NHHubbleFreeSCM(SCM_Model):

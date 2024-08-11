@@ -6,9 +6,9 @@ import itertools
 
 import numpy as np
 import pandas as pd
-import stan
 import matplotlib.pyplot as plt
 from tqdm import trange
+from cmdstanpy import CmdStanModel
 
 from sccala.scmlib.models import SCM_Model
 from sccala.utillib.aux import distmod_kin, quantile, split_list, nullify_output
@@ -237,6 +237,7 @@ class SccalaSCM:
                 )
         return np.array(errors)
 
+
     def sample(
         self,
         model,
@@ -252,7 +253,8 @@ class SccalaSCM:
         classic=False,
     ):
         """
-        Samples the posterior for the given data and model
+        Samples the posterior for the given data and model using
+        the cmdstanpy interface.
 
         Parameters
         ----------
@@ -283,7 +285,7 @@ class SccalaSCM:
         Returns
         -------
         posterior : pandas DataFrame
-            Result of the STAN sampling
+
         """
 
         assert issubclass(
@@ -368,17 +370,29 @@ class SccalaSCM:
 
         model.set_initial_conditions(init)
 
-        # Setup/ build STAN model
-        fit = stan.build(model.model, data=model.data)
-        samples = fit.sample(
-            num_chains=chains,
-            num_samples=iters,
-            init=[model.init] * chains,
-            num_warmup=warmup,
+        data_file = model.write_json("data.json", path=log_dir)
+        stan_file = model.write_stan("model.stan", path=log_dir)
+
+        mdl = CmdStanModel(stan_file=stan_file)
+
+        fit = mdl.sample(
+            data=data_file,
+            chains=chains,
+            iter_warmup=warmup,
+            iter_sampling=iters,
             save_warmup=save_warmup,
+            inits=[model.init] * chains,
         )
 
-        self.posterior = samples.to_frame()
+        summary = fit.summary()
+        diagnose = fit.diagnose()
+
+        if not quiet:
+            print(summary)
+            print(diagnose)
+
+
+        self.posterior = fit.draws_pd()
 
         # Encrypt H0 for blinding
         if self.blind and model.hubble:
@@ -393,12 +407,23 @@ class SccalaSCM:
             norm = None
 
         if log_dir is not None:
-            self.__save_samples__(self.posterior, log_dir=log_dir, norm=norm)
+            savename = self.__save_samples__(self.posterior, log_dir=log_dir, norm=norm)
+            chains_dir = savename.replace(".csv", "")
+            os.makedirs(chains_dir)
+            with open(os.path.join(chains_dir, "summary.txt"), "w") as f:
+                f.write(summary.to_string())
+            with open(os.path.join(chains_dir, "diagnose.txt"), "w") as f:
+                f.write(diagnose)
+            if not self.blind:
+                # Only move the csv files if we're not blinding the result
+                # TODO: find a way of blinding the individual chains
+                fit.save_csvfiles(chains_dir)
 
         if not quiet:
             model.print_results(self.posterior, blind=self.blind)
 
         return self.posterior
+
 
     def bootstrap(
         self,
@@ -614,6 +639,22 @@ class SccalaSCM:
         else:
             done = []
 
+        if rank == 0:
+            stan_file = model.write_stan("model.stan", path=log_dir)
+
+            # Create a model instance to trigger compilation and avoid
+            # having to compile the model on each rank separately
+            print("Compiling model...")
+            mdl_0 = CmdStanModel(stan_file=stan_file)
+            del mdl_0
+            print("Model compiled, starting sampling...")
+        else:
+            # Should be done via broadcast, but this is easier
+            # and the path is 'hardcoded' anyway
+            stan_file = os.path.join(log_dir, "model.stan")
+
+        comm.Barrier()
+
         for k in tr:
             if parallel:
                 inds = bt_inds_lists[rank][k]
@@ -633,12 +674,12 @@ class SccalaSCM:
                         continue
 
             model.data["calib_sn_idx"] = len(self.calib_sn)
-            model.data["calib_obs"] = [calib_obs[i] for i in inds]
-            model.data["calib_errors"] = [calib_errors[i] for i in inds]
-            model.data["calib_mag_sys"] = [self.calib_mag_sys[i] for i in inds]
-            model.data["calib_vel_sys"] = [self.calib_v_sys[i] for i in inds]
-            model.data["calib_col_sys"] = [self.calib_c_sys[i] for i in inds]
-            model.data["calib_dist_mod"] = [self.calib_dist_mod[i] for i in inds]
+            model.data["calib_obs"] = np.array([calib_obs[i] for i in inds])
+            model.data["calib_errors"] = np.array([calib_errors[i] for i in inds])
+            model.data["calib_mag_sys"] = np.array([self.calib_mag_sys[i] for i in inds])
+            model.data["calib_vel_sys"] = np.array([self.calib_v_sys[i] for i in inds])
+            model.data["calib_col_sys"] = np.array([self.calib_c_sys[i] for i in inds])
+            model.data["calib_dist_mod"] = np.array([self.calib_dist_mod[i] for i in inds])
 
             # Convert differnet datasets to dataset indices
             active_datasets = [self.calib_datasets[i] for i in inds]
@@ -652,18 +693,23 @@ class SccalaSCM:
 
             model.set_initial_conditions(init)
 
+
             # Setup/ build STAN model
             with nullify_output(suppress_stdout=True, suppress_stderr=True):
-                fit = stan.build(model.model, data=model.data)
-                samples = fit.sample(
-                    num_chains=chains,
-                    num_samples=iters,
-                    init=[model.init] * chains,
-                    num_warmup=warmup,
+                data_file = model.write_json(f"data_{rank}.json", path=log_dir)
+
+                mdl = CmdStanModel(stan_file=stan_file)
+
+                fit = mdl.sample(
+                    data=data_file,
+                    chains=chains,
+                    iter_warmup=warmup,
+                    iter_sampling=iters,
                     save_warmup=save_warmup,
+                    inits=[model.init] * chains,
                 )
 
-            self.posterior = samples.to_frame()
+                self.posterior = fit.draws_pd()
 
             # Append found H0 values to list
             h0 = quantile(self.posterior["H0"], 0.5)

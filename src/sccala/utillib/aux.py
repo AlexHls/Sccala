@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from contextlib import contextmanager
 
 import numpy as np
@@ -7,6 +8,13 @@ import scipy.stats as st
 import scipy.optimize as op
 
 from sccala.utillib.const import H_ERG, C_AA, C_LIGHT
+
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
 
 
 def calc_single_error(err_low, err_high, mode="mean"):
