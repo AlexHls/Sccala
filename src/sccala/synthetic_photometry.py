@@ -67,7 +67,7 @@ def main(args):
         filter_list = args.filter_list
 
     for filter_id in filter_list:
-        _, instrument, filter_name = re.split("/|\.", filter_id)
+        _, instrument, filter_name = re.split(r"/|\.", filter_id)
         filter_sets["instrument"].append(instrument)
         filter_sets["filter"].append(filter_name)
 
@@ -138,14 +138,14 @@ def main(args):
                 if not data.index.isin([sid]).any():
                     data = pd.concat([data, expdf])
                 else:
-                    data.loc[sid]["MJD"] = mjd
+                    data.loc["MJD", sid] = mjd
                     for j, f in enumerate(
                         filter_set_frame[
                             filter_set_frame["instrument"] == unique_instrument
                         ]["filter"].to_list()
                     ):
-                        data.loc[sid][f] = mags[j]
-                        data.loc[sid]["{:s}err".format(f)] = mags_err[j]
+                        data.loc[f, sid] = mags[j]
+                        data.loc[f"{f}err", sid] = mags_err[j]
                 data.to_csv(exp_name)
             else:
                 data = pd.DataFrame(expdf)
