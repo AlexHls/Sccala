@@ -202,14 +202,14 @@ class EpochDataSet:
                 self.plustwosigma[plotind] / conv,
                 alpha=0.1,
                 color="red",
-                label="2$\sigma$ (95.44%)",
+                label=r"2$\sigma$ (95.44%)",
             )
             ax1.axvspan(
                 self.minusonesigma[plotind] / conv,
                 self.plusonesigma[plotind] / conv,
                 alpha=0.3,
                 color="red",
-                label="1$\sigma$ (68.26%)",
+                label=r"1$\sigma$ (68.26%)",
             )
             ax1.axvline(
                 self.median[plotind] / conv,
@@ -253,7 +253,7 @@ class EpochDataSet:
                 - np.percentile(self.tkde.resample(10000), 84.13)
             )
             ax2.axvspan(
-                lower, upper, alpha=0.3, color="blue", label="1$\sigma$ (68.26%)"
+                lower, upper, alpha=0.3, color="blue", label=r"1$\sigma$ (68.26%)"
             )
             ax2.axvline(
                 self.dates[plotind],
@@ -295,7 +295,7 @@ class EpochDataSet:
                 lower = self.dates[plotind] + self.toe - np.percentile(self.tkde, 15.87)
                 upper = self.dates[plotind] + self.toe - np.percentile(self.tkde, 84.13)
                 ax3.axvspan(
-                    lower, upper, alpha=0.3, color="blue", label="1$\sigma$ (68.26%)"
+                    lower, upper, alpha=0.3, color="blue", label=r"1$\sigma$ (68.26%)"
                 )
                 ax3.axvline(
                     self.dates[plotind],
