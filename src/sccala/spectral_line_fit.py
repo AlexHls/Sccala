@@ -102,7 +102,6 @@ def main(args):
                 "'noisefit' should be 'True' or 'False', but it is %s" % noisefit[i]
             )
 
-        # try:
         print("ID: %s" % str(sid))
         print("Noisefit: ", nf)
         print("HODLR solver: ", hodlrsolver)
@@ -114,11 +113,6 @@ def main(args):
             hodlrsolver=hodlrsolver,
             num_live_points=args.num_live_points,
         )
-        # except ValueError as e:
-        #    warnings.warn(
-        #        "Encountered error '%s' for ID %s, skipping..." % (str(e), str(sid))
-        #    )
-        #    continue
 
         peak_loc, peak_error_lower, peak_error_upper = fit.get_results(line[i])
 
@@ -139,10 +133,10 @@ def main(args):
             if not data.index.isin([(line[i], sid)]).any():
                 data = pd.concat([data, expdf])
             else:
-                data.loc[(line[i], sid)]["MJD"] = mjd
-                data.loc[(line[i], sid)]["PeakLoc"] = peak_loc
-                data.loc[(line[i], sid)]["PeakErrorLower"] = peak_error_lower
-                data.loc[(line[i], sid)]["PeakErrorUpper"] = peak_error_upper
+                data.loc["MJD", (line[i], sid)] = mjd
+                data.loc["PeakLoc", (line[i], sid)] = peak_loc
+                data.loc["PeakErrorLower", (line[i], sid)] = peak_error_lower
+                data.loc["PeakErrorUpper", (line[i], sid)] = peak_error_upper
             data.to_csv(exp_name)
         else:
             expdf.to_csv(exp_name)
