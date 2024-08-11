@@ -20,6 +20,27 @@ Module Contents
    Base class encapsulating line fits of a spectrum
 
 
+   .. py:attribute:: wav
+
+
+   .. py:attribute:: norm_factor
+
+
+   .. py:attribute:: flux
+
+
+   .. py:attribute:: error
+
+
+   .. py:attribute:: numcode
+
+
+   .. py:attribute:: fits
+
+
+   .. py:attribute:: lines
+
+
    .. py:method:: __get_builtin_lines__()
 
 

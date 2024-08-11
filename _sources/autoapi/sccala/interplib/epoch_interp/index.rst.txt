@@ -21,6 +21,77 @@ Module Contents
    interpolation functionality
 
 
+   .. py:attribute:: data
+
+
+   .. py:attribute:: data_error
+
+
+   .. py:attribute:: tkde
+
+
+   .. py:attribute:: mjd
+
+
+   .. py:attribute:: snname
+
+
+   .. py:attribute:: errorfloor
+
+
+   .. py:attribute:: errorscale
+
+
+   .. py:attribute:: reg_min
+
+
+   .. py:attribute:: reg_max
+
+
+   .. py:attribute:: extrapolate
+
+
+   .. py:attribute:: toe
+
+
+   .. py:attribute:: time
+
+
+   .. py:attribute:: mask
+
+
+   .. py:attribute:: data_ex
+
+
+   .. py:attribute:: data_error_ex
+
+
+   .. py:attribute:: time_ex
+
+
+   .. py:attribute:: mjd_ex
+
+
+   .. py:attribute:: data_int
+      :value: None
+
+
+
+   .. py:attribute:: size
+
+
+   .. py:attribute:: num_live_points
+
+
+   .. py:attribute:: disable_mean_fit
+
+
+   .. py:attribute:: disable_white_noise_fit
+
+
+   .. py:attribute:: ignore_toe_uncertainty
+
+
    .. py:method:: get_results()
 
 

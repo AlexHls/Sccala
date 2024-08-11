@@ -47,6 +47,35 @@ Module Contents
    Bases: :py:obj:`Interpolator`
 
 
+   .. py:attribute:: data
+
+
+   .. py:attribute:: data_error
+
+
+   .. py:attribute:: t_grid
+
+
+   .. py:attribute:: num_live_points
+
+
+   .. py:attribute:: disable_mean_fit
+
+
+   .. py:attribute:: disable_white_noise_fit
+
+
+   .. py:attribute:: kernel
+
+
+   .. py:attribute:: parameters
+      :value: []
+
+
+
+   .. py:attribute:: gp
+
+
    .. py:method:: prior_transform(cube)
 
 
@@ -56,6 +85,35 @@ Module Contents
 .. py:class:: AKS_Interpolator(data, t_grid, uncertainty=0.004, num_live_points=400, disable_mean_fit=False)
 
    Bases: :py:obj:`Interpolator`
+
+
+   .. py:attribute:: data
+
+
+   .. py:attribute:: t_grid
+
+
+   .. py:attribute:: uncertainty
+
+
+   .. py:attribute:: num_live_points
+
+
+   .. py:attribute:: disable_mean_fit
+
+
+   .. py:attribute:: kernel
+
+
+   .. py:attribute:: mean_model
+
+
+   .. py:attribute:: parameters
+      :value: []
+
+
+
+   .. py:attribute:: gp
 
 
    .. py:method:: prior_transform(cube)
@@ -72,6 +130,35 @@ Module Contents
    Bases: :py:obj:`Interpolator`
 
 
+   .. py:attribute:: data
+
+
+   .. py:attribute:: data_error
+
+
+   .. py:attribute:: t_grid
+
+
+   .. py:attribute:: num_live_points
+
+
+   .. py:attribute:: disable_mean_fit
+
+
+   .. py:attribute:: disable_white_noise_fit
+
+
+   .. py:attribute:: kernel
+
+
+   .. py:attribute:: parameters
+      :value: []
+
+
+
+   .. py:attribute:: gp
+
+
    .. py:method:: prior_transform(cube)
 
 
@@ -84,6 +171,35 @@ Module Contents
 .. py:class:: AE_Interpolator(data, data_error, t_grid, num_live_points=800, disable_mean_fit=True, disable_white_noise_fit=True)
 
    Bases: :py:obj:`Interpolator`
+
+
+   .. py:attribute:: data
+
+
+   .. py:attribute:: data_error
+
+
+   .. py:attribute:: t_grid
+
+
+   .. py:attribute:: num_live_points
+
+
+   .. py:attribute:: disable_mean_fit
+
+
+   .. py:attribute:: disable_white_noise_fit
+
+
+   .. py:attribute:: kernel
+
+
+   .. py:attribute:: parameters
+      :value: []
+
+
+
+   .. py:attribute:: gp
 
 
    .. py:method:: reject_invalid(data_int, dint, no_reject)

@@ -118,6 +118,121 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.interplib.epoch_interp.</span></span><span class="sig-name descname"><span class="pre">EpochDataSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tkde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">red</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mjd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errorfloor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errorscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_mean_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_white_noise_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_toe_uncertainty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet" title="Link to this definition"></a></dt>
 <dd><p>Class wrapping data time series and providing
 interpolation functionality</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.data_error">
+<span class="sig-name descname"><span class="pre">data_error</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.data_error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.tkde">
+<span class="sig-name descname"><span class="pre">tkde</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.tkde" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.mjd">
+<span class="sig-name descname"><span class="pre">mjd</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.mjd" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.snname">
+<span class="sig-name descname"><span class="pre">snname</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.snname" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.errorfloor">
+<span class="sig-name descname"><span class="pre">errorfloor</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.errorfloor" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.errorscale">
+<span class="sig-name descname"><span class="pre">errorscale</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.errorscale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.reg_min">
+<span class="sig-name descname"><span class="pre">reg_min</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.reg_min" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.reg_max">
+<span class="sig-name descname"><span class="pre">reg_max</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.reg_max" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.extrapolate">
+<span class="sig-name descname"><span class="pre">extrapolate</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.extrapolate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.toe">
+<span class="sig-name descname"><span class="pre">toe</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.toe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.time">
+<span class="sig-name descname"><span class="pre">time</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.time" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.mask">
+<span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.mask" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.data_ex">
+<span class="sig-name descname"><span class="pre">data_ex</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.data_ex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.data_error_ex">
+<span class="sig-name descname"><span class="pre">data_error_ex</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.data_error_ex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.time_ex">
+<span class="sig-name descname"><span class="pre">time_ex</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.time_ex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.mjd_ex">
+<span class="sig-name descname"><span class="pre">mjd_ex</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.mjd_ex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.data_int">
+<span class="sig-name descname"><span class="pre">data_int</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.data_int" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.size">
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.num_live_points">
+<span class="sig-name descname"><span class="pre">num_live_points</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.num_live_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.disable_mean_fit">
+<span class="sig-name descname"><span class="pre">disable_mean_fit</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.disable_mean_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.disable_white_noise_fit">
+<span class="sig-name descname"><span class="pre">disable_white_noise_fit</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.disable_white_noise_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.ignore_toe_uncertainty">
+<span class="sig-name descname"><span class="pre">ignore_toe_uncertainty</span></span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.ignore_toe_uncertainty" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.interplib.epoch_interp.EpochDataSet.get_results">
 <span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.epoch_interp.EpochDataSet.get_results" title="Link to this definition"></a></dt>

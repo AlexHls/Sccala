@@ -169,6 +169,51 @@
 <dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.interplib.interpolators.</span></span><span class="sig-name descname"><span class="pre">LC_Interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_mean_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_white_noise_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.interplib.interpolators.Interpolator" title="sccala.interplib.interpolators.Interpolator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interpolator</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.data_error">
+<span class="sig-name descname"><span class="pre">data_error</span></span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.data_error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.t_grid">
+<span class="sig-name descname"><span class="pre">t_grid</span></span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.t_grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.num_live_points">
+<span class="sig-name descname"><span class="pre">num_live_points</span></span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.num_live_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.disable_mean_fit">
+<span class="sig-name descname"><span class="pre">disable_mean_fit</span></span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.disable_mean_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.disable_white_noise_fit">
+<span class="sig-name descname"><span class="pre">disable_white_noise_fit</span></span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.disable_white_noise_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.kernel">
+<span class="sig-name descname"><span class="pre">kernel</span></span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.kernel" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.gp">
+<span class="sig-name descname"><span class="pre">gp</span></span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.gp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.interplib.interpolators.LC_Interpolator.prior_transform">
 <span class="sig-name descname"><span class="pre">prior_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cube</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.interpolators.LC_Interpolator.prior_transform" title="Link to this definition"></a></dt>
@@ -185,6 +230,51 @@
 <dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.interplib.interpolators.</span></span><span class="sig-name descname"><span class="pre">AKS_Interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uncertainty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.004</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_mean_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.interplib.interpolators.Interpolator" title="sccala.interplib.interpolators.Interpolator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interpolator</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.t_grid">
+<span class="sig-name descname"><span class="pre">t_grid</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.t_grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.uncertainty">
+<span class="sig-name descname"><span class="pre">uncertainty</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.uncertainty" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.num_live_points">
+<span class="sig-name descname"><span class="pre">num_live_points</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.num_live_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.disable_mean_fit">
+<span class="sig-name descname"><span class="pre">disable_mean_fit</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.disable_mean_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.kernel">
+<span class="sig-name descname"><span class="pre">kernel</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.kernel" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.mean_model">
+<span class="sig-name descname"><span class="pre">mean_model</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.mean_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.gp">
+<span class="sig-name descname"><span class="pre">gp</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.gp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.interplib.interpolators.AKS_Interpolator.prior_transform">
 <span class="sig-name descname"><span class="pre">prior_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cube</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.interpolators.AKS_Interpolator.prior_transform" title="Link to this definition"></a></dt>
@@ -206,6 +296,51 @@
 <dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.interplib.interpolators.</span></span><span class="sig-name descname"><span class="pre">Vel_Interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_mean_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_white_noise_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.interplib.interpolators.Interpolator" title="sccala.interplib.interpolators.Interpolator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interpolator</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.data_error">
+<span class="sig-name descname"><span class="pre">data_error</span></span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.data_error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.t_grid">
+<span class="sig-name descname"><span class="pre">t_grid</span></span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.t_grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.num_live_points">
+<span class="sig-name descname"><span class="pre">num_live_points</span></span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.num_live_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.disable_mean_fit">
+<span class="sig-name descname"><span class="pre">disable_mean_fit</span></span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.disable_mean_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.disable_white_noise_fit">
+<span class="sig-name descname"><span class="pre">disable_white_noise_fit</span></span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.disable_white_noise_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.kernel">
+<span class="sig-name descname"><span class="pre">kernel</span></span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.kernel" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.gp">
+<span class="sig-name descname"><span class="pre">gp</span></span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.gp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.interplib.interpolators.Vel_Interpolator.prior_transform">
 <span class="sig-name descname"><span class="pre">prior_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cube</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.interpolators.Vel_Interpolator.prior_transform" title="Link to this definition"></a></dt>
@@ -227,6 +362,51 @@
 <dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.interplib.interpolators.</span></span><span class="sig-name descname"><span class="pre">AE_Interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_mean_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_white_noise_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.interplib.interpolators.Interpolator" title="sccala.interplib.interpolators.Interpolator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interpolator</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.data_error">
+<span class="sig-name descname"><span class="pre">data_error</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.data_error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.t_grid">
+<span class="sig-name descname"><span class="pre">t_grid</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.t_grid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.num_live_points">
+<span class="sig-name descname"><span class="pre">num_live_points</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.num_live_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.disable_mean_fit">
+<span class="sig-name descname"><span class="pre">disable_mean_fit</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.disable_mean_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.disable_white_noise_fit">
+<span class="sig-name descname"><span class="pre">disable_white_noise_fit</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.disable_white_noise_fit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.kernel">
+<span class="sig-name descname"><span class="pre">kernel</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.kernel" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.gp">
+<span class="sig-name descname"><span class="pre">gp</span></span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.gp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="sccala.interplib.interpolators.AE_Interpolator.reject_invalid">
 <span class="sig-name descname"><span class="pre">reject_invalid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_reject</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.interplib.interpolators.AE_Interpolator.reject_invalid" title="Link to this definition"></a></dt>

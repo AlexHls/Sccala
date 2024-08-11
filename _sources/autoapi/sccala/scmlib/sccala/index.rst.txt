@@ -17,6 +17,71 @@ Module Contents
 
 .. py:class:: SccalaSCM(file, calib='CALIB', blind=True, blindkey='HUBBLE')
 
+   .. py:attribute:: blind
+
+
+   .. py:attribute:: blindkey
+
+
+   .. py:attribute:: df
+
+
+   .. py:attribute:: datasets
+
+
+   .. py:attribute:: sn
+
+
+   .. py:attribute:: mag
+
+
+   .. py:attribute:: mag_err
+
+
+   .. py:attribute:: col
+
+
+   .. py:attribute:: col_err
+
+
+   .. py:attribute:: vel
+
+
+   .. py:attribute:: vel_err
+
+
+   .. py:attribute:: ae
+
+
+   .. py:attribute:: ae_err
+
+
+   .. py:attribute:: red
+
+
+   .. py:attribute:: red_err
+
+
+   .. py:attribute:: mag_sys
+
+
+   .. py:attribute:: v_sys
+
+
+   .. py:attribute:: c_sys
+
+
+   .. py:attribute:: ae_sys
+
+
+   .. py:attribute:: epoch
+
+
+   .. py:attribute:: posterior
+      :value: None
+
+
+
    .. py:property:: red_uncertainty
 
 
@@ -25,7 +90,8 @@ Module Contents
 
    .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, quiet=False, init=None, classic=False)
 
-      Samples the posterior for the given data and model
+      Samples the posterior for the given data and model using
+      the cmdstanpy interface.
 
       Parameters
       ----------
@@ -56,7 +122,7 @@ Module Contents
       Returns
       -------
       posterior : pandas DataFrame
-          Result of the STAN sampling
+
 
 
 

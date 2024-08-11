@@ -76,6 +76,18 @@ Module Contents
 
 
 
+   .. py:attribute:: wav
+
+
+   .. py:attribute:: trans
+
+
+   .. py:attribute:: interpolation_object
+
+
+   .. py:attribute:: filter_id
+
+
    .. py:method:: interpolate(wavelength)
 
 
@@ -128,6 +140,9 @@ Module Contents
 .. py:class:: MagnitudeSet(filter_set, magnitudes, magnitude_uncertainties=None, interpolation_kind='linear')
 
    Bases: :py:obj:`FilterSet`
+
+
+   .. py:attribute:: magnitudes
 
 
    .. py:method:: __repr__()
