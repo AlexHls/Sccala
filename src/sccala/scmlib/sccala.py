@@ -756,6 +756,13 @@ class SccalaSCM:
                 print("[TIMELIMIT] Rank %d reached wallclock limit, exiting..." % rank)
                 break
 
+            # If not using the default output_dir, clean up the temporary files to avoid
+            # excessive disk usage
+            if output_dir is not None:
+                files = glob.glob(os.path.join(output_dir_rank, "*"))
+                for f in files:
+                    os.remove(f)
+
         if parallel:
             comm.Barrier()
             h0_vals = comm.gather(h0_vals, root=0)
