@@ -237,7 +237,6 @@ class SccalaSCM:
                 )
         return np.array(errors)
 
-
     def sample(
         self,
         model,
@@ -251,6 +250,7 @@ class SccalaSCM:
         quiet=False,
         init=None,
         classic=False,
+        output_dir="/local",
     ):
         """
         Samples the posterior for the given data and model using
@@ -281,6 +281,8 @@ class SccalaSCM:
         classic : bool
             Switches classic mode on if True. In classic mode, a/e input is
             ignored.
+        output_dir : str
+            Directory where temporary STAN files will be stored. Default: '/local'
 
         Returns
         -------
@@ -382,6 +384,7 @@ class SccalaSCM:
             iter_sampling=iters,
             save_warmup=save_warmup,
             inits=[model.init] * chains,
+            output_dir=output_dir,
         )
 
         summary = fit.summary()
@@ -390,7 +393,6 @@ class SccalaSCM:
         if not quiet:
             print(summary)
             print(diagnose)
-
 
         self.posterior = fit.draws_pd()
 
@@ -424,7 +426,6 @@ class SccalaSCM:
 
         return self.posterior
 
-
     def bootstrap(
         self,
         model,
@@ -442,6 +443,7 @@ class SccalaSCM:
         replacement=True,
         restart=True,
         walltime=24.0,
+        output_dir="/local",
     ):
         """
         Samples the posterior for the given data and model
@@ -480,6 +482,8 @@ class SccalaSCM:
             Wallclock time (in h) available. Once 95% of the available wallclock
             time is used, no new iteration will be started and job will exit
             cleanly. Should be used with restart set to True. Default 24.0
+        output_dir : str
+            Directory where temporary STAN files will be stored. Default: '/local'
 
         Returns
         -------
@@ -676,10 +680,14 @@ class SccalaSCM:
             model.data["calib_sn_idx"] = len(self.calib_sn)
             model.data["calib_obs"] = np.array([calib_obs[i] for i in inds])
             model.data["calib_errors"] = np.array([calib_errors[i] for i in inds])
-            model.data["calib_mag_sys"] = np.array([self.calib_mag_sys[i] for i in inds])
+            model.data["calib_mag_sys"] = np.array(
+                [self.calib_mag_sys[i] for i in inds]
+            )
             model.data["calib_vel_sys"] = np.array([self.calib_v_sys[i] for i in inds])
             model.data["calib_col_sys"] = np.array([self.calib_c_sys[i] for i in inds])
-            model.data["calib_dist_mod"] = np.array([self.calib_dist_mod[i] for i in inds])
+            model.data["calib_dist_mod"] = np.array(
+                [self.calib_dist_mod[i] for i in inds]
+            )
 
             # Convert differnet datasets to dataset indices
             active_datasets = [self.calib_datasets[i] for i in inds]
@@ -692,7 +700,6 @@ class SccalaSCM:
             model.data["num_calib_dset"] = n_calib_dset
 
             model.set_initial_conditions(init)
-
 
             # Setup/ build STAN model
             with nullify_output(suppress_stdout=True, suppress_stderr=True):
@@ -707,6 +714,7 @@ class SccalaSCM:
                     iter_sampling=iters,
                     save_warmup=save_warmup,
                     inits=[model.init] * chains,
+                    output_dir=output_dir,
                 )
 
                 self.posterior = fit.draws_pd()

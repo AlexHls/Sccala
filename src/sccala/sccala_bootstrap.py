@@ -46,6 +46,7 @@ def main(args):
         replacement=args.no_replacement,
         restart=args.disable_restart,
         walltime=args.time,
+        output_dir=args.output_dir,
     )
 
     print("Finished bootstrap resampling")
@@ -122,6 +123,11 @@ def cli():
         "--disable_restart",
         help="Disables writing or restart file",
         action="store_false",
+    )
+    parser.add_argument(
+        "--output_dir",
+        help="Directory used for storing STAN temporary files. Default: '/local'",
+        default="/local",
     )
 
     args = parser.parse_args()
