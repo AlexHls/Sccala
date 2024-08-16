@@ -150,8 +150,7 @@ def cli():
     )
     parser.add_argument(
         "--output_dir",
-        help="Directory used for storing STAN temporary files. Default: '/local'",
-        default="/local",
+        help="Directory used for storing STAN temporary files.",
     )
 
     args = parser.parse_args()

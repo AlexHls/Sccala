@@ -250,7 +250,7 @@ class SccalaSCM:
         quiet=False,
         init=None,
         classic=False,
-        output_dir="/local",
+        output_dir=None,
     ):
         """
         Samples the posterior for the given data and model using
@@ -282,7 +282,7 @@ class SccalaSCM:
             Switches classic mode on if True. In classic mode, a/e input is
             ignored.
         output_dir : str
-            Directory where temporary STAN files will be stored. Default: '/local'
+            Directory where temporary STAN files will be stored. Default: None
 
         Returns
         -------
@@ -443,7 +443,7 @@ class SccalaSCM:
         replacement=True,
         restart=True,
         walltime=24.0,
-        output_dir="/local",
+        output_dir=None,
     ):
         """
         Samples the posterior for the given data and model
@@ -483,7 +483,7 @@ class SccalaSCM:
             time is used, no new iteration will be started and job will exit
             cleanly. Should be used with restart set to True. Default 24.0
         output_dir : str
-            Directory where temporary STAN files will be stored. Default: '/local'
+            Directory where temporary STAN files will be stored. Default: None
 
         Returns
         -------
@@ -657,6 +657,13 @@ class SccalaSCM:
             # and the path is 'hardcoded' anyway
             stan_file = os.path.join(log_dir, "model.stan")
 
+        if output_dir is not None:
+            output_dir_rank = os.path.join(output_dir, "rank_%03d" % rank)
+            if not os.path.exists(output_dir_rank):
+                os.makedirs(output_dir_rank)
+        else:
+            output_dir_rank = None
+
         comm.Barrier()
 
         for k in tr:
@@ -714,7 +721,7 @@ class SccalaSCM:
                     iter_sampling=iters,
                     save_warmup=save_warmup,
                     inits=[model.init] * chains,
-                    output_dir=output_dir,
+                    output_dir=output_dir_rank,
                 )
 
                 self.posterior = fit.draws_pd()
