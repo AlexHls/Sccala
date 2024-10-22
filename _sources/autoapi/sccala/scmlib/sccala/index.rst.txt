@@ -88,7 +88,7 @@ Module Contents
    .. py:method:: get_error_matrix(classic=False, rho=1.0, rho_calib=0.0)
 
 
-   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, quiet=False, init=None, classic=False)
+   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, quiet=False, init=None, classic=False, output_dir=None)
 
       Samples the posterior for the given data and model using
       the cmdstanpy interface.
@@ -118,6 +118,8 @@ Module Contents
       classic : bool
           Switches classic mode on if True. In classic mode, a/e input is
           ignored.
+      output_dir : str
+          Directory where temporary STAN files will be stored. Default: None
 
       Returns
       -------
@@ -126,7 +128,7 @@ Module Contents
 
 
 
-   .. py:method:: bootstrap(model, output, log_dir='log_dir', chains=2, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True, restart=True, walltime=24.0)
+   .. py:method:: bootstrap(model, output, log_dir='log_dir', chains=2, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True, restart=True, walltime=24.0, output_dir=None)
 
       Samples the posterior for the given data and model
 
@@ -164,6 +166,8 @@ Module Contents
           Wallclock time (in h) available. Once 95% of the available wallclock
           time is used, no new iteration will be started and job will exit
           cleanly. Should be used with restart set to True. Default 24.0
+      output_dir : str
+          Directory where temporary STAN files will be stored. Default: None
 
       Returns
       -------

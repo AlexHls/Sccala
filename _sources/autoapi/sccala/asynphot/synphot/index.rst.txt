@@ -104,9 +104,6 @@ Module Contents
 
    .. py:method:: __repr__()
 
-      Return repr(self).
-
-
 
 .. py:class:: FilterSet(filter_set, interpolation_kind='linear')
 
@@ -127,9 +124,6 @@ Module Contents
 
    .. py:method:: __repr__()
 
-      Return repr(self).
-
-
 
    .. py:method:: calculate_vega_magnitudes(spec_wav, spec_flux, spec_err=None)
 
@@ -146,8 +140,5 @@ Module Contents
 
 
    .. py:method:: __repr__()
-
-      Return repr(self).
-
 
 
