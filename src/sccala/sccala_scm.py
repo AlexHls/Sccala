@@ -52,6 +52,7 @@ def main(args):
         save_warmup=args.save_warmup,
         quiet=False,
         classic=args.classic,
+        output_dir=args.output_dir,
     )
 
     print("Finished sampling")
@@ -146,6 +147,10 @@ def cli():
         "--blindkey",
         default="HUBBLE",
         help="Encryption key used for blinding H0. Default: HUBBLE",
+    )
+    parser.add_argument(
+        "--output_dir",
+        help="Directory used for storing STAN temporary files.",
     )
 
     args = parser.parse_args()

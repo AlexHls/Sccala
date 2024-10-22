@@ -18,7 +18,7 @@ def calculate_vega_zp(filter):
             / H_ERG
             / C_AA
             * integrate.simpson(
-                vega_flux * filter.interpolate(vega_wav) * vega_wav, vega_wav
+                vega_flux * filter.interpolate(vega_wav) * vega_wav, x=vega_wav
             )
         )
         + 0.03
@@ -38,8 +38,10 @@ def calculate_lambda_eff(spec_wav, spec_flux, filter):
     """
 
     lambda_eff = integrate.simpson(
-        spec_flux * filter.interpolate(spec_wav) * spec_wav**2, spec_wav
-    ) / integrate.simpson(spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav)
+        spec_flux * filter.interpolate(spec_wav) * spec_wav**2, x=spec_wav
+    ) / integrate.simpson(
+        spec_flux * filter.interpolate(spec_wav) * spec_wav, x=spec_wav
+    )
 
     return lambda_eff
 
@@ -79,7 +81,7 @@ def calculate_vega_magnitude(
             / H_ERG
             / C_AA
             * integrate.simpson(
-                spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav
+                spec_flux * filter.interpolate(spec_wav) * spec_wav, x=spec_wav
             )
         )
         + vega_zp
@@ -101,7 +103,7 @@ def calculate_vega_magnitude(
                         / C_AA
                         * integrate.simpson(
                             noisy_flux * filter.interpolate(spec_wav) * spec_wav,
-                            spec_wav,
+                            x=spec_wav,
                         )
                     )
                     + vega_zp
@@ -113,12 +115,12 @@ def calculate_vega_magnitude(
                 2.5
                 / np.log(10)
                 / integrate.simpson(
-                    spec_flux * filter.interpolate(spec_wav) * spec_wav, spec_wav
+                    spec_flux * filter.interpolate(spec_wav) * spec_wav, x=spec_wav
                 )
                 * np.sqrt(
                     err_integrate.mod_simpson(
                         (spec_err * filter.interpolate(spec_wav) * spec_wav) ** 2,
-                        spec_wav,
+                        x=spec_wav,
                     )
                 )
             )
