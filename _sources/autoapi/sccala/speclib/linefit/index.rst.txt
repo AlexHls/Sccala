@@ -33,6 +33,8 @@ Module Contents
 
 
    .. py:attribute:: numcode
+      :value: 100
+
 
 
    .. py:attribute:: fits
@@ -90,7 +92,36 @@ Module Contents
 
 
 
-   .. py:method:: fit_line(line, cr_low=None, cr_high=None, rest=None, ae_feature=False, noisefit=True, hodlrsolver=True, size=1000, diagnostic=None, num_live_points=800)
+   .. py:method:: add_line(line, cr_low, cr_high, rest, ae_feature=False, overwrite=False) -> None
+
+      Adds a new line to the line dictionary so that it can be
+      fitted later.
+
+      Parameters
+      ----------
+      line : str
+          Specifies the name of the line. Will not overwrite
+          existing lines.
+      cr_low : float
+          Lower boundary of the line feature.
+      cr_high : float
+          Upper boundary of the line feature.
+      rest : float
+          Rest wavelength of the feature.
+      ae_feature : bool
+          Specifies if absorption to emission ratio is to be fit.
+          Default: False
+      overwrite : bool
+          If set to True, existing lines will be overwritten.
+          Default: False
+
+      Returns
+      -------
+      None
+
+
+
+   .. py:method:: fit_line(line, cr_low=None, cr_high=None, rest=None, ae_feature=False, emission=False, noisefit=True, hodlrsolver=True, size=1000, diagnostic=None, num_live_points=800)
 
       Fits a specific line to the spectrum. Lines can either be
       choosen from the predefined set or specified manually
@@ -109,6 +140,9 @@ Module Contents
       ae_feature : bool
           Specifies if absorption to emission ratio is to be fit.
           Default: False
+      emission : bool
+          Specifies if the line is an emission line. If ae_feature is
+          set to True, this parameter is ignored. Default: False
       noisefit : bool
           Determines if correlated noise is to be fit. If false, only one
           kernel is used, otherwise two will be used. Default: True

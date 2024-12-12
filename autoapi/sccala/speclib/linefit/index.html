@@ -52,16 +52,26 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../models.html">SCM Models</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../../index.html">sccala</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../aks_corr/index.html">sccala.aks_corr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../asynphot/index.html">sccala.asynphot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../collect_scm_data/index.html">sccala.collect_scm_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../deblind/index.html">sccala.deblind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../gen_testdata/index.html">sccala.gen_testdata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../interplib/index.html">sccala.interplib</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../libio/index.html">sccala.libio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../photometry_interpolation/index.html">sccala.photometry_interpolation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../project_init/index.html">sccala.project_init</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sccala_bootstrap/index.html">sccala.sccala_bootstrap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../sccala_scm/index.html">sccala.sccala_scm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../scmlib/index.html">sccala.scmlib</a></li>
 <li class="toctree-l4 current"><a class="reference internal" href="../index.html">sccala.speclib</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../spectral_line_fit/index.html">sccala.spectral_line_fit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../synthetic_photometry/index.html">sccala.synthetic_photometry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../utillib/index.html">sccala.utillib</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../velocity_interpolation/index.html">sccala.velocity_interpolation</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#attributes">Attributes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
 </ul>
@@ -137,7 +147,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.numcode">
-<span class="sig-name descname"><span class="pre">numcode</span></span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.numcode" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">numcode</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#sccala.speclib.linefit.LineFit.numcode" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -212,12 +222,43 @@ been overwritten</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.fit_line">
-<span class="sig-name descname"><span class="pre">fit_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ae_feature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noisefit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hodlrsolver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagnostic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.fit_line" title="Link to this definition"></a></dt>
-<dd><p>Fits a specific line to the spectrum. Lines can either be
-choosen from the predefined set or specified manually</p>
+<dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.add_line">
+<span class="sig-name descname"><span class="pre">add_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ae_feature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.add_line" title="Link to this definition"></a></dt>
+<dd><p>Adds a new line to the line dictionary so that it can be
+fitted later.</p>
 <section id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>line<span class="classifier">str</span></dt><dd><p>Specifies the name of the line. Will not overwrite
+existing lines.</p>
+</dd>
+<dt>cr_low<span class="classifier">float</span></dt><dd><p>Lower boundary of the line feature.</p>
+</dd>
+<dt>cr_high<span class="classifier">float</span></dt><dd><p>Upper boundary of the line feature.</p>
+</dd>
+<dt>rest<span class="classifier">float</span></dt><dd><p>Rest wavelength of the feature.</p>
+</dd>
+<dt>ae_feature<span class="classifier">bool</span></dt><dd><p>Specifies if absorption to emission ratio is to be fit.
+Default: False</p>
+</dd>
+<dt>overwrite<span class="classifier">bool</span></dt><dd><p>If set to True, existing lines will be overwritten.
+Default: False</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.fit_line">
+<span class="sig-name descname"><span class="pre">fit_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cr_high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ae_feature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noisefit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hodlrsolver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diagnostic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_live_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.fit_line" title="Link to this definition"></a></dt>
+<dd><p>Fits a specific line to the spectrum. Lines can either be
+choosen from the predefined set or specified manually</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>line<span class="classifier">str</span></dt><dd><p>Specifies the name of the line. Has to match the predefined
 line names, unless cr_low, cr_high and rest are specified.</p>
@@ -230,6 +271,9 @@ line names, unless cr_low, cr_high and rest are specified.</p>
 </dd>
 <dt>ae_feature<span class="classifier">bool</span></dt><dd><p>Specifies if absorption to emission ratio is to be fit.
 Default: False</p>
+</dd>
+<dt>emission<span class="classifier">bool</span></dt><dd><p>Specifies if the line is an emission line. If ae_feature is
+set to True, this parameter is ignored. Default: False</p>
 </dd>
 <dt>noisefit<span class="classifier">bool</span></dt><dd><p>Determines if correlated noise is to be fit. If false, only one
 kernel is used, otherwise two will be used. Default: True</p>
@@ -246,8 +290,8 @@ directory. Default: False</p>
 </dd>
 </dl>
 </section>
-<section id="returns">
-<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>results<span class="classifier">dict</span></dt><dd><p>Dictonary containing all the different fit quantities</p>
 </dd>
@@ -259,8 +303,8 @@ directory. Default: False</p>
 <dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.diagnostic_plot">
 <span class="sig-name descname"><span class="pre">diagnostic_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.diagnostic_plot" title="Link to this definition"></a></dt>
 <dd><p>Creates a diagnostic plot of a line fit.</p>
-<section id="id1">
-<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>line<span class="classifier">str</span></dt><dd><p>Specifies the name of the line. Has to match the predefined
 line names, unless cr_low, cr_high and rest are specified.</p>
@@ -270,8 +314,8 @@ None or False can be passed.</p>
 </dd>
 </dl>
 </section>
-<section id="id2">
-<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>fig<span class="classifier">matplotlib figure object</span></dt><dd><p>Diagnostic figure</p>
 </dd>
@@ -283,16 +327,16 @@ None or False can be passed.</p>
 <dt class="sig sig-object py" id="sccala.speclib.linefit.LineFit.get_results">
 <span class="sig-name descname"><span class="pre">get_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.speclib.linefit.LineFit.get_results" title="Link to this definition"></a></dt>
 <dd><p>Function that returns either the velocities or a/e values for a specific lines</p>
-<section id="id3">
-<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>line<span class="classifier">str</span></dt><dd><p>Specifies the name of the line. Has to match the predefined
 line names, unless cr_low, cr_high and rest are specified.</p>
 </dd>
 </dl>
 </section>
-<section id="id4">
-<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <p>velocity : float
 vel_err_lower : float
 vel_err_upper : float</p>

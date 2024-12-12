@@ -18,15 +18,13 @@ Module Contents
 .. py:class:: SccalaSCM(file, calib='CALIB', blind=True, blindkey='HUBBLE')
 
    .. py:attribute:: blind
+      :value: True
+
 
 
    .. py:attribute:: blindkey
+      :value: 'HUBBLE'
 
-
-   .. py:attribute:: df
-
-
-   .. py:attribute:: datasets
 
 
    .. py:attribute:: sn
@@ -75,6 +73,9 @@ Module Contents
 
 
    .. py:attribute:: epoch
+
+
+   .. py:attribute:: datasets
 
 
    .. py:attribute:: posterior

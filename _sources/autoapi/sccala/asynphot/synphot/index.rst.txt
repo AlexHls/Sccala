@@ -86,6 +86,8 @@ Module Contents
 
 
    .. py:attribute:: filter_id
+      :value: None
+
 
 
    .. py:method:: interpolate(wavelength)

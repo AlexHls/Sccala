@@ -30,4 +30,6 @@ Package Contents
 ----------------
 
 .. py:data:: file
+   :value: ''
+
 

@@ -34,30 +34,39 @@ Module Contents
 
 
    .. py:attribute:: snname
+      :value: ''
+
 
 
    .. py:attribute:: errorfloor
+      :value: 0.0
+
 
 
    .. py:attribute:: errorscale
+      :value: 1.0
+
 
 
    .. py:attribute:: reg_min
+      :value: 20.0
+
 
 
    .. py:attribute:: reg_max
+      :value: 60.0
+
 
 
    .. py:attribute:: extrapolate
+      :value: 5.0
+
 
 
    .. py:attribute:: toe
 
 
    .. py:attribute:: time
-
-
-   .. py:attribute:: mask
 
 
    .. py:attribute:: data_ex
@@ -78,18 +87,28 @@ Module Contents
 
 
    .. py:attribute:: size
+      :value: 50
+
 
 
    .. py:attribute:: num_live_points
+      :value: 800
+
 
 
    .. py:attribute:: disable_mean_fit
+      :value: False
+
 
 
    .. py:attribute:: disable_white_noise_fit
+      :value: False
+
 
 
    .. py:attribute:: ignore_toe_uncertainty
+      :value: False
+
 
 
    .. py:method:: get_results()

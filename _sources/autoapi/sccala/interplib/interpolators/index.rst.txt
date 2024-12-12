@@ -57,15 +57,18 @@ Module Contents
 
 
    .. py:attribute:: num_live_points
+      :value: 800
+
 
 
    .. py:attribute:: disable_mean_fit
+      :value: False
+
 
 
    .. py:attribute:: disable_white_noise_fit
+      :value: False
 
-
-   .. py:attribute:: kernel
 
 
    .. py:attribute:: parameters
@@ -94,18 +97,18 @@ Module Contents
 
 
    .. py:attribute:: uncertainty
+      :value: 0.004
+
 
 
    .. py:attribute:: num_live_points
+      :value: 400
+
 
 
    .. py:attribute:: disable_mean_fit
+      :value: False
 
-
-   .. py:attribute:: kernel
-
-
-   .. py:attribute:: mean_model
 
 
    .. py:attribute:: parameters
@@ -140,15 +143,18 @@ Module Contents
 
 
    .. py:attribute:: num_live_points
+      :value: 800
+
 
 
    .. py:attribute:: disable_mean_fit
+      :value: True
+
 
 
    .. py:attribute:: disable_white_noise_fit
+      :value: True
 
-
-   .. py:attribute:: kernel
 
 
    .. py:attribute:: parameters
@@ -183,15 +189,18 @@ Module Contents
 
 
    .. py:attribute:: num_live_points
+      :value: 800
+
 
 
    .. py:attribute:: disable_mean_fit
+      :value: True
+
 
 
    .. py:attribute:: disable_white_noise_fit
+      :value: True
 
-
-   .. py:attribute:: kernel
 
 
    .. py:attribute:: parameters
