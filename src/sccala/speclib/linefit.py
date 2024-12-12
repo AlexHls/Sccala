@@ -148,8 +148,47 @@ class LineFit:
         self.lines = {
             "halpha-ae": [6250, 6650, 6563, True],
             "hbeta": [4550, 4900, 4861, False],
-            "si-ii": [5900, 6450, 6355, False],
+            "si-ii": [5750, 6450, 6355, False],
         }
+        return
+
+    def add_line(
+        self, line, cr_low, cr_high, rest, ae_feature=False, overwrite=False
+    ) -> None:
+        """
+        Adds a new line to the line dictionary so that it can be
+        fitted later.
+
+        Parameters
+        ----------
+        line : str
+            Specifies the name of the line. Will not overwrite
+            existing lines.
+        cr_low : float
+            Lower boundary of the line feature.
+        cr_high : float
+            Upper boundary of the line feature.
+        rest : float
+            Rest wavelength of the feature.
+        ae_feature : bool
+            Specifies if absorption to emission ratio is to be fit.
+            Default: False
+        overwrite : bool
+            If set to True, existing lines will be overwritten.
+            Default: False
+
+        Returns
+        -------
+        None
+        """
+
+        if overwrite:
+            self.__modify_builtin_lines__(
+                line, cr_low=cr_low, cr_high=cr_high, rest=rest, ae_feature=ae_feature
+            )
+        else:
+            self.__set_builtin_lines__(line, cr_low, cr_high, rest, ae_feature)
+
         return
 
     def fit_line(
@@ -159,6 +198,7 @@ class LineFit:
         cr_high=None,
         rest=None,
         ae_feature=False,
+        emission=False,
         noisefit=True,
         hodlrsolver=True,
         size=1000,
@@ -183,6 +223,9 @@ class LineFit:
         ae_feature : bool
             Specifies if absorption to emission ratio is to be fit.
             Default: False
+        emission : bool
+            Specifies if the line is an emission line. If ae_feature is
+            set to True, this parameter is ignored. Default: False
         noisefit : bool
             Determines if correlated noise is to be fit. If false, only one
             kernel is used, otherwise two will be used. Default: True
@@ -230,7 +273,9 @@ class LineFit:
             else:
                 error = None
             try:
-                if wav[np.argmin(flux)] < rest:
+                if emission and wav[np.argmax(flux)] > rest:
+                    break
+                if not emission and wav[np.argmin(flux)] < rest:
                     break
             except ValueError as e:
                 warnings.warn(
@@ -343,7 +388,10 @@ class LineFit:
 
         print("Predicting flux...")
         # Mask to ensure only minima in the middle region are selected
-        mask = np.logical_and(x > min(wav) + lowcut, x < rest)
+        if emission:
+            mask = np.logical_and(x > rest, x < max(wav) - lowcut)
+        else:
+            mask = np.logical_and(x > min(wav) + lowcut, x < rest)
         xmin = x[mask]
         for s in tqdm(sampler.results["samples"][subsample]):
             gp.set_parameter_vector(s)
@@ -359,7 +407,10 @@ class LineFit:
             else:
                 fits_noise.extend(np.zeros_like(fit))
             try:
-                minind = np.argmin(fit[:, mask], axis=1)
+                if emission:
+                    minind = np.argmax(fit[:, mask], axis=1)
+                else:
+                    minind = np.argmin(fit[:, mask], axis=1)
                 if len(minind) == 0:
                     continue
                 # Calculate absorption to emission line ratio
