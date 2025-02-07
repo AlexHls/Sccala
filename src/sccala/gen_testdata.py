@@ -4,8 +4,72 @@ from matplotlib import scale
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from scipy.stats import norm
 
-from sccala.utillib.aux import *
+from sccala.utillib.aux import distmod_kin
+from sccala.utillib.const import C_LIGHT
+
+
+def generate_observed_data(
+    zrange,
+    vel_range=(7100e3, 725e3),
+    col_range=(0.5, 0.06),
+    ae_range=(0.31, 0.13),
+    verr=np.sqrt(200e3**2 + 150e3**2),
+    cerr=0.05,
+    aeerr=0.013,
+    r_err=0.0001,
+    alpha=3.4,
+    beta=1.8,
+    gamma=-1.5,
+    mi=-1.6,
+    sint=0.25,
+    rng=None,
+    hubble=False,
+    h0=70.0,
+):
+    if rng is None:
+        rng = np.random.default_rng()
+
+    red = rng.triangular(left=zrange[0], mode=zrange[1], right=zrange[1])
+    vel = rng.normal(loc=vel_range[0], scale=vel_range[1])
+    col = rng.normal(loc=col_range[0], scale=col_range[1])
+    ae = np.absolute(rng.normal(loc=ae_range[0], scale=ae_range[1]))
+
+    vel_obs = rng.normal(loc=vel, scale=verr)
+    col_obs = rng.normal(loc=col, scale=cerr)
+    ae_obs = rng.normal(loc=ae, scale=aeerr)
+
+    mag = (
+        mi
+        - alpha * np.log10(vel_obs / np.mean(vel))
+        + beta * (col_obs - np.mean(col))
+        + gamma * (ae_obs - np.mean(ae))
+        + 5 * np.log10(distmod_kin(red))
+    )
+    if hubble:
+        mu = rng.uniform(29, 32)
+        mag += 5 * np.log10(10 ** ((mu - 25) / 5) * h0)
+
+    mag_err = (
+        (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
+        + (300 / C_LIGHT * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
+        + (0.055 * red) ** 2
+    )
+
+    mag_obs = rng.normal(
+        loc=mag,
+        scale=np.sqrt(mag_err + 0.05**2 + sint**2),
+    )
+
+    if hubble:
+        return red, vel_obs, col_obs, ae_obs, mag_obs, mag_err, mu
+    return red, vel_obs, col_obs, ae_obs, mag_obs, mag_err
+
+
+@np.vectorize
+def detection_probability(mag, m_cut=21, sigma_cut=0.5):
+    return 1 / (0.01 + norm.cdf(mag, m_cut, sigma_cut)) / 100
 
 
 def gen_testdata(
@@ -17,6 +81,17 @@ def gen_testdata(
     zrange_hubble=(0.001, 0.005),
     hubble_size=25,
     h0=70.0,
+    alpha=3.4,
+    beta=1.8,
+    gamma=-1.5,
+    mi=-1.6,
+    sint=0.25,
+    verr=np.sqrt(200e3**2 + 150e3**2),
+    cerr=0.05,
+    aeerr=0.013,
+    r_err=0.0001,
+    m_cut=23,
+    sigma_cut=0.5,
 ):
     """
     Function generating simulated datasets for standardisation
@@ -45,6 +120,20 @@ def gen_testdata(
     h0 : float
         Value of the Hubble constant used for simulating calibrator sample.
         Default: 70.0
+    alpha : float
+    beta : float
+    gamma : float
+    mi : float
+    sint : float
+        Parameters for the calculation of the magnitudes.
+    verr : float
+    cerr : float
+    aeerr : float
+    r_err : float
+        Parameters for the calculation of the magnitude errors.
+    m_cut : float
+    sigma_cut : float
+        Parameters for the detection probability.
 
     Returns
     -------
@@ -58,189 +147,113 @@ def gen_testdata(
     ):
         raise ValueError("zrange is not a valid tuple or list of length two")
 
-    red = np.random.triangular(
-        left=zrange[0], mode=zrange[1], right=zrange[1], size=size
-    )
-    if hubble:
-        hubble_red = np.random.triangular(
-            left=zrange_hubble[0],
-            mode=zrange_hubble[1],
-            right=zrange_hubble[1],
-            size=hubble_size,
-        )
-
-    if plots:
-        plt.hist(red, label="z = %.2f - %.2f" % (zrange[0], zrange[1]))
-        plt.gca().set_xscale("log")
-        plt.xlabel("Redshift")
-        plt.ylabel(r"N$_{SNe}$/bin")
-        plt.title("Sample redshift distributions")
-        plt.legend()
-        plt.savefig(
-            "sample_redshift distribution.png",
-            dpi=600,
-            bbox_inches="tight",
-        )
-        plt.close()
-
     rng = np.random.default_rng()
+    m_sc, m_sc_rej = [], []
+    v_sc, v_sc_rej = [], []
+    c_sc, c_sc_rej = [], []
+    ae_sc, ae_sc_rej = [], []
+    r_sc, r_sc_rej = [], []
+    merr_sc, merr_sc_rej = [], []
 
-    # Velocity
-    vel = rng.normal(loc=7100e3, scale=725e3, size=size)
-
-    # Color
-    col = rng.normal(loc=0.5, scale=0.06, size=size)
-
-    # a/e
-    ae = np.absolute(rng.normal(loc=0.31, scale=0.13, size=size))
-
-    if hubble:
-        # Velocity
-        hubble_vel = rng.normal(loc=7100e3, scale=725e3, size=hubble_size)
-        # Color
-        hubble_col = rng.normal(loc=0.5, scale=0.06, size=hubble_size)
-        # a/e
-        hubble_ae = np.absolute(rng.normal(loc=0.31, scale=0.13, size=hubble_size))
-        # Distance modulus
-        mu = rng.uniform(29, 32, size=hubble_size)
+    while len(m_sc) < size:
+        red, vel, col, ae, mag, mag_err = generate_observed_data(
+            zrange,
+            verr=verr,
+            cerr=cerr,
+            aeerr=aeerr,
+            r_err=r_err,
+            alpha=alpha,
+            beta=beta,
+            gamma=gamma,
+            mi=mi,
+            sint=sint,
+            rng=rng,
+            hubble=False,
+            h0=h0,
+        )
+        detection_prob = detection_probability(mag, m_cut=m_cut, sigma_cut=sigma_cut)
+        detected = rng.uniform() < detection_prob
+        if detected:
+            m_sc.append(mag)
+            v_sc.append(vel)
+            c_sc.append(col)
+            ae_sc.append(ae)
+            r_sc.append(red)
+            merr_sc.append(mag_err)
+        m_sc_rej.append(mag)
+        v_sc_rej.append(vel)
+        c_sc_rej.append(col)
+        ae_sc_rej.append(ae)
+        r_sc_rej.append(red)
+        merr_sc_rej.append(mag_err)
 
     if plots:
-        fig, (ax1, ax2, ax3) = plt.subplots(
-            nrows=1, ncols=3, figsize=(3 * 6.4, 4.8), sharey=True
+        fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(
+            nrows=2, ncols=3, figsize=(15, 10)
         )
-        n_bins = 25
-        ax1.hist(vel / 1e3, n_bins, histtype="bar", stacked=True)
-        ax2.hist(col, n_bins, histtype="bar", stacked=True)
-        ax3.hist(ae, n_bins, histtype="bar", stacked=True)
-
-        ax1.set_ylabel(r"N$_{SNe}$/bin")
-        ax1.set_xlabel(r"v$_{\mathrm{H}\beta}$ (km$\,$s$^{-1}$)")
-        ax2.set_xlabel("c (mag)")
-        ax3.set_xlabel("a/e")
-
-        ax1.set_title("Velocity")
-        ax2.set_title("Color")
-        ax3.set_title("a/e")
-
-        fig.savefig(
-            "sample_properties.png",
-            dpi=600,
-            bbox_inches="tight",
+        ax1.hist(
+            r_sc_rej, bins=25, histtype="bar", color="r", label="Rejected", alpha=0.5
         )
-        plt.close()
+        ax1.hist(r_sc, bins=25, histtype="bar", color="b", label="Accepted")
+        ax1.set_xscale("log")
+        ax1.set_xlabel("Redshift")
+        ax1.set_ylabel("Number of SNe")
+        ax1.legend()
+        ax1.set_title("Redshift distribution of simulated data")
 
-    verr = np.sqrt(200e3**2 + 150e3**2)
-    cerr = 0.05
-    aeerr = 0.013
-    r_err = 0.0001
-
-    c_light = 299792.458
-
-    alpha = 3.4
-    beta = 1.8
-    gamma = -1.5
-    mi = -1.6
-    sint = 0.25
-
-    # Calculate magnitudes
-    mag_err = (
-        (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
-        + (300 / c_light * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
-        + (0.055 * red) ** 2
-    )
-    mag = (
-        mi
-        - alpha * np.log10(vel / np.mean(vel))
-        + beta * (col - np.mean(col))
-        + gamma * (ae - np.mean(ae))
-        + 5 * np.log10(distmod_kin(red))
-    )
-    if hubble:
-        dl = 10 ** ((mu - 25) / 5)
-        hubble_mag_err = (
-            (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
-            + (300 / c_light * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10)))
-            ** 2
-            + (0.055 * red) ** 2
-        )
-        hubble_mag = (
-            mi
-            - alpha * np.log10(hubble_vel / np.mean(hubble_vel))
-            + beta * (hubble_col - np.mean(hubble_col))
-            + gamma * (hubble_ae - np.mean(hubble_ae))
-            + 5 * np.log10(h0 * dl)
-        )
-
-    # Add noise/ scatter to data
-    m_sc = []
-    v_sc = []
-    c_sc = []
-    ae_sc = []
-    r_sc = []
-    merr_sc = []
-    for i in range(len(red)):
-        m_sc.append(
-            rng.normal(
-                loc=mag[i],
-                scale=np.sqrt(mag_err[i] + 0.05**2 + sint**2),
-                size=1,
-            )[0]
-        )
-        v_sc.append(rng.normal(loc=vel[i], scale=verr, size=1)[0])
-        c_sc.append(rng.normal(loc=col[i], scale=cerr, size=1)[0])
-        ae_sc.append(rng.normal(loc=ae[i], scale=aeerr, size=1)[0])
-        r_sc.append(rng.normal(loc=red[i], scale=r_err, size=1)[0])
-        merr_sc.append(0.05)
-    m_sc = np.array(m_sc)
-    merr_sc = np.array(merr_sc)
-
-    if hubble:
-        hubble_m_sc = []
-        hubble_v_sc = []
-        hubble_c_sc = []
-        hubble_ae_sc = []
-        hubble_r_sc = []
-        hubble_merr_sc = []
-        hubble_mu_sc = []
-        for i in range(len(hubble_red)):
-            hubble_m_sc.append(
-                rng.normal(
-                    loc=hubble_mag[i],
-                    scale=np.sqrt(hubble_mag_err[i] + 0.05**2 + sint**2),
-                    size=1,
-                )[0]
-            )
-            hubble_v_sc.append(rng.normal(loc=hubble_vel[i], scale=verr, size=1)[0])
-            hubble_c_sc.append(rng.normal(loc=hubble_col[i], scale=cerr, size=1)[0])
-            hubble_ae_sc.append(rng.normal(loc=hubble_ae[i], scale=aeerr, size=1)[0])
-            hubble_r_sc.append(rng.normal(loc=hubble_red[i], scale=r_err, size=1)[0])
-            hubble_mu_sc.append(rng.normal(loc=mu[i], scale=0.1, size=1)[0])
-            hubble_merr_sc.append(0.05)
-        hubble_m_sc = np.array(hubble_m_sc)
-        hubble_merr_sc = np.array(hubble_merr_sc)
-
-    if plots:
-        plt.scatter(red, m_sc)
-
+        ax2.scatter(r_sc, m_sc)
         x = np.linspace(zrange[0], zrange[1], 100)
-
-        plt.plot(
+        ax2.plot(
             x, 5 * np.log10(distmod_kin(x)) + mi, color="k", ls="--", label="Cosmology"
         )
+        ax2.set_ylabel("Observed magnitudes (mag)")
+        ax2.set_xlabel("Redshift")
+        ax2.legend()
+        ax2.set_title("Observed magnitudes of simulated data")
 
-        plt.ylabel("Observed magnitudes (mag)")
-        plt.xlabel("Redshift")
+        m_values = np.linspace(18, 25, 200)
+        prob_values = detection_probability(m_values, m_cut, sigma_cut)
 
-        plt.legend()
+        ax3.plot(m_values, prob_values, label="Detection Probability")
+        ax3.set_xlabel("Observed Magnitude")
+        ax3.set_ylabel("Detection Probability")
+        ax3.set_title("Selection Function")
+        ax3.legend()
 
-        plt.title("Observed magnitudes of simulated data")
+        # Plot vel, col and a/e distributions as histograms
+        ax4.hist(
+            v_sc_rej, bins=25, histtype="bar", color="r", label="Rejected", alpha=0.5
+        )
+        ax4.hist(v_sc, bins=25, histtype="bar", color="b", label="Accepted")
+        ax4.set_xlabel("Velocity (km/s)")
+        ax4.set_ylabel("Number of SNe")
+        ax4.legend()
+        ax4.set_title("Velocity distribution of simulated data")
+
+        ax5.hist(
+            c_sc_rej, bins=25, histtype="bar", color="r", label="Rejected", alpha=0.5
+        )
+        ax5.hist(c_sc, bins=25, histtype="bar", color="b", label="Accepted")
+        ax5.set_xlabel("Color")
+        ax5.set_ylabel("Number of SNe")
+        ax5.legend()
+        ax5.set_title("Color distribution of simulated data")
+
+        ax6.hist(
+            ae_sc_rej, bins=25, histtype="bar", color="r", label="Rejected", alpha=0.5
+        )
+        ax6.hist(ae_sc, bins=25, histtype="bar", color="b", label="Accepted")
+        ax6.set_xlabel("a/e")
+        ax6.set_ylabel("Number of SNe")
+        ax6.legend()
+        ax6.set_title("a/e distribution of simulated data")
 
         plt.savefig(
-            "sample.svg",
-            dpi=600,
+            "test_data_overview.png",
             bbox_inches="tight",
         )
-        plt.close()
+
+        plt.show()
 
     names = []
     for i in range(size):
@@ -267,6 +280,50 @@ def gen_testdata(
     }
 
     if hubble:
+        hubble_m_sc, hubble_m_sc_rej = [], []
+        hubble_v_sc, hubble_v_sc_rej = [], []
+        hubble_c_sc, hubble_c_sc_rej = [], []
+        hubble_ae_sc, hubble_ae_sc_rej = [], []
+        hubble_r_sc, hubble_r_sc_rej = [], []
+        hubble_merr_sc, hubble_merr_sc_rej = [], []
+        mu, mu_rej = [], []
+
+        while len(hubble_m_sc) < hubble_size:
+            red, vel, col, ae, mag, mag_err, mu_val = generate_observed_data(
+                zrange_hubble,
+                verr=verr,
+                cerr=cerr,
+                aeerr=aeerr,
+                r_err=r_err,
+                alpha=alpha,
+                beta=beta,
+                gamma=gamma,
+                mi=mi,
+                sint=sint,
+                rng=rng,
+                hubble=True,
+                h0=h0,
+            )
+            detection_prob = detection_probability(
+                mag, m_cut=m_cut, sigma_cut=sigma_cut
+            )
+            detected = rng.uniform() < detection_prob
+            if detected:
+                hubble_m_sc.append(mag)
+                hubble_v_sc.append(vel)
+                hubble_c_sc.append(col)
+                hubble_ae_sc.append(ae)
+                hubble_r_sc.append(red)
+                hubble_merr_sc.append(mag_err)
+                mu.append(mu_val)
+            hubble_m_sc_rej.append(mag)
+            hubble_v_sc_rej.append(vel)
+            hubble_c_sc_rej.append(col)
+            hubble_ae_sc_rej.append(ae)
+            hubble_r_sc_rej.append(red)
+            hubble_merr_sc_rej.append(mag_err)
+            mu_rej.append(mu_val)
+
         exp_dict["mu"] = [0] * len(names)  # Dummy values for non-calibrators
 
         hubble_names = []
@@ -322,6 +379,7 @@ def main(args):
         zrange_hubble=zrange_hubble,
         hubble_size=args.hubble_size,
         h0=args.h0,
+        m_cut=args.m_cut,
     )
 
     return data
@@ -376,6 +434,13 @@ def cli():
         type=float,
         help="Value of the Hubble constant for which to generate testdata. Default: 70.0",
         default=70.0,
+    )
+    parser.add_argument(
+        "-m",
+        "--m_cut",
+        type=float,
+        help="Magnitude cut for the detection probability. Default: 23",
+        default=23,
     )
 
     args = parser.parse_args()
