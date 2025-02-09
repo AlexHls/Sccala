@@ -42,9 +42,9 @@ def generate_observed_data(
 
     mag = (
         mi
-        - alpha * np.log10(vel_obs / np.mean(vel))
-        + beta * (col_obs - np.mean(col))
-        + gamma * (ae_obs - np.mean(ae))
+        - alpha * np.log10(vel_obs / vel_range[0])
+        + beta * (col_obs - col_range[0])
+        + gamma * (ae_obs - ae_range[0])
         + 5 * np.log10(distmod_kin(red))
     )
     if hubble:
@@ -69,7 +69,7 @@ def generate_observed_data(
 
 @np.vectorize
 def detection_probability(mag, m_cut=21, sigma_cut=0.5):
-    return 1 / (0.01 + norm.cdf(mag, m_cut, sigma_cut)) / 100
+    return 1 - norm.cdf(mag, m_cut, sigma_cut)
 
 
 def gen_testdata(
@@ -90,7 +90,7 @@ def gen_testdata(
     cerr=0.05,
     aeerr=0.013,
     r_err=0.0001,
-    m_cut=23,
+    m_cut=21,
     sigma_cut=0.5,
 ):
     """
@@ -179,7 +179,7 @@ def gen_testdata(
             c_sc.append(col)
             ae_sc.append(ae)
             r_sc.append(red)
-            merr_sc.append(mag_err)
+            merr_sc.append(0.05)
         m_sc_rej.append(mag)
         v_sc_rej.append(vel)
         c_sc_rej.append(col)
@@ -222,9 +222,16 @@ def gen_testdata(
 
         # Plot vel, col and a/e distributions as histograms
         ax4.hist(
-            v_sc_rej, bins=25, histtype="bar", color="r", label="Rejected", alpha=0.5
+            np.array(v_sc_rej) / 1e3,
+            bins=25,
+            histtype="bar",
+            color="r",
+            label="Rejected",
+            alpha=0.5,
         )
-        ax4.hist(v_sc, bins=25, histtype="bar", color="b", label="Accepted")
+        ax4.hist(
+            np.array(v_sc) / 1e3, bins=25, histtype="bar", color="b", label="Accepted"
+        )
         ax4.set_xlabel("Velocity (km/s)")
         ax4.set_ylabel("Number of SNe")
         ax4.legend()
@@ -351,6 +358,7 @@ def gen_testdata(
         exp_dict["epoch"].extend([35] * len(hubble_names))
 
         exp_dict["mu"].extend(mu)
+        exp_dict["mu_err"] = [0.05] * len(exp_dict["mu"])
 
     data = pd.DataFrame(exp_dict)
 
@@ -440,7 +448,7 @@ def cli():
         "--m_cut",
         type=float,
         help="Magnitude cut for the detection probability. Default: 23",
-        default=23,
+        default=21,
     )
 
     args = parser.parse_args()
