@@ -86,6 +86,9 @@ def gen_testdata(
     gamma=-1.5,
     mi=-1.6,
     sint=0.25,
+    vel_range=(7100e3, 725e3),
+    col_range=(0.5, 0.06),
+    ae_range=(0.31, 0.13),
     verr=np.sqrt(200e3**2 + 150e3**2),
     cerr=0.05,
     aeerr=0.013,
@@ -126,6 +129,10 @@ def gen_testdata(
     mi : float
     sint : float
         Parameters for the calculation of the magnitudes.
+    vel_range : tuple
+    col_range : tuple
+    ae_range : tuple
+        Parameters for the generation of the observed data.
     verr : float
     cerr : float
     aeerr : float
@@ -187,6 +194,21 @@ def gen_testdata(
         r_sc_rej.append(red)
         merr_sc_rej.append(mag_err)
 
+    m_sc, v_sc, c_sc, ae_sc, r_sc = (
+        np.array(m_sc),
+        np.array(v_sc),
+        np.array(c_sc),
+        np.array(ae_sc),
+        np.array(r_sc),
+    )
+    m_sc_rej, v_sc_rej, c_sc_rej, ae_sc_rej, r_sc_rej = (
+        np.array(m_sc_rej),
+        np.array(v_sc_rej),
+        np.array(c_sc_rej),
+        np.array(ae_sc_rej),
+        np.array(r_sc_rej),
+    )
+
     if plots:
         fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(
             nrows=2, ncols=3, figsize=(15, 10)
@@ -221,37 +243,33 @@ def gen_testdata(
         ax3.legend()
 
         # Plot vel, col and a/e distributions as histograms
-        ax4.hist(
-            np.array(v_sc_rej) / 1e3,
-            bins=25,
-            histtype="bar",
-            color="r",
-            label="Rejected",
-            alpha=0.5,
+        ax4.scatter(r_sc, v_sc / 1e3, label="Accepted", color="b")
+        ax4.scatter(
+            r_sc_rej, v_sc_rej / 1e3, label="Rejected", color="r", alpha=0.5, zorder=0
         )
-        ax4.hist(
-            np.array(v_sc) / 1e3, bins=25, histtype="bar", color="b", label="Accepted"
-        )
-        ax4.set_xlabel("Velocity (km/s)")
-        ax4.set_ylabel("Number of SNe")
+        ax4.axhline(vel_range[0] / 1e3, color="k", ls="--", label="Norm velocity")
+        ax4.set_xlabel("Redshift")
+        ax4.set_ylabel("Velocity (km/s)")
         ax4.legend()
         ax4.set_title("Velocity distribution of simulated data")
 
-        ax5.hist(
-            c_sc_rej, bins=25, histtype="bar", color="r", label="Rejected", alpha=0.5
+        ax5.scatter(r_sc, c_sc, label="Accepted", color="b")
+        ax5.scatter(
+            r_sc_rej, c_sc_rej, label="Rejected", color="r", alpha=0.5, zorder=0
         )
-        ax5.hist(c_sc, bins=25, histtype="bar", color="b", label="Accepted")
-        ax5.set_xlabel("Color")
-        ax5.set_ylabel("Number of SNe")
+        ax5.axhline(col_range[0], color="k", ls="--", label="Norm color")
+        ax5.set_xlabel("Redshift")
+        ax5.set_ylabel("Color")
         ax5.legend()
         ax5.set_title("Color distribution of simulated data")
 
-        ax6.hist(
-            ae_sc_rej, bins=25, histtype="bar", color="r", label="Rejected", alpha=0.5
+        ax6.scatter(r_sc, ae_sc, label="Accepted", color="b")
+        ax6.scatter(
+            r_sc_rej, ae_sc_rej, label="Rejected", color="r", alpha=0.5, zorder=0
         )
-        ax6.hist(ae_sc, bins=25, histtype="bar", color="b", label="Accepted")
-        ax6.set_xlabel("a/e")
-        ax6.set_ylabel("Number of SNe")
+        ax6.axhline(ae_range[0], color="k", ls="--", label="Norm a/e")
+        ax6.set_xlabel("Redshift")
+        ax6.set_ylabel("a/e")
         ax6.legend()
         ax6.set_title("a/e distribution of simulated data")
 
@@ -388,6 +406,7 @@ def main(args):
         hubble_size=args.hubble_size,
         h0=args.h0,
         m_cut=args.m_cut,
+        sigma_cut=args.sigma_cut,
     )
 
     return data
@@ -449,6 +468,13 @@ def cli():
         type=float,
         help="Magnitude cut for the detection probability. Default: 23",
         default=21,
+    )
+    parser.add_argument(
+        "-sig",
+        "--sigma_cut",
+        type=float,
+        help="Sigma cut for the detection probability. Default: 0.5",
+        default=0.5,
     )
 
     args = parser.parse_args()
