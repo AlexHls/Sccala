@@ -232,7 +232,7 @@ def gen_testdata(
         ax2.legend()
         ax2.set_title("Observed magnitudes of simulated data")
 
-        m_values = np.linspace(18, 25, 200)
+        m_values = np.linspace(np.min(m_sc), np.max(m_sc), 200)
         prob_values = detection_probability(m_values, m_cut, sigma_cut)
 
         ax3.plot(m_values, prob_values, label="Detection Probability")
