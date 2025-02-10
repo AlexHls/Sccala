@@ -1,5 +1,4 @@
 import argparse
-from matplotlib import scale
 
 import numpy as np
 import matplotlib.pyplot as plt
