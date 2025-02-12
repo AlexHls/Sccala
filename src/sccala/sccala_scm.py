@@ -53,6 +53,7 @@ def main(args):
         quiet=False,
         classic=args.classic,
         output_dir=args.output_dir,
+        test_data=args.test_data,
     )
 
     print("Finished sampling")
@@ -154,6 +155,12 @@ def cli():
     parser.add_argument(
         "--output_dir",
         help="Directory used for storing STAN temporary files.",
+    )
+    parser.add_argument(
+        "-t",
+        "--test_data",
+        action="store_true",
+        help="If flag is set, the normalisation will be overwritten by the default values of the test data generation script.",
     )
 
     args = parser.parse_args()

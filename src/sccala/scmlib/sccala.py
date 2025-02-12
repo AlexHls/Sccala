@@ -251,6 +251,7 @@ class SccalaSCM:
         init=None,
         classic=False,
         output_dir=None,
+        test_data=False,
     ):
         """
         Samples the posterior for the given data and model using
@@ -283,6 +284,11 @@ class SccalaSCM:
             ignored.
         output_dir : str
             Directory where temporary STAN files will be stored. Default: None
+        test_data : bool
+            If True, the normalisation of the data will be overwritten to account
+            for the test data. For now the values can't be adjusted and are
+            hardcoded to the defaults of the `gen_testdata` script.
+            Default: False
 
         Returns
         -------
@@ -319,6 +325,12 @@ class SccalaSCM:
         model.data["vel_avg"] = np.mean(self.vel)
         model.data["col_avg"] = np.mean(self.col)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
+
+        if test_data:
+            model.data["vel_avg"] = 7100e3
+            model.data["col_avg"] = 0.5
+            if not classic:
+                model.data["ae_avg"] = 0.31
 
         if model.hubble:
             assert self.calib_sn is not None, "No calibrator SNe found..."
