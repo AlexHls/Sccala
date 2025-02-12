@@ -37,9 +37,9 @@ class SccalaSCM:
         """
 
         if blind:
-            assert (
-                blindkey is not None
-            ), "For blinding, a blindkey has to be specified..."
+            assert blindkey is not None, (
+                "For blinding, a blindkey has to be specified..."
+            )
         self.blind = blind
         self.blindkey = blindkey
 
@@ -290,9 +290,9 @@ class SccalaSCM:
 
         """
 
-        assert issubclass(
-            type(model), SCM_Model
-        ), "'model' should be a subclass of SCM_Model"
+        assert issubclass(type(model), SCM_Model), (
+            "'model' should be a subclass of SCM_Model"
+        )
         assert isinstance(iters, int), "'iters' has to by of type 'int'"
         assert isinstance(warmup, int), "'warmup' has to by of type 'int'"
 
@@ -371,6 +371,10 @@ class SccalaSCM:
             model.data["num_calib_dset"] = n_calib_dset
 
         model.set_initial_conditions(init)
+
+        if log_dir is not None:
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
 
         data_file = model.write_json("data.json", path=log_dir)
         stan_file = model.write_stan("model.stan", path=log_dir)
@@ -493,9 +497,9 @@ class SccalaSCM:
 
         start = time.clock_gettime(time.CLOCK_REALTIME)
 
-        assert issubclass(
-            type(model), SCM_Model
-        ), "'model' should be a subclass of SCM_Model"
+        assert issubclass(type(model), SCM_Model), (
+            "'model' should be a subclass of SCM_Model"
+        )
         assert isinstance(iters, int), "'iters' has to by of type 'int'"
         assert isinstance(warmup, int), "'warmup' has to by of type 'int'"
         assert self.calib_sn is not None, "There are no calibrator SNe"
@@ -797,6 +801,86 @@ class SccalaSCM:
 
         return os.path.join(log_dir, savename)
 
+    def hubble_diagram(self, save=None, classic=False):
+        """
+        Plots a Hubble diagram of the posterior
+
+        Parameters
+        ----------
+        save : str
+            Specified where the generated Hubble diagram will be saved.
+        classic : bool
+            Switches classic mode on if True. In classic mode, a/e input is
+            ignored.
+
+        Returns
+        -------
+        None
+
+        Note: Only plots redshift vs. apparent magnitude to work for all
+        models, i.e. H0 and H0-free models.
+        """
+
+        if self.posterior is None:
+            warnings.warn("Please run sampling before generating Hubble diagram")
+            return
+
+        mi = self.posterior["Mi"].to_numpy().mean()
+        alpha = self.posterior["alpha"].to_numpy().mean()
+        beta = self.posterior["beta"].to_numpy().mean()
+
+        m_corr = (
+            self.mag
+            + alpha * np.log10(self.vel / np.mean(self.vel))
+            - beta * (self.col - np.mean(self.col))
+        )
+        if not classic:
+            gamma = self.posterior["gamma"].to_numpy().mean()
+            m_corr -= gamma * (self.ae - np.mean(self.ae))
+
+        res = 5 * np.log10(distmod_kin(self.red)) + mi - self.mag
+        res_corr = 5 * np.log10(distmod_kin(self.red)) + mi - m_corr
+
+        fig, ax = plt.subplots()
+        fig = plt.figure(figsize=[10.2, 7.2])
+        ax = fig.add_axes((0.1, 0.3, 0.8, 0.6))
+        ax.scatter(
+            self.red, self.mag, color="tab:blue", alpha=0.5, label=r"$m_\mathrm{obs}$"
+        )
+        ax.errorbar(
+            self.red,
+            m_corr,
+            yerr=self.mag_err,
+            fmt="o",
+            color="tab:blue",
+            label=r"$m_\mathrm{corr}$",
+        )
+        x = np.linspace(np.min(self.red), np.max(self.red), 100)
+        ax.plot(
+            x, 5 * np.log10(distmod_kin(x)) + mi, color="k", ls="--", label="Cosmology"
+        )
+
+        ax.set_ylabel(r"$m$ (mag)")
+        ax.legend()
+
+        ax2 = fig.add_axes((0.1, 0.1, 0.8, 0.2))
+        ax2.scatter(self.red, res, color="tab:blue", alpha=0.5)
+        ax2.errorbar(
+            self.red,
+            res_corr,
+            fmt="o",
+            color="tab:blue",
+            linewidth=2,
+        )
+
+        plt.hlines(0, min(self.red), max(self.red), linestyles="--", color="k")
+
+        ax2.set_xlabel(r"$z_\mathrm{CMB}$")
+        ax2.set_ylabel("Residuals")
+        plt.grid()
+
+        fig.savefig(save, bbox_inches="tight", dpi=300)
+
     def cornerplot(self, save=None, classic=False):
         """
         Plots the cornerplot of the posterior
@@ -847,6 +931,16 @@ class SccalaSCM:
 
             # Get relevant parameters
             keys = ["Mi", "alpha", "beta", "sigma_int"]
+
+        all_keys = list(self.posterior.keys())
+        if "mag_cut" in all_keys:
+            paramnames.append(r"$m_\mathrm{cut}$")
+            keys.append("mag_cut")
+            ndim += 1
+        if "sigma_cut" in all_keys:
+            paramnames.append(r"$\sigma_\mathrm{cut}$")
+            keys.append("sigma_cut")
+            ndim += 1
 
         posterior = self.posterior[keys].to_numpy()
 

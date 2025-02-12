@@ -60,6 +60,9 @@ def main(args):
         print("Saving cornerplot...")
         save = os.path.join(args.log_dir, args.plot)
         sccala_scm.cornerplot(save, args.classic)
+        sccala_scm.hubble_diagram(
+            save=save.replace(".png", "_hubble.png"), classic=args.classic
+        )
 
     return posterior
 
