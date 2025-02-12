@@ -31,7 +31,7 @@ def generate_observed_data(
         rng = np.random.default_rng()
 
     red = rng.triangular(left=zrange[0], mode=zrange[1], right=zrange[1])
-    vel = rng.normal(loc=vel_range[0], scale=vel_range[1])
+    vel = np.absolute(rng.normal(loc=vel_range[0], scale=vel_range[1]))
     col = rng.normal(loc=col_range[0], scale=col_range[1])
     ae = np.absolute(rng.normal(loc=ae_range[0], scale=ae_range[1]))
 
@@ -41,10 +41,11 @@ def generate_observed_data(
 
     mag = (
         mi
-        - alpha * np.log10(vel_obs / vel_range[0])
-        + beta * (col_obs - col_range[0])
-        + gamma * (ae_obs - ae_range[0])
+        - alpha * np.log10(vel / vel_range[0])
+        + beta * (col - col_range[0])
+        + gamma * (ae - ae_range[0])
         + 5 * np.log10(distmod_kin(red))
+        + rng.normal(loc=0, scale=sint)
     )
     if hubble:
         mu = rng.uniform(29, 32)
@@ -54,11 +55,12 @@ def generate_observed_data(
         (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
         + (300 / C_LIGHT * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
         + (0.055 * red) ** 2
+        + 0.05**2
     )
 
     mag_obs = rng.normal(
         loc=mag,
-        scale=np.sqrt(mag_err + 0.05**2 + sint**2),
+        scale=np.sqrt(mag_err),
     )
 
     if hubble:
