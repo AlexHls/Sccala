@@ -374,7 +374,7 @@ class HubbleFreeSCM(SCM_Model):
                 array[sn_idx] real vel_sys; // Systematic velocity uncertainties
                 array[sn_idx] real col_sys; // Systematic color uncertainties
                 array[sn_idx] real ae_sys; // Systematic ae uncertainties
-                real vel_avg; // Normalisation constans
+                real vel_avg; // Normalisation constants
                 real col_avg;
                 real ae_avg;
                 array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
@@ -394,13 +394,19 @@ class HubbleFreeSCM(SCM_Model):
                 array[sn_idx] real <lower=0> v_true; // Modeled latent velocities (cannot be negative)
                 array[sn_idx] real c_true; // Modeled latent color
                 array[sn_idx] real <lower=0> a_true; // Modeled latent a/e (cannot be negative)
+                real <lower=14, upper=30> mag_cut; // Magnitude cut for selection effect calculation
+                real <lower=0.1, upper=3> sigma_cut; // Uncertainty of the magnitude cut
             }
             transformed parameters{
                 array[sn_idx] real mag_true;
+                array[sn_idx] real mean;
+                array[sn_idx] real v_mi;
                 real sigma_int;
                 sigma_int = 10 ^ log_sigma;
                 for (i in 1:sn_idx) {
                     mag_true[i] = Mi - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + gamma * (a_true[i] - ae_avg) + 5 * log_dist_mod[i];
+                    mean[i] = Mi - alpha * log10(vs / vel_avg) + beta * (cs - col_avg) + gamma * (as - ae_avg) + 5 * log_dist_mod[i];
+                    v_mi[i] = (errors[i][1,1] + sigma_int^2) + sigma_cut^2 + (alpha * rv / (vs * log10()))^2 + (beta * rc)^2 + (gamma * ra)^2;
                 }
             }
             model {
@@ -415,15 +421,20 @@ class HubbleFreeSCM(SCM_Model):
                 as ~ cauchy(0.5,0.5);
 
                 rv ~ normal(0,1500e3);
-                rc ~ normal(0,0.05);
-                ra ~ normal(0,0.05);
+                rc ~ normal(0,0.5);
+                ra ~ normal(0,0.5);
 
                 v_true ~ normal(vs,rv);
                 c_true ~ normal(cs,rc);
                 a_true ~ normal(as,ra);
 
+                mag_cut ~ normal(18,0.5);
+                sigma_cut ~ normal(0.5,0.25);
+
                 for (i in 1:sn_idx) {
-                    target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]', errors[i] +[[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
+                    target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]', errors[i] + [[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]])
+                    + normal_lcdf(mag_cut | obs[i][1], sigma_cut)
+                    - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
                 }
             }
             """
