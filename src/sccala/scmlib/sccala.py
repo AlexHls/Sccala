@@ -255,6 +255,7 @@ class SccalaSCM:
         classic=False,
         output_dir=None,
         test_data=False,
+        selection_effects=True,
     ):
         """
         Samples the posterior for the given data and model using
@@ -292,6 +293,8 @@ class SccalaSCM:
             for the test data. For now the values can't be adjusted and are
             hardcoded to the defaults of the `gen_testdata` script.
             Default: False
+        selection_effects : bool
+            If True, selection effects are included in the model. Default: True
 
         Returns
         -------
@@ -330,8 +333,14 @@ class SccalaSCM:
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
 
         # For now, we take the average of the limiting magnitudes
-        model.data["m_cut_nom"] = np.mean(self.m_cut_nom)
-        model.data["sig_cut_nom"] = np.mean(self.sig_cut_nom)
+        if selection_effects:
+            model.data["m_cut_nom"] = np.mean(self.m_cut_nom)
+            model.data["sig_cut_nom"] = np.mean(self.sig_cut_nom)
+            model.data["use_selection"] = 1
+        else:
+            model.data["m_cut_nom"] = 0
+            model.data["sig_cut_nom"] = 0
+            model.data["use_selection"] = 0
 
         if test_data:
             model.data["vel_avg"] = 7100e3
@@ -396,9 +405,8 @@ class SccalaSCM:
                 os.makedirs(log_dir)
 
         data_file = model.write_json("data.json", path=log_dir)
-        stan_file = model.write_stan("model.stan", path=log_dir)
 
-        mdl = CmdStanModel(stan_file=stan_file)
+        mdl = CmdStanModel(stan_file=model.file)
 
         fit = mdl.sample(
             data=data_file,

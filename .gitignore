@@ -3,3 +3,7 @@ sccala-dev
 build
 _build
 src/sccala_sniip.egg-info
+
+src/sccala/scmlib/models/*
+!src/sccala/scmlib/models/*.*
+

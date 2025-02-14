@@ -54,6 +54,7 @@ def main(args):
         classic=args.classic,
         output_dir=args.output_dir,
         test_data=args.test_data,
+        selection_effects=args.selection_effects,
     )
 
     print("Finished sampling")
@@ -161,6 +162,12 @@ def cli():
         "--test_data",
         action="store_true",
         help="If flag is set, the normalisation will be overwritten by the default values of the test data generation script.",
+    )
+    parser.add_argument(
+        "--no_selection_effects",
+        action="store_false",
+        help="If flag is set, selection effects will be turned off.",
+        dest="selection_effects",
     )
 
     args = parser.parse_args()
