@@ -96,6 +96,8 @@ def gen_testdata(
     r_err=0.0001,
     m_cut=21,
     sigma_cut=0.5,
+    m_cut_nom=None,
+    sig_cut_nom=None,
 ):
     """
     Function generating simulated datasets for standardisation
@@ -142,6 +144,9 @@ def gen_testdata(
     m_cut : float
     sigma_cut : float
         Parameters for the detection probability.
+    m_cut_nom : float
+    sig_cut_nom : float
+        Parameters for the nominal detection values exported to the data.
 
     Returns
     -------
@@ -154,6 +159,11 @@ def gen_testdata(
         isinstance(zrange, list) and len(zrange) == 2
     ):
         raise ValueError("zrange is not a valid tuple or list of length two")
+
+    if m_cut_nom is None:
+        m_cut_nom = m_cut
+    if sig_cut_nom is None:
+        sig_cut_nom = sigma_cut
 
     rng = np.random.default_rng()
     m_sc, m_sc_rej = [], []
@@ -303,6 +313,8 @@ def gen_testdata(
         "red": list(r_sc),
         "red_err": list(np.ones_like(r_sc) * r_err),
         "epoch": [35] * len(names),
+        "m_cut_nom": [m_cut_nom] * len(names),
+        "sig_cut_nom": [sig_cut_nom] * len(names),
     }
 
     if hubble:
@@ -408,6 +420,8 @@ def main(args):
         h0=args.h0,
         m_cut=args.m_cut,
         sigma_cut=args.sigma_cut,
+        m_cut_nom=args.m_cut_nom,
+        sig_cut_nom=args.sig_cut_nom,
     )
 
     return data
@@ -476,6 +490,16 @@ def cli():
         type=float,
         help="Sigma cut for the detection probability. Default: 0.5",
         default=0.5,
+    )
+    parser.add_argument(
+        "--m_cut_nom",
+        type=float,
+        help="Nominal magnitude cut for the exported data. Default: 21",
+    )
+    parser.add_argument(
+        "--sig_cut_nom",
+        type=float,
+        help="Nominal sigma cut for the exported data. Default: 0.5",
     )
 
     args = parser.parse_args()

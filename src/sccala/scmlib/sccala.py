@@ -77,6 +77,9 @@ class SccalaSCM:
 
         self.epoch = df[df["dataset"].isin(datasets)]["epoch"].to_numpy()
 
+        self.m_cut_nom = df[df["dataset"].isin(datasets)]["m_cut_nom"].to_numpy()
+        self.sig_cut_nom = df[df["dataset"].isin(datasets)]["sig_cut_nom"].to_numpy()
+
         if calib:
             self.calib_sn = df[df["dataset"].isin(calib_datasets)]["SN"].to_numpy()
 
@@ -325,6 +328,10 @@ class SccalaSCM:
         model.data["vel_avg"] = np.mean(self.vel)
         model.data["col_avg"] = np.mean(self.col)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
+
+        # For now, we take the average of the limiting magnitudes
+        model.data["m_cut_nom"] = np.mean(self.m_cut_nom)
+        model.data["sig_cut_nom"] = np.mean(self.sig_cut_nom)
 
         if test_data:
             model.data["vel_avg"] = 7100e3

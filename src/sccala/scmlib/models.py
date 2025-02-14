@@ -378,6 +378,8 @@ class HubbleFreeSCM(SCM_Model):
                 real col_avg;
                 real ae_avg;
                 array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
+                real m_cut_nom; // Nominal magnitude cut for selection effect calculation
+                real sig_cut_nom; // Nominal uncertainty of the magnitude cut
             }
             parameters {
                 real Mi; // Absolute Hubble-free Magnitude
@@ -428,8 +430,8 @@ class HubbleFreeSCM(SCM_Model):
                 c_true ~ normal(cs,rc);
                 a_true ~ normal(as,ra);
 
-                mag_cut ~ normal(18,0.5);
-                sigma_cut ~ normal(0.5,0.25);
+                mag_cut ~ normal(m_cut_nom,0.5);
+                sigma_cut ~ normal(sig_cut_nom,0.25);
 
                 for (i in 1:sn_idx) {
                     target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]', errors[i] + [[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]])
