@@ -475,6 +475,7 @@ class SccalaSCM:
         restart=True,
         walltime=24.0,
         output_dir=None,
+        selection_effects=True,
     ):
         """
         Samples the posterior for the given data and model
@@ -515,6 +516,8 @@ class SccalaSCM:
             cleanly. Should be used with restart set to True. Default 24.0
         output_dir : str
             Directory where temporary STAN files will be stored. Default: None
+        selection_effects : bool
+            If True, selection effects are included in the model. Default: True
 
         Returns
         -------
@@ -594,6 +597,15 @@ class SccalaSCM:
         model.data["vel_avg"] = np.mean(self.vel)
         model.data["col_avg"] = np.mean(self.col)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
+
+        if selection_effects:
+            model.data["m_cut_nom"] = np.mean(self.m_cut_nom)
+            model.data["sig_cut_nom"] = np.mean(self.sig_cut_nom)
+            model.data["use_selection"] = 1
+        else:
+            model.data["m_cut_nom"] = 0
+            model.data["sig_cut_nom"] = 0
+            model.data["use_selection"] = 0
 
         if not classic:
             # Observed values
@@ -675,18 +687,14 @@ class SccalaSCM:
             done = []
 
         if rank == 0:
-            stan_file = model.write_stan("model.stan", path=log_dir)
-
             # Create a model instance to trigger compilation and avoid
             # having to compile the model on each rank separately
             print("Compiling model...")
-            mdl_0 = CmdStanModel(stan_file=stan_file)
+            mdl_0 = CmdStanModel(stan_file=model.file)
             del mdl_0
             print("Model compiled, starting sampling...")
-        else:
-            # Should be done via broadcast, but this is easier
-            # and the path is 'hardcoded' anyway
-            stan_file = os.path.join(log_dir, "model.stan")
+
+        comm.Barrier()
 
         if output_dir is not None:
             output_dir_rank = os.path.join(output_dir, "rank_%03d" % rank)
@@ -743,7 +751,7 @@ class SccalaSCM:
             with nullify_output(suppress_stdout=True, suppress_stderr=True):
                 data_file = model.write_json(f"data_{rank}.json", path=log_dir)
 
-                mdl = CmdStanModel(stan_file=stan_file)
+                mdl = CmdStanModel(stan_file=model.file)
 
                 fit = mdl.sample(
                     data=data_file,
