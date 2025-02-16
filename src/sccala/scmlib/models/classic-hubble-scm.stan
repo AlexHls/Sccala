@@ -89,7 +89,7 @@ model {
     cs ~ cauchy(0,0.5);
 
     rv ~ normal(0,1500e3);
-    rc ~ normal(0,0.05);
+    rc ~ normal(0,0.5);
 
     v_true ~ normal(vs,rv);
     c_true ~ normal(cs,rc);
@@ -99,7 +99,7 @@ model {
         calib_cs[i] ~ cauchy(0,0.5);
 
         calib_rv[i] ~ normal(0,1500e3);
-        calib_rc[i] ~ normal(0,0.05);
+        calib_rc[i] ~ normal(0,0.5);
     }
     
     for (i in 1:calib_sn_idx) {
