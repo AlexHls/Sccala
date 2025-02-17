@@ -131,6 +131,13 @@ class SccalaSCM:
             self.calib_epoch = df[df["dataset"].isin(calib_datasets)][
                 "epoch"
             ].to_numpy()
+
+            self.calib_m_cut_nom = df[df["dataset"].isin(calib_datasets)][
+                "m_cut_nom"
+            ].to_numpy()
+            self.calib_sig_cut_nom = df[df["dataset"].isin(calib_datasets)][
+                "sig_cut_nom"
+            ].to_numpy()
         else:
             self.calib_sn = None
 
@@ -158,6 +165,9 @@ class SccalaSCM:
             self.calib_dist_mod_err = None
 
             self.calib_epoch = None
+
+            self.calib_m_cut_nom = None
+            self.calib_sig_cut_nom = None
 
         self.datasets = df[df["dataset"].isin(datasets)]["dataset"].to_numpy()
 
@@ -397,6 +407,22 @@ class SccalaSCM:
             calib_dset_idx = map(lambda x: mappded_dsets[x] + 1, self.calib_datasets)
             model.data["calib_dset_idx"] = list(calib_dset_idx)
             model.data["num_calib_dset"] = n_calib_dset
+
+            # For now, we take the average for each dataset
+            if selection_effects:
+                calib_m_cut_nom = []
+                calib_sig_cut_nom = []
+                for i in range(n_calib_dset):
+                    mask = [x == (i + 1) for x in model.data["calib_dset_idx"]]
+                    calib_m_cut_nom.append(np.mean(self.calib_m_cut_nom[mask]))
+                    calib_sig_cut_nom.append(np.mean(self.calib_sig_cut_nom[mask]))
+                model.data["calib_m_cut_nom"] = np.array(calib_m_cut_nom)
+                model.data["calib_sig_cut_nom"] = np.array(calib_sig_cut_nom)
+                model.data["use_selection"] = 1
+            else:
+                model.data["calib_m_cut_nom"] = np.zeros(n_calib_dset)
+                model.data["calib_sig_cut_nom"] = np.zeros(n_calib_dset)
+                model.data["use_selection"] = 0
 
         model.set_initial_conditions(init)
 
@@ -863,6 +889,10 @@ class SccalaSCM:
         mi = self.posterior["Mi"].to_numpy().mean()
         alpha = self.posterior["alpha"].to_numpy().mean()
         beta = self.posterior["beta"].to_numpy().mean()
+        try:
+            h0 = self.posterior["H0"].to_numpy().mean()
+        except KeyError:
+            h0 = None
 
         m_corr = (
             self.mag
@@ -875,6 +905,9 @@ class SccalaSCM:
 
         res = 5 * np.log10(distmod_kin(self.red)) + mi - self.mag
         res_corr = 5 * np.log10(distmod_kin(self.red)) + mi - m_corr
+        if h0 is not None:
+            res -= 5 * np.log10(h0) - 25
+            res_corr -= 5 * np.log10(h0) - 25
 
         fig, ax = plt.subplots()
         fig = plt.figure(figsize=[10.2, 7.2])
@@ -891,9 +924,10 @@ class SccalaSCM:
             label=r"$m_\mathrm{corr}$",
         )
         x = np.linspace(np.min(self.red), np.max(self.red), 100)
-        ax.plot(
-            x, 5 * np.log10(distmod_kin(x)) + mi, color="k", ls="--", label="Cosmology"
-        )
+        cosmo = 5 * np.log10(distmod_kin(x)) + mi
+        if h0 is not None:
+            cosmo -= 5 * np.log10(h0) - 25
+        ax.plot(x, cosmo, color="k", ls="--", label="Cosmology")
 
         ax.set_ylabel(r"$m$ (mag)")
         ax.legend()

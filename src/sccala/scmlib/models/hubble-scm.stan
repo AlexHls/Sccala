@@ -81,7 +81,7 @@ transformed parameters{
         calib_mag_true[i] = Mi - alpha * log10(calib_v_true[i] / vel_avg) + beta * (calib_c_true[i] - col_avg) + gamma * (calib_a_true[i] - ae_avg) + calib_dist_mod[i];
         if (use_selection != 0) {
           calib_mean[i] = Mi - alpha * log10(calib_vs[calib_dset_idx[i]] / vel_avg) + beta * (calib_cs[calib_dset_idx[i]] - col_avg) + gamma * (calib_as[calib_dset_idx[i]] - ae_avg) + calib_dist_mod[i];
-          calib_v_mi[i] = (calib_errors[i][1,1] + calib_sigma_int[calib_dset_idx[i]]^2) + calib_sigma_cut[calib_dset_idx[i]]^2 + (alpha * calib_rv[calib_dset_idx[i]] / (calib_vs[calib_dset_idx[i]] * log10()))^2 + (beta * calib_rc[calib_dset_idx[i]])^2 + (gamma * calib_ra[calib_dset_idx[i]])^2;
+          calib_v_mi[i] = (calib_errors[i][1] + calib_sigma_int[calib_dset_idx[i]]^2) + calib_sigma_cut[calib_dset_idx[i]]^2 + (alpha * calib_rv[calib_dset_idx[i]] / (calib_vs[calib_dset_idx[i]] * log10()))^2 + (beta * calib_rc[calib_dset_idx[i]])^2 + (gamma * calib_ra[calib_dset_idx[i]])^2;
         }
     }
 }

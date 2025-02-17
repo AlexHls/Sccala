@@ -25,6 +25,7 @@ def generate_observed_data(
     sint=0.25,
     rng=None,
     hubble=False,
+    calib=False,
     h0=70.0,
 ):
     if rng is None:
@@ -39,17 +40,27 @@ def generate_observed_data(
     col_obs = rng.normal(loc=col, scale=cerr)
     ae_obs = rng.normal(loc=ae, scale=aeerr)
 
+    h0_obs = rng.normal(loc=h0, scale=h0 * 0.05)
+    mu = rng.uniform(29, 32)
+
+    if hubble:
+        mi = mi + 5 * np.log10(h0) - 25
+
+    if hubble and not calib:
+        dist = 5 * np.log10(distmod_kin(red) / h0_obs) + 25
+    elif hubble and calib:
+        dist = mu
+    else:
+        dist = 5 * np.log10(distmod_kin(red))
+
     mag = (
         mi
         - alpha * np.log10(vel / vel_range[0])
         + beta * (col - col_range[0])
         + gamma * (ae - ae_range[0])
-        + 5 * np.log10(distmod_kin(red))
+        + dist
         + rng.normal(loc=0, scale=sint)
     )
-    if hubble:
-        mu = rng.uniform(29, 32)
-        mag += 5 * np.log10(10 ** ((mu - 25) / 5) * h0)
 
     mag_err = (
         (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
@@ -63,7 +74,7 @@ def generate_observed_data(
         scale=np.sqrt(mag_err),
     )
 
-    if hubble:
+    if calib and hubble:
         return red, vel_obs, col_obs, ae_obs, mag_obs, mag_err, mu
     return red, vel_obs, col_obs, ae_obs, mag_obs, mag_err
 
@@ -96,8 +107,12 @@ def gen_testdata(
     r_err=0.0001,
     m_cut=21,
     sigma_cut=0.5,
+    calib_m_cut=21,
+    calib_sigma_cut=0.5,
     m_cut_nom=None,
     sig_cut_nom=None,
+    calib_m_cut_nom=None,
+    calib_sig_cut_nom=None,
 ):
     """
     Function generating simulated datasets for standardisation
@@ -143,9 +158,13 @@ def gen_testdata(
         Parameters for the calculation of the magnitude errors.
     m_cut : float
     sigma_cut : float
+    calib_m_cut : float
+    calib_sigma_cut : float
         Parameters for the detection probability.
     m_cut_nom : float
     sig_cut_nom : float
+    calib_m_cut_nom : float
+    calib_sig_cut_nom : float
         Parameters for the nominal detection values exported to the data.
 
     Returns
@@ -186,7 +205,7 @@ def gen_testdata(
             mi=mi,
             sint=sint,
             rng=rng,
-            hubble=False,
+            hubble=hubble,
             h0=h0,
         )
         detection_prob = detection_probability(mag, m_cut=m_cut, sigma_cut=sigma_cut)
@@ -220,6 +239,119 @@ def gen_testdata(
         np.array(r_sc_rej),
     )
 
+    names = []
+    for i in range(size):
+        names.append("supernova_%d" % i)
+
+    exp_dict = {
+        "SN": names,
+        "dataset": ["Testdata"] * len(names),
+        "mag": list(m_sc),
+        "mag_err": list(merr_sc),
+        "mag_sys": [0] * len(names),
+        "col": list(c_sc),
+        "col_err": list(merr_sc),
+        "col_sys": [0] * len(names),
+        "vel": list(v_sc),
+        "vel_err": list(np.ones_like(v_sc) * np.sqrt(200e3**2 + 150e3**2)),
+        "vel_sys": [0] * len(names),
+        "ae": list(ae_sc),
+        "ae_err": list(np.ones_like(ae_sc) * aeerr),
+        "ae_sys": [0] * len(names),
+        "red": list(r_sc),
+        "red_err": list(np.ones_like(r_sc) * r_err),
+        "epoch": [35] * len(names),
+        "m_cut_nom": [m_cut_nom] * len(names),
+        "sig_cut_nom": [sig_cut_nom] * len(names),
+    }
+
+    if hubble:
+        hubble_m_sc, hubble_m_sc_rej = [], []
+        hubble_v_sc, hubble_v_sc_rej = [], []
+        hubble_c_sc, hubble_c_sc_rej = [], []
+        hubble_ae_sc, hubble_ae_sc_rej = [], []
+        hubble_r_sc, hubble_r_sc_rej = [], []
+        hubble_merr_sc, hubble_merr_sc_rej = [], []
+        mu, mu_rej = [], []
+
+        if calib_m_cut_nom is None:
+            calib_m_cut_nom = calib_m_cut
+        if calib_sig_cut_nom is None:
+            calib_sig_cut_nom = calib_sigma_cut
+
+        while len(hubble_m_sc) < hubble_size:
+            red, vel, col, ae, mag, mag_err, mu_val = generate_observed_data(
+                zrange_hubble,
+                verr=verr,
+                cerr=cerr,
+                aeerr=aeerr,
+                r_err=r_err,
+                alpha=alpha,
+                beta=beta,
+                gamma=gamma,
+                mi=mi,
+                sint=sint,
+                rng=rng,
+                hubble=hubble,
+                calib=True,
+                h0=h0,
+            )
+            detection_prob = detection_probability(
+                mag, m_cut=calib_m_cut, sigma_cut=calib_sigma_cut
+            )
+            detected = rng.uniform() < detection_prob
+            if detected:
+                hubble_m_sc.append(mag)
+                hubble_v_sc.append(vel)
+                hubble_c_sc.append(col)
+                hubble_ae_sc.append(ae)
+                hubble_r_sc.append(red)
+                hubble_merr_sc.append(mag_err)
+                mu.append(mu_val)
+            hubble_m_sc_rej.append(mag)
+            hubble_v_sc_rej.append(vel)
+            hubble_c_sc_rej.append(col)
+            hubble_ae_sc_rej.append(ae)
+            hubble_r_sc_rej.append(red)
+            hubble_merr_sc_rej.append(mag_err)
+            mu_rej.append(mu_val)
+
+        exp_dict["mu"] = [0] * len(names)  # Dummy values for non-calibrators
+
+        hubble_names = []
+        for i in range(hubble_size):
+            hubble_names.append("calib_supernova_%d" % i)
+
+        exp_dict["SN"].extend(hubble_names)
+        exp_dict["dataset"].extend(["CALIB_Testdata"] * len(hubble_names))
+        exp_dict["mag"].extend(hubble_m_sc)
+        exp_dict["mag_err"].extend(hubble_merr_sc)
+        exp_dict["mag_sys"].extend([0] * len(hubble_names))
+        exp_dict["col"].extend(hubble_c_sc)
+        exp_dict["col_err"].extend(hubble_merr_sc)
+        exp_dict["col_sys"].extend([0] * len(hubble_names))
+        exp_dict["vel"].extend(hubble_v_sc)
+        exp_dict["vel_err"].extend(
+            np.ones_like(hubble_v_sc) * np.sqrt(200e3**2 + 150e3**2)
+        )
+        exp_dict["vel_sys"].extend([0] * len(hubble_names))
+        exp_dict["ae"].extend(hubble_ae_sc)
+        exp_dict["ae_err"].extend(np.ones_like(hubble_ae_sc) * aeerr)
+        exp_dict["ae_sys"].extend([0] * len(hubble_names))
+        exp_dict["red"].extend(hubble_r_sc)
+        exp_dict["red_err"].extend(np.ones_like(hubble_r_sc) * r_err)
+        exp_dict["epoch"].extend([35] * len(hubble_names))
+
+        exp_dict["mu"].extend(mu)
+        exp_dict["mu_err"] = [0.05] * len(exp_dict["mu"])
+
+        exp_dict["m_cut_nom"].extend([calib_m_cut_nom] * len(hubble_names))
+        exp_dict["sig_cut_nom"].extend([calib_sig_cut_nom] * len(hubble_names))
+
+    data = pd.DataFrame(exp_dict)
+
+    data.to_csv(save)
+
     if plots:
         fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(
             nrows=2, ncols=3, figsize=(15, 10)
@@ -234,7 +366,8 @@ def gen_testdata(
         ax1.legend()
         ax1.set_title("Redshift distribution of simulated data")
 
-        ax2.scatter(r_sc, m_sc)
+        ax2.scatter(r_sc, m_sc, label="Hubble flow")
+        ax2.scatter(hubble_r_sc, hubble_m_sc, label="Calibrator")
         x = np.linspace(zrange[0], zrange[1], 100)
         ax2.plot(
             x, 5 * np.log10(distmod_kin(x)) + mi, color="k", ls="--", label="Cosmology"
@@ -291,110 +424,6 @@ def gen_testdata(
 
         plt.show()
 
-    names = []
-    for i in range(size):
-        names.append("supernova_%d" % i)
-
-    exp_dict = {
-        "SN": names,
-        "dataset": ["Testdata"] * len(names),
-        "mag": list(m_sc),
-        "mag_err": list(merr_sc),
-        "mag_sys": [0] * len(names),
-        "col": list(c_sc),
-        "col_err": list(merr_sc),
-        "col_sys": [0] * len(names),
-        "vel": list(v_sc),
-        "vel_err": list(np.ones_like(v_sc) * np.sqrt(200e3**2 + 150e3**2)),
-        "vel_sys": [0] * len(names),
-        "ae": list(ae_sc),
-        "ae_err": list(np.ones_like(ae_sc) * aeerr),
-        "ae_sys": [0] * len(names),
-        "red": list(r_sc),
-        "red_err": list(np.ones_like(r_sc) * r_err),
-        "epoch": [35] * len(names),
-        "m_cut_nom": [m_cut_nom] * len(names),
-        "sig_cut_nom": [sig_cut_nom] * len(names),
-    }
-
-    if hubble:
-        hubble_m_sc, hubble_m_sc_rej = [], []
-        hubble_v_sc, hubble_v_sc_rej = [], []
-        hubble_c_sc, hubble_c_sc_rej = [], []
-        hubble_ae_sc, hubble_ae_sc_rej = [], []
-        hubble_r_sc, hubble_r_sc_rej = [], []
-        hubble_merr_sc, hubble_merr_sc_rej = [], []
-        mu, mu_rej = [], []
-
-        while len(hubble_m_sc) < hubble_size:
-            red, vel, col, ae, mag, mag_err, mu_val = generate_observed_data(
-                zrange_hubble,
-                verr=verr,
-                cerr=cerr,
-                aeerr=aeerr,
-                r_err=r_err,
-                alpha=alpha,
-                beta=beta,
-                gamma=gamma,
-                mi=mi,
-                sint=sint,
-                rng=rng,
-                hubble=True,
-                h0=h0,
-            )
-            detection_prob = detection_probability(
-                mag, m_cut=m_cut, sigma_cut=sigma_cut
-            )
-            detected = rng.uniform() < detection_prob
-            if detected:
-                hubble_m_sc.append(mag)
-                hubble_v_sc.append(vel)
-                hubble_c_sc.append(col)
-                hubble_ae_sc.append(ae)
-                hubble_r_sc.append(red)
-                hubble_merr_sc.append(mag_err)
-                mu.append(mu_val)
-            hubble_m_sc_rej.append(mag)
-            hubble_v_sc_rej.append(vel)
-            hubble_c_sc_rej.append(col)
-            hubble_ae_sc_rej.append(ae)
-            hubble_r_sc_rej.append(red)
-            hubble_merr_sc_rej.append(mag_err)
-            mu_rej.append(mu_val)
-
-        exp_dict["mu"] = [0] * len(names)  # Dummy values for non-calibrators
-
-        hubble_names = []
-        for i in range(hubble_size):
-            hubble_names.append("calib_supernova_%d" % i)
-
-        exp_dict["SN"].extend(hubble_names)
-        exp_dict["dataset"].extend(["CALIB_Testdata"] * len(hubble_names))
-        exp_dict["mag"].extend(hubble_m_sc)
-        exp_dict["mag_err"].extend(hubble_merr_sc)
-        exp_dict["mag_sys"].extend([0] * len(hubble_names))
-        exp_dict["col"].extend(hubble_c_sc)
-        exp_dict["col_err"].extend(hubble_merr_sc)
-        exp_dict["col_sys"].extend([0] * len(hubble_names))
-        exp_dict["vel"].extend(hubble_v_sc)
-        exp_dict["vel_err"].extend(
-            np.ones_like(hubble_v_sc) * np.sqrt(200e3**2 + 150e3**2)
-        )
-        exp_dict["vel_sys"].extend([0] * len(hubble_names))
-        exp_dict["ae"].extend(hubble_ae_sc)
-        exp_dict["ae_err"].extend(np.ones_like(hubble_ae_sc) * aeerr)
-        exp_dict["ae_sys"].extend([0] * len(hubble_names))
-        exp_dict["red"].extend(hubble_r_sc)
-        exp_dict["red_err"].extend(np.ones_like(hubble_r_sc) * r_err)
-        exp_dict["epoch"].extend([35] * len(hubble_names))
-
-        exp_dict["mu"].extend(mu)
-        exp_dict["mu_err"] = [0.05] * len(exp_dict["mu"])
-
-    data = pd.DataFrame(exp_dict)
-
-    data.to_csv(save)
-
     return data
 
 
@@ -422,6 +451,10 @@ def main(args):
         sigma_cut=args.sigma_cut,
         m_cut_nom=args.m_cut_nom,
         sig_cut_nom=args.sig_cut_nom,
+        calib_m_cut=args.calib_m_cut,
+        calib_sigma_cut=args.calib_sigma_cut,
+        calib_m_cut_nom=args.calib_m_cut_nom,
+        calib_sig_cut_nom=args.calib_sig_cut_nom,
     )
 
     return data
@@ -500,6 +533,28 @@ def cli():
         "--sig_cut_nom",
         type=float,
         help="Nominal sigma cut for the exported data. Default: 0.5",
+    )
+    parser.add_argument(
+        "--calib_m_cut",
+        type=float,
+        help="Magnitude cut for the detection probability of the calibrator sample. Default: 21",
+        default=21,
+    )
+    parser.add_argument(
+        "--calib_sigma_cut",
+        type=float,
+        help="Sigma cut for the detection probability of the calibrator sample. Default: 0.5",
+        default=0.5,
+    )
+    parser.add_argument(
+        "--calib_m_cut_nom",
+        type=float,
+        help="Nominal magnitude cut for the exported calibrator data. Default: 21",
+    )
+    parser.add_argument(
+        "--calib_sig_cut_nom",
+        type=float,
+        help="Nominal sigma cut for the exported calibrator data. Default: 0.5",
     )
 
     args = parser.parse_args()
