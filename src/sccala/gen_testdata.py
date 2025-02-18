@@ -40,16 +40,14 @@ def generate_observed_data(
     col_obs = rng.normal(loc=col, scale=cerr)
     ae_obs = rng.normal(loc=ae, scale=aeerr)
 
-    h0_obs = rng.normal(loc=h0, scale=h0 * 0.05)
-    mu = rng.uniform(29, 32)
-
     if hubble:
         mi = mi + 5 * np.log10(h0) - 25
 
     if hubble and not calib:
-        dist = 5 * np.log10(distmod_kin(red) / h0_obs) + 25
+        dist = 5 * np.log10(distmod_kin(red) / h0) + 25
     elif hubble and calib:
-        dist = mu
+        dist = 5 * np.log10(distmod_kin(red) / h0) + 25
+        mu = dist
     else:
         dist = 5 * np.log10(distmod_kin(red))
 
@@ -62,16 +60,25 @@ def generate_observed_data(
         + rng.normal(loc=0, scale=sint)
     )
 
-    mag_err = (
-        (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
-        + (300 / C_LIGHT * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
-        + (0.055 * red) ** 2
-        + 0.05**2
-    )
+    if calib:
+        r_err = 0.05 * red
+        mag_err = np.sqrt(
+            (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
+            + (0.055 * red) ** 2
+            + 0.05**2
+        )
+    else:
+        mag_err = np.sqrt(
+            (r_err * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10))) ** 2
+            + (300 / C_LIGHT * 5 * (1 + red) / (red * (1 + 0.5 * red) * np.log(10)))
+            ** 2
+            + (0.055 * red) ** 2
+            + 0.05**2
+        )
 
     mag_obs = rng.normal(
         loc=mag,
-        scale=np.sqrt(mag_err),
+        scale=mag_err,
     )
 
     if calib and hubble:
@@ -306,7 +313,7 @@ def gen_testdata(
                 hubble_c_sc.append(col)
                 hubble_ae_sc.append(ae)
                 hubble_r_sc.append(red)
-                hubble_merr_sc.append(mag_err)
+                hubble_merr_sc.append(0.05)
                 mu.append(mu_val)
             hubble_m_sc_rej.append(mag)
             hubble_v_sc_rej.append(vel)

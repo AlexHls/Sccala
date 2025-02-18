@@ -891,23 +891,47 @@ class SccalaSCM:
         beta = self.posterior["beta"].to_numpy().mean()
         try:
             h0 = self.posterior["H0"].to_numpy().mean()
+            hubble = True
         except KeyError:
             h0 = None
+            hubble = False
 
         m_corr = (
             self.mag
             + alpha * np.log10(self.vel / np.mean(self.vel))
             - beta * (self.col - np.mean(self.col))
         )
+        if hubble:
+            calib_m_corr = (
+                self.calib_mag
+                + alpha * np.log10(self.calib_vel / np.mean(self.vel))
+                - beta * (self.calib_col - np.mean(self.col))
+            )
         if not classic:
             gamma = self.posterior["gamma"].to_numpy().mean()
             m_corr -= gamma * (self.ae - np.mean(self.ae))
+            if hubble:
+                calib_m_corr -= gamma * (self.calib_ae - np.mean(self.ae))
 
         res = 5 * np.log10(distmod_kin(self.red)) + mi - self.mag
         res_corr = 5 * np.log10(distmod_kin(self.red)) + mi - m_corr
-        if h0 is not None:
+        if hubble:
             res -= 5 * np.log10(h0) - 25
             res_corr -= 5 * np.log10(h0) - 25
+            res_calib = (
+                mi
+                - self.calib_mag
+                + 5 * np.log10(distmod_kin(self.calib_red))
+                - 5 * np.log10(h0)
+                + 25
+            )
+            res_calib_corr = (
+                mi
+                - calib_m_corr
+                + 5 * np.log10(distmod_kin(self.calib_red))
+                - 5 * np.log10(h0)
+                + 25
+            )
 
         fig, ax = plt.subplots()
         fig = plt.figure(figsize=[10.2, 7.2])
@@ -923,10 +947,31 @@ class SccalaSCM:
             color="tab:blue",
             label=r"$m_\mathrm{corr}$",
         )
-        x = np.linspace(np.min(self.red), np.max(self.red), 100)
+        if hubble:
+            red_min = np.min(np.concatenate([self.red, self.calib_red]))
+            red_max = np.max(np.concatenate([self.red, self.calib_red]))
+        else:
+            red_min = np.min(self.red)
+            red_max = np.max(self.red)
+        x = np.linspace(red_min, red_max, 100)
         cosmo = 5 * np.log10(distmod_kin(x)) + mi
-        if h0 is not None:
+        if hubble:
             cosmo -= 5 * np.log10(h0) - 25
+            ax.scatter(
+                self.calib_red,
+                self.calib_mag,
+                color="tab:orange",
+                alpha=0.5,
+                label=r"$m_\mathrm{calib}$",
+            )
+            ax.errorbar(
+                self.calib_red,
+                calib_m_corr,
+                yerr=self.calib_mag_err,
+                fmt="o",
+                color="tab:orange",
+                label=r"$m_\mathrm{calib, corr}$",
+            )
         ax.plot(x, cosmo, color="k", ls="--", label="Cosmology")
 
         ax.set_ylabel(r"$m$ (mag)")
@@ -941,8 +986,19 @@ class SccalaSCM:
             color="tab:blue",
             linewidth=2,
         )
+        if hubble:
+            ax2.scatter(self.calib_red, res_calib, color="tab:orange", alpha=0.5)
+            ax2.errorbar(
+                self.calib_red,
+                res_calib_corr,
+                fmt="o",
+                color="tab:orange",
+                linewidth=2,
+            )
 
-        plt.hlines(0, min(self.red), max(self.red), linestyles="--", color="k")
+        red_min = np.min(np.concatenate([self.red, self.calib_red]))
+        red_max = np.max(np.concatenate([self.red, self.calib_red]))
+        plt.hlines(0, red_min, red_max, linestyles="--", color="k")
 
         ax2.set_xlabel(r"$z_\mathrm{CMB}$")
         ax2.set_ylabel("Residuals")
