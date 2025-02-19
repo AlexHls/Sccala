@@ -73,7 +73,7 @@ transformed parameters{
     for (i in 1:sn_idx) {
         mag_true[i] = Mi - 5 * log10(H0) + 25 - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + gamma * (a_true[i] - ae_avg) + 5 * log_dist_mod[i];
         if (use_selection != 0) {
-          mean[i] = Mi - alpha * log10(vs / vel_avg) + beta * (cs - col_avg) + gamma * (as - ae_avg) + 5 * log_dist_mod[i];
+          mean[i] = Mi - 5 * log10(H0) + 25 - alpha * log10(vs / vel_avg) + beta * (cs - col_avg) + gamma * (as - ae_avg) + 5 * log_dist_mod[i];
           v_mi[i] = (errors[i][1,1] + sigma_int^2) + sigma_cut^2 + (alpha * rv / (vs * log10()))^2 + (beta * rc)^2 + (gamma * ra)^2;
         }
     }

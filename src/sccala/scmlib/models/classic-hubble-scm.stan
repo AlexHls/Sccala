@@ -63,7 +63,7 @@ transformed parameters{
     for (i in 1:sn_idx) {
         mag_true[i] = Mi - 5 * log10(H0) + 25 - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + 5 * log_dist_mod[i];
         if (use_selection != 0) {
-          mean[i] = Mi - alpha * log10(vs / vel_avg) + beta * (cs - col_avg) + 5 * log_dist_mod[i];
+          mean[i] = Mi - 5 * log10(H0) + 25 - alpha * log10(vs / vel_avg) + beta * (cs - col_avg) + 5 * log_dist_mod[i];
           v_mi[i] = (errors[i][1,1] + sigma_int^2) + sigma_cut^2 + (alpha * rv / (vs * log10()))^2 + (beta * rc)^2;
         }
     }
@@ -106,9 +106,6 @@ model {
         calib_v_true[i] ~ normal(calib_vs[calib_dset_idx[i]],calib_rv[calib_dset_idx[i]]);
         calib_c_true[i] ~ normal(calib_cs[calib_dset_idx[i]],calib_rc[calib_dset_idx[i]]);
     }
-
-    calib_v_true ~ normal(vs,rv);
-    calib_c_true ~ normal(cs,rc);
 
     mag_cut ~ normal(m_cut_nom,0.5);
     sigma_cut ~ normal(sig_cut_nom,0.25);
