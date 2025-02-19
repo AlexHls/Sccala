@@ -2,9 +2,6 @@ data {
     int<lower=0> sn_idx;
     array[sn_idx] vector[3] obs; // Observed SN properties
     array[sn_idx] matrix[3,3] errors; // Associated uncertaintes (measurement, statistical, systematic)
-    array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
-    array[sn_idx] real vel_sys; // Systematic velocity uncertainties
-    array[sn_idx] real col_sys; // Systematic color uncertainties
     real vel_avg; // Normalisation constants
     real col_avg;
     array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
@@ -59,7 +56,7 @@ model {
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
     for (i in 1:sn_idx) {
-        target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i]]', errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+        target +=  multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i]]', errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]);
         if (use_selection != 0) {
         target += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
           - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);

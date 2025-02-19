@@ -2,18 +2,12 @@ data {
     int<lower=0> sn_idx;
     array[sn_idx] vector[3] obs; // Observed SN properties
     array[sn_idx] matrix[3,3] errors; // Associated uncertaintes (measurement, statistical, systematic)
-    array[sn_idx] real mag_sys; // Systematic magnitude uncertainties
-    array[sn_idx] real vel_sys; // Systematic velocity uncertainties
-    array[sn_idx] real col_sys; // Systematic color uncertainties
     real vel_avg; // Normalisation constans
     real col_avg;
     array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli
     int<lower=0> calib_sn_idx;
     array[calib_sn_idx] vector[3] calib_obs; // Observed SN properties
     array[calib_sn_idx] vector[3] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)
-    array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties
-    array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties
-    array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties
     array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators
     array[calib_sn_idx] int<lower=0> calib_dset_idx; // Index of the calibrator dataset
     int<lower=0> num_calib_dset; // Number of calibrator datasets
@@ -116,14 +110,14 @@ model {
     }
 
     for (i in 1:sn_idx) {
-        target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i]]', errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0]]);
+        target +=  multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i]]', errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0]]);
         if (use_selection != 0) {
           target += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
             - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
         }
     }
     for (i in 1:calib_sn_idx) {
-        target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i] + calib_mag_sys[i], calib_v_true[i] + calib_vel_sys[i], calib_c_true[i] + calib_col_sys[i]]', sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0]'));
+        target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i]]', sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0]'));
         if (use_selection != 0) {
           target += normal_lcdf(calib_mag_cut[calib_dset_idx[i]] | calib_obs[i][1], calib_sigma_cut[calib_dset_idx[i]]) 
             - log(normal_cdf(calib_mag_cut[calib_dset_idx[i]] | calib_mean[i], sqrt(calib_v_mi[i])) + 0.0001);
