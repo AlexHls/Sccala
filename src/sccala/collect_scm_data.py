@@ -25,6 +25,7 @@ def main(args):
     rho = args.rho
     rho_calib = args.rho_calib
     error_mode = args.error_mode
+    pv_red_file = args.pv_red_file
 
     df = sl.load_data(
         sne_list,
@@ -43,6 +44,7 @@ def main(args):
         rho=rho,
         rho_calib=rho_calib,
         error_mode=error_mode,
+        pv_red_file=pv_red_file,
     )
 
     return df
@@ -139,6 +141,11 @@ def cli():
         help="Mode to calculate asymmetric errors. Default: mean",
         default="mean",
         choices=["mean", "max", "min"],
+    )
+    parser.add_argument(
+        "-p",
+        "--pv_red_file",
+        help="Path to the file containing redshifts corrected for peculiar velocities.",
     )
 
     args = parser.parse_args()
