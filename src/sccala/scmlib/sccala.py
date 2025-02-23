@@ -210,47 +210,43 @@ class SccalaSCM:
         if not classic:
             for i in range(len(self.mag)):
                 errors.append(
-                    np.array(
+                    np.array([
                         [
-                            [
-                                self.red_uncertainty[i]
-                                + self.mag_err[i] ** 2
-                                + self.mag_sys[i] ** 2,
-                                0,
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                            ],
-                            [0, self.vel_err[i] ** 2 + self.v_sys[i] ** 2, 0, 0],
-                            [
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                                self.col_err[i] ** 2 + self.c_sys[i] ** 2,
-                                0,
-                            ],
-                            [0, 0, 0, self.ae_err[i] ** 2 + self.ae_sys[i] ** 2],
-                        ]
-                    )
+                            self.red_uncertainty[i]
+                            + self.mag_err[i] ** 2
+                            + self.mag_sys[i] ** 2,
+                            0,
+                            self.mag_err[i] * self.col_err[i] * rho,
+                            0,
+                        ],
+                        [0, self.vel_err[i] ** 2 + self.v_sys[i] ** 2, 0, 0],
+                        [
+                            self.mag_err[i] * self.col_err[i] * rho,
+                            0,
+                            self.col_err[i] ** 2 + self.c_sys[i] ** 2,
+                            0,
+                        ],
+                        [0, 0, 0, self.ae_err[i] ** 2 + self.ae_sys[i] ** 2],
+                    ])
                 )
         else:
             for i in range(len(self.mag)):
                 errors.append(
-                    np.array(
+                    np.array([
                         [
-                            [
-                                self.red_uncertainty[i]
-                                + self.mag_err[i] ** 2
-                                + self.mag_sys[i] ** 2,
-                                0,
-                                self.mag_err[i] * self.col_err[i] * rho,
-                            ],
-                            [0, self.vel_err[i] ** 2 + self.v_sys[i] ** 2, 0],
-                            [
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                                self.col_err[i] ** 2 + self.c_sys[i] ** 2,
-                            ],
-                        ]
-                    )
+                            self.red_uncertainty[i]
+                            + self.mag_err[i] ** 2
+                            + self.mag_sys[i] ** 2,
+                            0,
+                            self.mag_err[i] * self.col_err[i] * rho,
+                        ],
+                        [0, self.vel_err[i] ** 2 + self.v_sys[i] ** 2, 0],
+                        [
+                            self.mag_err[i] * self.col_err[i] * rho,
+                            0,
+                            self.col_err[i] ** 2 + self.c_sys[i] ** 2,
+                        ],
+                    ])
                 )
         return np.array(errors)
 
@@ -358,35 +354,34 @@ class SccalaSCM:
             assert self.calib_sn is not None, "No calibrator SNe found..."
 
             if not classic:
-                calib_obs = np.array(
-                    [self.calib_mag, self.calib_vel, self.calib_col, self.calib_ae]
-                ).T
+                calib_obs = np.array([
+                    self.calib_mag,
+                    self.calib_vel,
+                    self.calib_col,
+                    self.calib_ae,
+                ]).T
 
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
-                calib_errors = np.array(
-                    [
-                        self.calib_mag_err**2
-                        + self.calib_dist_mod_err**2
-                        + self.calib_mag_sys**2,
-                        self.calib_vel_err**2 + self.calib_v_sys**2,
-                        self.calib_col_err**2 + self.calib_c_sys**2,
-                        self.calib_ae_err**2 + self.calib_ae_sys**2,
-                    ]
-                ).T
+                calib_errors = np.array([
+                    self.calib_mag_err**2
+                    + self.calib_dist_mod_err**2
+                    + self.calib_mag_sys**2,
+                    self.calib_vel_err**2 + self.calib_v_sys**2,
+                    self.calib_col_err**2 + self.calib_c_sys**2,
+                    self.calib_ae_err**2 + self.calib_ae_sys**2,
+                ]).T
             else:
                 # Observed values
                 calib_obs = np.array([self.calib_mag, self.calib_vel, self.calib_col]).T
 
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
-                calib_errors = np.array(
-                    [
-                        self.calib_mag_err**2
-                        + self.calib_dist_mod_err**2
-                        + self.calib_mag_sys**2,
-                        self.calib_vel_err**2 + self.calib_v_sys**2,
-                        self.calib_col_err**2 + self.calib_c_sys**2,
-                    ]
-                ).T
+                calib_errors = np.array([
+                    self.calib_mag_err**2
+                    + self.calib_dist_mod_err**2
+                    + self.calib_mag_sys**2,
+                    self.calib_vel_err**2 + self.calib_v_sys**2,
+                    self.calib_col_err**2 + self.calib_c_sys**2,
+                ]).T
             model.data["calib_sn_idx"] = len(self.calib_sn)
             model.data["calib_obs"] = calib_obs
             model.data["calib_errors"] = calib_errors
@@ -622,34 +617,33 @@ class SccalaSCM:
             model.data["use_selection"] = 0
 
         if not classic:
-            calib_obs = np.array(
-                [self.calib_mag, self.calib_vel, self.calib_col, self.calib_ae]
-            ).T
+            calib_obs = np.array([
+                self.calib_mag,
+                self.calib_vel,
+                self.calib_col,
+                self.calib_ae,
+            ]).T
 
             # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            calib_errors = np.array(
-                [
-                    self.calib_mag_err**2
-                    + self.calib_dist_mod_err**2
-                    + self.calib_mag_sys**2,
-                    self.calib_vel_err**2 + self.calib_v_sys**2,
-                    self.calib_col_err**2 + self.calib_c_sys**2,
-                    self.calib_ae_err**2 + self.calib_ae_sys**2,
-                ]
-            ).T
+            calib_errors = np.array([
+                self.calib_mag_err**2
+                + self.calib_dist_mod_err**2
+                + self.calib_mag_sys**2,
+                self.calib_vel_err**2 + self.calib_v_sys**2,
+                self.calib_col_err**2 + self.calib_c_sys**2,
+                self.calib_ae_err**2 + self.calib_ae_sys**2,
+            ]).T
         else:
             calib_obs = np.array([self.calib_mag, self.calib_vel, self.calib_col]).T
 
             # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            calib_errors = np.array(
-                [
-                    self.calib_mag_err**2
-                    + self.calib_dist_mod_err**2
-                    + self.calib_mag_sys**2,
-                    self.calib_vel_err**2 + self.calib_v_sys**2,
-                    self.calib_col_err**2 + self.calib_c_sys**2,
-                ]
-            ).T
+            calib_errors = np.array([
+                self.calib_mag_err**2
+                + self.calib_dist_mod_err**2
+                + self.calib_mag_sys**2,
+                self.calib_vel_err**2 + self.calib_v_sys**2,
+                self.calib_col_err**2 + self.calib_c_sys**2,
+            ]).T
 
         # Generate list with all bootstrap combinations.
         indices = np.arange(len(self.calib_sn))
@@ -740,9 +734,9 @@ class SccalaSCM:
             model.data["calib_sn_idx"] = len(self.calib_sn)
             model.data["calib_obs"] = np.array([calib_obs[i] for i in inds])
             model.data["calib_errors"] = np.array([calib_errors[i] for i in inds])
-            model.data["calib_dist_mod"] = np.array(
-                [self.calib_dist_mod[i] for i in inds]
-            )
+            model.data["calib_dist_mod"] = np.array([
+                self.calib_dist_mod[i] for i in inds
+            ])
 
             # Convert differnet datasets to dataset indices
             active_datasets = [self.calib_datasets[i] for i in inds]
@@ -979,8 +973,6 @@ class SccalaSCM:
                 linewidth=2,
             )
 
-        red_min = np.min(np.concatenate([self.red, self.calib_red]))
-        red_max = np.max(np.concatenate([self.red, self.calib_red]))
         plt.hlines(0, red_min, red_max, linestyles="--", color="k")
 
         ax2.set_xlabel(r"$z_\mathrm{CMB}$")
