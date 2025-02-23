@@ -27,6 +27,8 @@ def load_data(
     rho=1.0,
     rho_calib=0.0,
     error_mode="mean",
+    m_cut_nom=18.5,
+    sig_cut_nom=0.5,
     pv_red_file=None,
 ):
     """
@@ -78,6 +80,9 @@ def load_data(
         Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0
     error_mode : str
         Mode used to calculate single value error from asymmetric errors. Default: "mean"
+    m_cut_nom : float
+    sig_cut_nom : float
+        Nominal values for the magnitude cut and its uncertainty. Default: 18.5, 0.5
     pv_red_file : str
         Path to a file containing the peculiar velocity corrected redshifts of the SNe.
         If None, redshifts are taken from the info file. Default: None
@@ -504,6 +509,9 @@ def load_data(
         datadict["ae_sys"] = [ae_sys] * len(datadict["SN"])
 
     scm_data = pd.DataFrame(datadict)
+
+    scm_data["m_cut_nom"] = m_cut_nom * np.ones(len(scm_data))
+    scm_data["sig_cut_nom"] = sig_cut_nom * np.ones(len(scm_data))
 
     if export:
         if isinstance(export, bool):

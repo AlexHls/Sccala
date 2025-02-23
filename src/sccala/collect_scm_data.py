@@ -25,6 +25,8 @@ def main(args):
     rho = args.rho
     rho_calib = args.rho_calib
     error_mode = args.error_mode
+    m_cut_nom = args.m_cut_nom
+    sig_cut_nom = args.sig_cut_nom
     pv_red_file = args.pv_red_file
 
     df = sl.load_data(
@@ -44,6 +46,8 @@ def main(args):
         rho=rho,
         rho_calib=rho_calib,
         error_mode=error_mode,
+        m_cut_nom=m_cut_nom,
+        sig_cut_nom=sig_cut_nom,
         pv_red_file=pv_red_file,
     )
 
@@ -141,6 +145,16 @@ def cli():
         help="Mode to calculate asymmetric errors. Default: mean",
         default="mean",
         choices=["mean", "max", "min"],
+    )
+    parser.add_argument(
+        "--m_cut_nom",
+        help="Nominal value of the magnitude cut. Used for the full sample.",
+        default=18.5,
+    )
+    parser.add_argument(
+        "--sig_cut_nom",
+        help="Nominal value of the magnitude cut uncertainty. Used for the full sample.",
+        default=0.5,
     )
     parser.add_argument(
         "-p",
