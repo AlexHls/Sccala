@@ -14,8 +14,8 @@ data {
     int<lower=0> num_calib_dset; // Number of calibrator datasets
     real m_cut_nom; // Nominal magnitude cut for selection effect calculation
     real sig_cut_nom; // Nominal uncertainty of the magnitude cut
-    array[num_calib_dset] real calib_m_cut_nom; // Nominal magnitude cut for selection effect calculation
-    array[num_calib_dset] real calib_sig_cut_nom; // Nominal uncertainty of the magnitude cut
+    // array[num_calib_dset] real calib_m_cut_nom; // Nominal magnitude cut for selection effect calculation
+    // array[num_calib_dset] real calib_sig_cut_nom; // Nominal uncertainty of the magnitude cut
     int use_selection; // Flag to use selection effect. If 0, the selection effect is not used
 }
 parameters {
@@ -46,16 +46,16 @@ parameters {
     array[calib_sn_idx] real<lower=0> calib_a_true; // Modeled latent a/e (cannot be negative)
     real <lower=14, upper=30> mag_cut; // Magnitude cut for selection effect calculation
     real <lower=0.1, upper=3> sigma_cut; // Uncertainty of the magnitude cut
-    array[num_calib_dset] real <lower=14, upper=30> calib_mag_cut; // Magnitude cut for selection effect calculation
-    array[num_calib_dset] real <lower=0.1, upper=3> calib_sigma_cut; // Uncertainty of the magnitude cut
+    // array[num_calib_dset] real <lower=14, upper=30> calib_mag_cut; // Magnitude cut for selection effect calculation
+    // array[num_calib_dset] real <lower=0.1, upper=3> calib_sigma_cut; // Uncertainty of the magnitude cut
 }
 transformed parameters{
     array[sn_idx] real mag_true;
     array[sn_idx] real mean;
     array[sn_idx] real v_mi;
     array[calib_sn_idx] real calib_mag_true;
-    array[calib_sn_idx] real calib_mean;
-    array[calib_sn_idx] real calib_v_mi;
+    // array[calib_sn_idx] real calib_mean;
+    // array[calib_sn_idx] real calib_v_mi;
     real sigma_int;
     array[num_calib_dset] real calib_sigma_int;
     sigma_int = 10 ^ log_sigma;
@@ -71,10 +71,10 @@ transformed parameters{
     }
     for (i in 1:calib_sn_idx) {
         calib_mag_true[i] = Mi - alpha * log10(calib_v_true[i] / vel_avg) + beta * (calib_c_true[i] - col_avg) + gamma * (calib_a_true[i] - ae_avg) + calib_dist_mod[i];
-        if (use_selection != 0) {
-          calib_mean[i] = Mi - alpha * log10(calib_vs[calib_dset_idx[i]] / vel_avg) + beta * (calib_cs[calib_dset_idx[i]] - col_avg) + gamma * (calib_as[calib_dset_idx[i]] - ae_avg) + calib_dist_mod[i];
-          calib_v_mi[i] = (calib_errors[i][1] + calib_sigma_int[calib_dset_idx[i]]^2) + calib_sigma_cut[calib_dset_idx[i]]^2 + (alpha * calib_rv[calib_dset_idx[i]] / (calib_vs[calib_dset_idx[i]] * log10()))^2 + (beta * calib_rc[calib_dset_idx[i]])^2 + (gamma * calib_ra[calib_dset_idx[i]])^2;
-        }
+    //     if (use_selection != 0) {
+    //       calib_mean[i] = Mi - alpha * log10(calib_vs[calib_dset_idx[i]] / vel_avg) + beta * (calib_cs[calib_dset_idx[i]] - col_avg) + gamma * (calib_as[calib_dset_idx[i]] - ae_avg) + calib_dist_mod[i];
+    //       calib_v_mi[i] = (calib_errors[i][1] + calib_sigma_int[calib_dset_idx[i]]^2) + calib_sigma_cut[calib_dset_idx[i]]^2 + (alpha * calib_rv[calib_dset_idx[i]] / (calib_vs[calib_dset_idx[i]] * log10()))^2 + (beta * calib_rc[calib_dset_idx[i]])^2 + (gamma * calib_ra[calib_dset_idx[i]])^2;
+    //     }
     }
 }
 model {
@@ -119,10 +119,10 @@ model {
     mag_cut ~ normal(m_cut_nom,0.5);
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
-    for (i in 1:calib_sn_idx) {
-        calib_mag_cut[calib_dset_idx[i]] ~ normal(calib_m_cut_nom[calib_dset_idx[i]],0.5);
-        calib_sigma_cut[calib_dset_idx[i]] ~ normal(calib_sig_cut_nom[calib_dset_idx[i]],0.25);
-    }
+    // for (i in 1:calib_sn_idx) {
+    //     calib_mag_cut[calib_dset_idx[i]] ~ normal(calib_m_cut_nom[calib_dset_idx[i]],0.5);
+    //     calib_sigma_cut[calib_dset_idx[i]] ~ normal(calib_sig_cut_nom[calib_dset_idx[i]],0.25);
+    // }
 
     for (i in 1:sn_idx) {
         target +=  multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', errors[i] + [[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
@@ -133,9 +133,9 @@ model {
     }
     for (i in 1:calib_sn_idx) {
         target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i], calib_a_true[i]]', sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0, 0]'));
-        if (use_selection != 0) {
-          target += normal_lcdf(calib_mag_cut[calib_dset_idx[i]] | calib_obs[i][1], calib_sigma_cut[calib_dset_idx[i]]) 
-            - log(normal_cdf(calib_mag_cut[calib_dset_idx[i]] | calib_mean[i], sqrt(calib_v_mi[i])) + 0.0001);
-        }
+        // if (use_selection != 0) {
+        //   target += normal_lcdf(calib_mag_cut[calib_dset_idx[i]] | calib_obs[i][1], calib_sigma_cut[calib_dset_idx[i]]) 
+        //     - log(normal_cdf(calib_mag_cut[calib_dset_idx[i]] | calib_mean[i], sqrt(calib_v_mi[i])) + 0.0001);
+        // }
     }
 }

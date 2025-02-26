@@ -132,12 +132,12 @@ class SccalaSCM:
                 "epoch"
             ].to_numpy()
 
-            self.calib_m_cut_nom = df[df["dataset"].isin(calib_datasets)][
-                "m_cut_nom"
-            ].to_numpy()
-            self.calib_sig_cut_nom = df[df["dataset"].isin(calib_datasets)][
-                "sig_cut_nom"
-            ].to_numpy()
+            # self.calib_m_cut_nom = df[df["dataset"].isin(calib_datasets)][
+            #     "m_cut_nom"
+            # ].to_numpy()
+            # self.calib_sig_cut_nom = df[df["dataset"].isin(calib_datasets)][
+            #     "sig_cut_nom"
+            # ].to_numpy()
         else:
             self.calib_sn = None
 
@@ -166,8 +166,8 @@ class SccalaSCM:
 
             self.calib_epoch = None
 
-            self.calib_m_cut_nom = None
-            self.calib_sig_cut_nom = None
+            # self.calib_m_cut_nom = None
+            # self.calib_sig_cut_nom = None
 
         self.datasets = df[df["dataset"].isin(datasets)]["dataset"].to_numpy()
 
@@ -398,20 +398,18 @@ class SccalaSCM:
             model.data["num_calib_dset"] = n_calib_dset
 
             # For now, we take the average for each dataset
-            if selection_effects:
-                calib_m_cut_nom = []
-                calib_sig_cut_nom = []
-                for i in range(n_calib_dset):
-                    mask = [x == (i + 1) for x in model.data["calib_dset_idx"]]
-                    calib_m_cut_nom.append(np.mean(self.calib_m_cut_nom[mask]))
-                    calib_sig_cut_nom.append(np.mean(self.calib_sig_cut_nom[mask]))
-                model.data["calib_m_cut_nom"] = np.array(calib_m_cut_nom)
-                model.data["calib_sig_cut_nom"] = np.array(calib_sig_cut_nom)
-                model.data["use_selection"] = 1
-            else:
-                model.data["calib_m_cut_nom"] = np.zeros(n_calib_dset)
-                model.data["calib_sig_cut_nom"] = np.zeros(n_calib_dset)
-                model.data["use_selection"] = 0
+            # if selection_effects:
+            #     calib_m_cut_nom = []
+            #     calib_sig_cut_nom = []
+            #     for i in range(n_calib_dset):
+            #         mask = [x == (i + 1) for x in model.data["calib_dset_idx"]]
+            #         calib_m_cut_nom.append(np.mean(self.calib_m_cut_nom[mask]))
+            #         calib_sig_cut_nom.append(np.mean(self.calib_sig_cut_nom[mask]))
+            #     model.data["calib_m_cut_nom"] = np.array(calib_m_cut_nom)
+            #     model.data["calib_sig_cut_nom"] = np.array(calib_sig_cut_nom)
+            # else:
+            #     model.data["calib_m_cut_nom"] = np.zeros(n_calib_dset)
+            #     model.data["calib_sig_cut_nom"] = np.zeros(n_calib_dset)
 
         model.set_initial_conditions(init)
 
