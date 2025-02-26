@@ -12,7 +12,7 @@ from cmdstanpy import CmdStanModel
 
 from sccala.scmlib.models import SCM_Model
 from sccala.utillib.aux import distmod_kin, quantile, split_list, nullify_output
-from sccala.utillib.const import C_LIGHT
+from sccala.utillib.const import C_LIGHT, PV_UNCERTAINTY
 
 
 class SccalaSCM:
@@ -194,7 +194,7 @@ class SccalaSCM:
             )
             ** 2
             + (
-                300
+                PV_UNCERTAINTY
                 / C_LIGHT
                 * 5
                 * (1 + self.red)
