@@ -55,6 +55,7 @@ def main(args):
         output_dir=args.output_dir,
         test_data=args.test_data,
         selection_effects=args.selection_effects,
+        store_chains=args.no_store_chains,
     )
 
     print("Finished sampling")
@@ -168,6 +169,11 @@ def cli():
         action="store_false",
         help="If flag is set, selection effects will be turned off.",
         dest="selection_effects",
+    )
+    parser.add_argument(
+        "--no_store_chains",
+        action="store_false",
+        help="If flag is set, chains will not be stored.",
     )
 
     args = parser.parse_args()

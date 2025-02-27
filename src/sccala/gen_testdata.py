@@ -374,7 +374,8 @@ def gen_testdata(
         ax1.set_title("Redshift distribution of simulated data")
 
         ax2.scatter(r_sc, m_sc, label="Hubble flow")
-        ax2.scatter(hubble_r_sc, hubble_m_sc, label="Calibrator")
+        if hubble:
+            ax2.scatter(hubble_r_sc, hubble_m_sc, label="Calibrator")
         x = np.linspace(zrange[0], zrange[1], 100)
         ax2.plot(
             x, 5 * np.log10(distmod_kin(x)) + mi, color="k", ls="--", label="Cosmology"

@@ -266,6 +266,7 @@ class SccalaSCM:
         output_dir=None,
         test_data=False,
         selection_effects=True,
+        store_chains=True,
     ):
         """
         Samples the posterior for the given data and model using
@@ -305,6 +306,8 @@ class SccalaSCM:
             Default: False
         selection_effects : bool
             If True, selection effects are included in the model. Default: True
+        store_chains : bool
+            If True, sampling chains will be stored. Default: True
 
         Returns
         -------
@@ -453,14 +456,14 @@ class SccalaSCM:
             norm = None
 
         if log_dir is not None:
-            savename = self.__save_samples__(self.posterior, log_dir=log_dir, norm=norm)
-            chains_dir = savename.replace(".csv", "")
-            os.makedirs(chains_dir)
+            chains_dir = self.__save_samples__(
+                self.posterior, log_dir=log_dir, norm=norm, store_chains=store_chains
+            )
             with open(os.path.join(chains_dir, "summary.txt"), "w") as f:
                 f.write(summary.to_string())
             with open(os.path.join(chains_dir, "diagnose.txt"), "w") as f:
                 f.write(diagnose)
-            if not self.blind:
+            if store_chains and not self.blind:
                 # Only move the csv files if we're not blinding the result
                 # TODO: find a way of blinding the individual chains
                 fit.save_csvfiles(chains_dir)
@@ -815,27 +818,33 @@ class SccalaSCM:
 
         return h0_vals
 
-    def __save_samples__(self, df, log_dir="log_dir", norm=None):
+    def __save_samples__(self, df, log_dir="log_dir", norm=None, store_chains=True):
         """Exports sample data"""
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
-        savename = "chains_1.csv"
-        if os.path.exists(os.path.join(log_dir, savename)):
+        chains_dir = "chains_1"
+        if os.path.exists(os.path.join(log_dir, chains_dir)):
             i = 1
             while os.path.exists(
-                os.path.join(log_dir, savename.replace("1", str(i + 1)))
+                os.path.join(log_dir, chains_dir.replace("1", str(i + 1)))
             ):
                 i += 1
-            savename = savename.replace("1", str(i + 1))
+            chains_dir = chains_dir.replace("1", str(i + 1))
+        chains_dir = os.path.join(log_dir, chains_dir)
+        os.makedirs(chains_dir)
 
-        df.to_csv(os.path.join(log_dir, savename))
+        if store_chains:
+            savename = chains_dir + ".csv"
+            df.to_csv(os.path.join(chains_dir, savename))
 
-        if norm is not None:
-            normsave = savename.replace(".csv", ".key")
-            np.savetxt(os.path.join(log_dir, normsave), [norm], fmt="%s")
+            if norm is not None:
+                normsave = savename.replace(".csv", ".key")
+                np.savetxt(os.path.join(chains_dir, normsave), [norm], fmt="%s")
 
-        return os.path.join(log_dir, savename)
+        print("[WARNING]", chains_dir)
+
+        return chains_dir
 
     def hubble_diagram(self, save=None, classic=False):
         """
