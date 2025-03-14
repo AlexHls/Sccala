@@ -18,6 +18,7 @@ def main(args):
     rules = args.rules
     flux_interp = args.fluxinterp
     no_overwrite = args.nooverwrite
+    interactive = args.interactive
 
     # Sampling parameter
     size = args.sample_size
@@ -117,6 +118,7 @@ def main(args):
             "{:s}_{:s}_phot".format(instrument, band),
             diagnostic=diag_path,
             flux_interp=flux_interp,
+            interactive=interactive,
         )
 
         expname = os.path.join(
@@ -134,16 +136,14 @@ def main(args):
                 )
                 ext += 1
 
-        expdf = pd.DataFrame(
-            {
-                "Date": np.around(
-                    dates, 3
-                ),  # TODO Find better solution to deal with floating point error
-                "{:s}".format(band): mag_int,
-                "{:s}_err_lower".format(band): mag_int_error_lower,
-                "{:s}_err_upper".format(band): mag_int_error_upper,
-            }
-        )
+        expdf = pd.DataFrame({
+            "Date": np.around(
+                dates, 3
+            ),  # TODO Find better solution to deal with floating point error
+            "{:s}".format(band): mag_int,
+            "{:s}_err_lower".format(band): mag_int_error_lower,
+            "{:s}_err_upper".format(band): mag_int_error_upper,
+        })
 
         expdf.to_csv(expname, index=False)
 
@@ -204,6 +204,12 @@ def cli():
     parser.add_argument(
         "--nooverwrite",
         help="Prevents from overwriting existing results.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        help="Show plots interactively",
         action="store_true",
     )
 
