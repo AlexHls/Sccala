@@ -835,7 +835,7 @@ class SccalaSCM:
         os.makedirs(chains_dir)
 
         if store_chains:
-            savename = chains_dir + ".csv"
+            savename = os.path.basename(chains_dir) + ".csv"
             df.to_csv(os.path.join(chains_dir, savename))
 
             if norm is not None:

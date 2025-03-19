@@ -56,7 +56,7 @@ model {
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
     for (i in 1:sn_idx) {
-        target +=  multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i]]', errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+        target +=  multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i]]', errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0]]);
         if (use_selection != 0) {
         target += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
           - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
