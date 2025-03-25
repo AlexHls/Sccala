@@ -12,11 +12,6 @@ from sccala.interplib.interpolators import (
 )
 from sccala.utillib.aux import convert_to_flux, convert_to_mag
 
-try:
-    matplotlib.use("TkAgg")
-except ImportError:
-    pass
-
 
 class EpochDataSet:
     """

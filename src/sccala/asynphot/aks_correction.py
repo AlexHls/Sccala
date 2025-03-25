@@ -41,9 +41,9 @@ def get_sn_phot(photometry_file):
     )
     data.sort_values(by=["mjd"])
     tels = data["telescope"].unique().tolist()
-    assert (
-        len(tels) == 1
-    ), "More than one telescope found. Please correct each telescope separately."
+    assert len(tels) == 1, (
+        "More than one telescope found. Please correct each telescope separately."
+    )
 
     phot_data = data.pivot_table(
         index=["mjd"], columns=["band"], values=["mag", "emag"]
@@ -267,10 +267,6 @@ def aks_correction(
     aks_corr_phot, aks_corr_phot_err
     """
 
-    try:
-        matplotlib.use("TkAgg")
-    except ImportError:
-        pass
     # SN data
     a_v, z_hel, mjd_explo = get_sn_info(snname, modelpath=modelpath)
 
