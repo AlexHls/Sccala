@@ -27,6 +27,9 @@ def load_data(
     rho=1.0,
     rho_calib=0.0,
     error_mode="mean",
+    m_cut_nom=18.5,
+    sig_cut_nom=0.5,
+    pv_red_file=None,
 ):
     """
     Loads all the necessary data for the scm and bundles it
@@ -77,6 +80,12 @@ def load_data(
         Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0
     error_mode : str
         Mode used to calculate single value error from asymmetric errors. Default: "mean"
+    m_cut_nom : float
+    sig_cut_nom : float
+        Nominal values for the magnitude cut and its uncertainty. Default: 18.5, 0.5
+    pv_red_file : str
+        Path to a file containing the peculiar velocity corrected redshifts of the SNe.
+        If None, redshifts are taken from the info file. Default: None
 
     Returns
     -------
@@ -105,6 +114,9 @@ def load_data(
         "red_err": [],
         "epoch": [],
     }
+
+    if pv_red_file is not None:
+        pv_red = pd.read_csv(pv_red_file)
 
     # Check format of sne input
     if not isinstance(sne_list, list) or len(sne_list) == 1:
@@ -212,6 +224,14 @@ def load_data(
         info = pd.read_csv(os.path.join(datapath, "{:s}_info.csv".format(sn)))
         red = np.mean(info["Redshift"].to_numpy())
         red_err = np.mean(info["Redshift_Error"])
+
+        # If SN is in peculiar velocity redshift file, use that redshift
+        if pv_red_file is not None:
+            if sn in pv_red["SN"].tolist():
+                red = pv_red[pv_red["SN"] == sn]["Redshift"].to_numpy()[0]
+            else:
+                warnings.warn("No peculiar velocity redshift found for %s" % sn)
+
         datadict["red"].append(red)
         datadict["red_err"].append(red_err)
         if dataset is None:
@@ -290,12 +310,10 @@ def load_data(
         # Color
         datadict["col"].append(col0 - col1)
         datadict["col_err"].append(
-            np.max(
-                [
-                    np.sqrt(col0_err**2 + col1_err**2 - 2 * rho * col0_err * col1_err),
-                    0.001,
-                ]
-            )
+            np.max([
+                np.sqrt(col0_err**2 + col1_err**2 - 2 * rho * col0_err * col1_err),
+                0.001,
+            ])
         )
 
         # Velocity
@@ -424,16 +442,12 @@ def load_data(
             # Color
             datadict["col"].append(col0 - col1)
             datadict["col_err"].append(
-                np.max(
-                    [
-                        np.sqrt(
-                            col0_err**2
-                            + col1_err**2
-                            - 2 * rho_calib * col0_err * col1_err
-                        ),
-                        0.001,
-                    ]
-                )
+                np.max([
+                    np.sqrt(
+                        col0_err**2 + col1_err**2 - 2 * rho_calib * col0_err * col1_err
+                    ),
+                    0.001,
+                ])
             )
 
             # Velocity
@@ -495,6 +509,9 @@ def load_data(
         datadict["ae_sys"] = [ae_sys] * len(datadict["SN"])
 
     scm_data = pd.DataFrame(datadict)
+
+    scm_data["m_cut_nom"] = m_cut_nom * np.ones(len(scm_data))
+    scm_data["sig_cut_nom"] = sig_cut_nom * np.ones(len(scm_data))
 
     if export:
         if isinstance(export, bool):

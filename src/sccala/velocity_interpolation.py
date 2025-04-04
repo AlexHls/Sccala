@@ -88,6 +88,7 @@ def main(args):
         line,
         diagnostic=diag_path,
         no_reject=no_reject,
+        interactive=args.interactive,
     )
 
     expname = os.path.join(
@@ -103,16 +104,14 @@ def main(args):
             )
             ext += 1
 
-    expdf = pd.DataFrame(
-        {
-            "Date": np.around(
-                dates, 3
-            ),  # TODO Find better solution to deal with floating point error
-            "VelInt": vel_int,
-            "ErrorLower": vel_int_error_lower,
-            "ErrorUpper": vel_int_error_upper,
-        }
-    )
+    expdf = pd.DataFrame({
+        "Date": np.around(
+            dates, 3
+        ),  # TODO Find better solution to deal with floating point error
+        "VelInt": vel_int,
+        "ErrorLower": vel_int_error_lower,
+        "ErrorUpper": vel_int_error_upper,
+    })
 
     expdf.to_csv(expname, index=False)
 
@@ -173,6 +172,12 @@ def cli():
     parser.add_argument(
         "--nooverwrite",
         help="Prevents from overwriting existing results.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        help="Show plots interactively",
         action="store_true",
     )
 

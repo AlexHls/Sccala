@@ -53,6 +53,9 @@ def main(args):
         quiet=False,
         classic=args.classic,
         output_dir=args.output_dir,
+        test_data=args.test_data,
+        selection_effects=args.selection_effects,
+        store_chains=args.no_store_chains,
     )
 
     print("Finished sampling")
@@ -60,6 +63,9 @@ def main(args):
         print("Saving cornerplot...")
         save = os.path.join(args.log_dir, args.plot)
         sccala_scm.cornerplot(save, args.classic)
+        sccala_scm.hubble_diagram(
+            save=save.replace(".png", "_hubble.png"), classic=args.classic
+        )
 
     return posterior
 
@@ -151,6 +157,23 @@ def cli():
     parser.add_argument(
         "--output_dir",
         help="Directory used for storing STAN temporary files.",
+    )
+    parser.add_argument(
+        "-t",
+        "--test_data",
+        action="store_true",
+        help="If flag is set, the normalisation will be overwritten by the default values of the test data generation script.",
+    )
+    parser.add_argument(
+        "--no_selection_effects",
+        action="store_false",
+        help="If flag is set, selection effects will be turned off.",
+        dest="selection_effects",
+    )
+    parser.add_argument(
+        "--no_store_chains",
+        action="store_false",
+        help="If flag is set, chains will not be stored.",
     )
 
     args = parser.parse_args()

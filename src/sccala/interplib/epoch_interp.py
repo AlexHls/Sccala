@@ -12,11 +12,6 @@ from sccala.interplib.interpolators import (
 )
 from sccala.utillib.aux import convert_to_flux, convert_to_mag
 
-try:
-    matplotlib.use("TkAgg")
-except ImportError:
-    pass
-
 
 class EpochDataSet:
     """
@@ -178,7 +173,7 @@ class EpochDataSet:
 
         return
 
-    def diagnostic_plot(self, diagnostic, target, flux_interp=False):
+    def diagnostic_plot(self, diagnostic, target, flux_interp=False, interactive=False):
         """
         Plots the output of the interpolation
         """
@@ -399,6 +394,9 @@ class EpochDataSet:
 
         plt.tight_layout()
 
+        if interactive:
+            plt.show()
+
         fig.savefig(
             os.path.join(
                 diagnostic, "{:s}_Interpolation_{:s}".format(self.snname, target)
@@ -418,6 +416,7 @@ class EpochDataSet:
         diagnostic=None,
         no_reject=False,
         flux_interp=False,
+        interactive=False,
     ):
         """
         Interpolate dataocities using Gaussian Process regression
@@ -443,6 +442,8 @@ class EpochDataSet:
             If True, data is converted to flux before interpolating.
             Exported values will be converted back to magnitudes.
             Only works with 'phot' in target. Default: False
+        interactive : bool
+            If True, diagnostic plots will be shown interactively.
 
         Returns
         -------
@@ -568,7 +569,9 @@ class EpochDataSet:
         self.get_results()
 
         if diagnostic:
-            self.diagnostic_plot(diagnostic, target, flux_interp=flux_interp)
+            self.diagnostic_plot(
+                diagnostic, target, flux_interp=flux_interp, interactive=interactive
+            )
 
         return (
             self.median,

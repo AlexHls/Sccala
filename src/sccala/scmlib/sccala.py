@@ -12,7 +12,7 @@ from cmdstanpy import CmdStanModel
 
 from sccala.scmlib.models import SCM_Model
 from sccala.utillib.aux import distmod_kin, quantile, split_list, nullify_output
-from sccala.utillib.const import C_LIGHT
+from sccala.utillib.const import C_LIGHT, PV_UNCERTAINTY
 
 
 class SccalaSCM:
@@ -37,9 +37,9 @@ class SccalaSCM:
         """
 
         if blind:
-            assert (
-                blindkey is not None
-            ), "For blinding, a blindkey has to be specified..."
+            assert blindkey is not None, (
+                "For blinding, a blindkey has to be specified..."
+            )
         self.blind = blind
         self.blindkey = blindkey
 
@@ -76,6 +76,9 @@ class SccalaSCM:
         self.ae_sys = df[df["dataset"].isin(datasets)]["ae_sys"].to_numpy()
 
         self.epoch = df[df["dataset"].isin(datasets)]["epoch"].to_numpy()
+
+        self.m_cut_nom = df[df["dataset"].isin(datasets)]["m_cut_nom"].to_numpy()
+        self.sig_cut_nom = df[df["dataset"].isin(datasets)]["sig_cut_nom"].to_numpy()
 
         if calib:
             self.calib_sn = df[df["dataset"].isin(calib_datasets)]["SN"].to_numpy()
@@ -128,6 +131,13 @@ class SccalaSCM:
             self.calib_epoch = df[df["dataset"].isin(calib_datasets)][
                 "epoch"
             ].to_numpy()
+
+            # self.calib_m_cut_nom = df[df["dataset"].isin(calib_datasets)][
+            #     "m_cut_nom"
+            # ].to_numpy()
+            # self.calib_sig_cut_nom = df[df["dataset"].isin(calib_datasets)][
+            #     "sig_cut_nom"
+            # ].to_numpy()
         else:
             self.calib_sn = None
 
@@ -156,6 +166,9 @@ class SccalaSCM:
 
             self.calib_epoch = None
 
+            # self.calib_m_cut_nom = None
+            # self.calib_sig_cut_nom = None
+
         self.datasets = df[df["dataset"].isin(datasets)]["dataset"].to_numpy()
 
         if calib:
@@ -181,7 +194,7 @@ class SccalaSCM:
             )
             ** 2
             + (
-                300
+                PV_UNCERTAINTY
                 / C_LIGHT
                 * 5
                 * (1 + self.red)
@@ -197,43 +210,43 @@ class SccalaSCM:
         if not classic:
             for i in range(len(self.mag)):
                 errors.append(
-                    np.array(
+                    np.array([
                         [
-                            [
-                                self.red_uncertainty[i] + self.mag_err[i] ** 2,
-                                0,
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                            ],
-                            [0, self.vel_err[i] ** 2, 0, 0],
-                            [
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                                self.col_err[i] ** 2,
-                                0,
-                            ],
-                            [0, 0, 0, self.ae_err[i] ** 2],
-                        ]
-                    )
+                            self.red_uncertainty[i]
+                            + self.mag_err[i] ** 2
+                            + self.mag_sys[i] ** 2,
+                            0,
+                            self.mag_err[i] * self.col_err[i] * rho,
+                            0,
+                        ],
+                        [0, self.vel_err[i] ** 2 + self.v_sys[i] ** 2, 0, 0],
+                        [
+                            self.mag_err[i] * self.col_err[i] * rho,
+                            0,
+                            self.col_err[i] ** 2 + self.c_sys[i] ** 2,
+                            0,
+                        ],
+                        [0, 0, 0, self.ae_err[i] ** 2 + self.ae_sys[i] ** 2],
+                    ])
                 )
         else:
             for i in range(len(self.mag)):
                 errors.append(
-                    np.array(
+                    np.array([
                         [
-                            [
-                                self.red_uncertainty[i] + self.mag_err[i] ** 2,
-                                0,
-                                self.mag_err[i] * self.col_err[i] * rho,
-                            ],
-                            [0, self.vel_err[i] ** 2, 0],
-                            [
-                                self.mag_err[i] * self.col_err[i] * rho,
-                                0,
-                                self.col_err[i] ** 2,
-                            ],
-                        ]
-                    )
+                            self.red_uncertainty[i]
+                            + self.mag_err[i] ** 2
+                            + self.mag_sys[i] ** 2,
+                            0,
+                            self.mag_err[i] * self.col_err[i] * rho,
+                        ],
+                        [0, self.vel_err[i] ** 2 + self.v_sys[i] ** 2, 0],
+                        [
+                            self.mag_err[i] * self.col_err[i] * rho,
+                            0,
+                            self.col_err[i] ** 2 + self.c_sys[i] ** 2,
+                        ],
+                    ])
                 )
         return np.array(errors)
 
@@ -251,6 +264,9 @@ class SccalaSCM:
         init=None,
         classic=False,
         output_dir=None,
+        test_data=False,
+        selection_effects=True,
+        store_chains=True,
     ):
         """
         Samples the posterior for the given data and model using
@@ -283,6 +299,15 @@ class SccalaSCM:
             ignored.
         output_dir : str
             Directory where temporary STAN files will be stored. Default: None
+        test_data : bool
+            If True, the normalisation of the data will be overwritten to account
+            for the test data. For now the values can't be adjusted and are
+            hardcoded to the defaults of the `gen_testdata` script.
+            Default: False
+        selection_effects : bool
+            If True, selection effects are included in the model. Default: True
+        store_chains : bool
+            If True, sampling chains will be stored. Default: True
 
         Returns
         -------
@@ -290,74 +315,79 @@ class SccalaSCM:
 
         """
 
-        assert issubclass(
-            type(model), SCM_Model
-        ), "'model' should be a subclass of SCM_Model"
+        assert issubclass(type(model), SCM_Model), (
+            "'model' should be a subclass of SCM_Model"
+        )
         assert isinstance(iters, int), "'iters' has to by of type 'int'"
         assert isinstance(warmup, int), "'warmup' has to by of type 'int'"
 
         errors = self.get_error_matrix(classic=classic, rho=rho, rho_calib=rho_calib)
 
         if not classic:
-            # Observed values
             obs = np.array([self.mag, self.vel, self.col, self.ae]).T
-
-            # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            model.data["ae_sys"] = self.ae_sys
             model.data["ae_avg"] = np.mean(self.ae)
         else:
-            # Observed values
             obs = np.array([self.mag, self.vel, self.col]).T
 
         # Fill model data
         model.data["sn_idx"] = len(self.sn)
         model.data["obs"] = obs
         model.data["errors"] = errors
-        model.data["mag_sys"] = self.mag_sys
-        model.data["vel_sys"] = self.v_sys
-        model.data["col_sys"] = self.c_sys
         model.data["vel_avg"] = np.mean(self.vel)
         model.data["col_avg"] = np.mean(self.col)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
+
+        # For now, we take the average of the limiting magnitudes
+        if selection_effects:
+            model.data["m_cut_nom"] = np.mean(self.m_cut_nom)
+            model.data["sig_cut_nom"] = np.mean(self.sig_cut_nom)
+            model.data["use_selection"] = 1
+        else:
+            model.data["m_cut_nom"] = 0
+            model.data["sig_cut_nom"] = 0
+            model.data["use_selection"] = 0
+
+        if test_data:
+            model.data["vel_avg"] = 7100e3
+            model.data["col_avg"] = 0.5
+            if not classic:
+                model.data["ae_avg"] = 0.31
 
         if model.hubble:
             assert self.calib_sn is not None, "No calibrator SNe found..."
 
             if not classic:
-                # Observed values
-                calib_obs = np.array(
-                    [self.calib_mag, self.calib_vel, self.calib_col, self.calib_ae]
-                ).T
+                calib_obs = np.array([
+                    self.calib_mag,
+                    self.calib_vel,
+                    self.calib_col,
+                    self.calib_ae,
+                ]).T
 
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
-                calib_errors = np.array(
-                    [
-                        self.calib_mag_err**2 + self.calib_dist_mod_err**2,
-                        self.calib_vel_err**2,
-                        self.calib_col_err**2,
-                        self.calib_ae_err**2,
-                    ]
-                ).T
-
-                model.data["calib_ae_sys"] = self.calib_ae_sys
+                calib_errors = np.array([
+                    self.calib_mag_err**2
+                    + self.calib_dist_mod_err**2
+                    + self.calib_mag_sys**2,
+                    self.calib_vel_err**2 + self.calib_v_sys**2,
+                    self.calib_col_err**2 + self.calib_c_sys**2,
+                    self.calib_ae_err**2 + self.calib_ae_sys**2,
+                ]).T
             else:
                 # Observed values
                 calib_obs = np.array([self.calib_mag, self.calib_vel, self.calib_col]).T
 
                 # Redshift, peculiar velocity and gravitational lensing uncertaintes
-                calib_errors = np.array(
-                    [
-                        self.calib_mag_err**2 + self.calib_dist_mod_err**2,
-                        self.calib_vel_err**2,
-                        self.calib_col_err**2,
-                    ]
-                ).T
+                calib_errors = np.array([
+                    self.calib_mag_err**2
+                    + self.calib_dist_mod_err**2
+                    + self.calib_mag_sys**2,
+                    self.calib_vel_err**2 + self.calib_v_sys**2,
+                    self.calib_col_err**2 + self.calib_c_sys**2,
+                ]).T
             model.data["calib_sn_idx"] = len(self.calib_sn)
             model.data["calib_obs"] = calib_obs
             model.data["calib_errors"] = calib_errors
-            model.data["calib_mag_sys"] = self.calib_mag_sys
-            model.data["calib_vel_sys"] = self.calib_v_sys
-            model.data["calib_col_sys"] = self.calib_c_sys
             model.data["calib_dist_mod"] = self.calib_dist_mod
 
             # Convert differnet datasets to dataset indices
@@ -370,12 +400,29 @@ class SccalaSCM:
             model.data["calib_dset_idx"] = list(calib_dset_idx)
             model.data["num_calib_dset"] = n_calib_dset
 
+            # For now, we take the average for each dataset
+            # if selection_effects:
+            #     calib_m_cut_nom = []
+            #     calib_sig_cut_nom = []
+            #     for i in range(n_calib_dset):
+            #         mask = [x == (i + 1) for x in model.data["calib_dset_idx"]]
+            #         calib_m_cut_nom.append(np.mean(self.calib_m_cut_nom[mask]))
+            #         calib_sig_cut_nom.append(np.mean(self.calib_sig_cut_nom[mask]))
+            #     model.data["calib_m_cut_nom"] = np.array(calib_m_cut_nom)
+            #     model.data["calib_sig_cut_nom"] = np.array(calib_sig_cut_nom)
+            # else:
+            #     model.data["calib_m_cut_nom"] = np.zeros(n_calib_dset)
+            #     model.data["calib_sig_cut_nom"] = np.zeros(n_calib_dset)
+
         model.set_initial_conditions(init)
 
-        data_file = model.write_json("data.json", path=log_dir)
-        stan_file = model.write_stan("model.stan", path=log_dir)
+        if log_dir is not None:
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
 
-        mdl = CmdStanModel(stan_file=stan_file)
+        data_file = model.write_json("data.json", path=log_dir)
+
+        mdl = CmdStanModel(stan_file=model.file)
 
         fit = mdl.sample(
             data=data_file,
@@ -409,14 +456,14 @@ class SccalaSCM:
             norm = None
 
         if log_dir is not None:
-            savename = self.__save_samples__(self.posterior, log_dir=log_dir, norm=norm)
-            chains_dir = savename.replace(".csv", "")
-            os.makedirs(chains_dir)
+            chains_dir = self.__save_samples__(
+                self.posterior, log_dir=log_dir, norm=norm, store_chains=store_chains
+            )
             with open(os.path.join(chains_dir, "summary.txt"), "w") as f:
                 f.write(summary.to_string())
             with open(os.path.join(chains_dir, "diagnose.txt"), "w") as f:
                 f.write(diagnose)
-            if not self.blind:
+            if store_chains and not self.blind:
                 # Only move the csv files if we're not blinding the result
                 # TODO: find a way of blinding the individual chains
                 fit.save_csvfiles(chains_dir)
@@ -444,6 +491,7 @@ class SccalaSCM:
         restart=True,
         walltime=24.0,
         output_dir=None,
+        selection_effects=True,
     ):
         """
         Samples the posterior for the given data and model
@@ -484,6 +532,8 @@ class SccalaSCM:
             cleanly. Should be used with restart set to True. Default 24.0
         output_dir : str
             Directory where temporary STAN files will be stored. Default: None
+        selection_effects : bool
+            If True, selection effects are included in the model. Default: True
 
         Returns
         -------
@@ -493,9 +543,9 @@ class SccalaSCM:
 
         start = time.clock_gettime(time.CLOCK_REALTIME)
 
-        assert issubclass(
-            type(model), SCM_Model
-        ), "'model' should be a subclass of SCM_Model"
+        assert issubclass(type(model), SCM_Model), (
+            "'model' should be a subclass of SCM_Model"
+        )
         assert isinstance(iters, int), "'iters' has to by of type 'int'"
         assert isinstance(warmup, int), "'warmup' has to by of type 'int'"
         assert self.calib_sn is not None, "There are no calibrator SNe"
@@ -544,10 +594,7 @@ class SccalaSCM:
         errors = self.get_error_matrix(classic=classic, rho=rho)
 
         if not classic:
-            # Observed values
             obs = np.array([self.mag, self.vel, self.col, self.ae]).T
-
-            model.data["ae_sys"] = self.ae_sys
             model.data["ae_avg"] = np.mean(self.ae)
         else:
             # Observed values
@@ -557,42 +604,47 @@ class SccalaSCM:
         model.data["sn_idx"] = len(self.sn)
         model.data["obs"] = obs
         model.data["errors"] = errors
-        model.data["mag_sys"] = self.mag_sys
-        model.data["vel_sys"] = self.v_sys
-        model.data["col_sys"] = self.c_sys
         model.data["vel_avg"] = np.mean(self.vel)
         model.data["col_avg"] = np.mean(self.col)
         model.data["log_dist_mod"] = np.log10(distmod_kin(self.red))
 
+        if selection_effects:
+            model.data["m_cut_nom"] = np.mean(self.m_cut_nom)
+            model.data["sig_cut_nom"] = np.mean(self.sig_cut_nom)
+            model.data["use_selection"] = 1
+        else:
+            model.data["m_cut_nom"] = 0
+            model.data["sig_cut_nom"] = 0
+            model.data["use_selection"] = 0
+
         if not classic:
-            # Observed values
-            calib_obs = np.array(
-                [self.calib_mag, self.calib_vel, self.calib_col, self.calib_ae]
-            ).T
+            calib_obs = np.array([
+                self.calib_mag,
+                self.calib_vel,
+                self.calib_col,
+                self.calib_ae,
+            ]).T
 
             # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            calib_errors = np.array(
-                [
-                    self.calib_mag_err**2 + self.calib_dist_mod_err**2,
-                    self.calib_vel_err**2,
-                    self.calib_col_err**2,
-                    self.calib_ae_err**2,
-                ]
-            ).T
-
-            model.data["calib_ae_sys"] = self.calib_ae_sys
+            calib_errors = np.array([
+                self.calib_mag_err**2
+                + self.calib_dist_mod_err**2
+                + self.calib_mag_sys**2,
+                self.calib_vel_err**2 + self.calib_v_sys**2,
+                self.calib_col_err**2 + self.calib_c_sys**2,
+                self.calib_ae_err**2 + self.calib_ae_sys**2,
+            ]).T
         else:
-            # Observed values
             calib_obs = np.array([self.calib_mag, self.calib_vel, self.calib_col]).T
 
             # Redshift, peculiar velocity and gravitational lensing uncertaintes
-            calib_errors = np.array(
-                [
-                    self.calib_mag_err**2 + self.calib_dist_mod_err**2,
-                    self.calib_vel_err**2,
-                    self.calib_col_err**2,
-                ]
-            ).T
+            calib_errors = np.array([
+                self.calib_mag_err**2
+                + self.calib_dist_mod_err**2
+                + self.calib_mag_sys**2,
+                self.calib_vel_err**2 + self.calib_v_sys**2,
+                self.calib_col_err**2 + self.calib_c_sys**2,
+            ]).T
 
         # Generate list with all bootstrap combinations.
         indices = np.arange(len(self.calib_sn))
@@ -644,18 +696,14 @@ class SccalaSCM:
             done = []
 
         if rank == 0:
-            stan_file = model.write_stan("model.stan", path=log_dir)
-
             # Create a model instance to trigger compilation and avoid
             # having to compile the model on each rank separately
             print("Compiling model...")
-            mdl_0 = CmdStanModel(stan_file=stan_file)
+            mdl_0 = CmdStanModel(stan_file=model.file)
             del mdl_0
             print("Model compiled, starting sampling...")
-        else:
-            # Should be done via broadcast, but this is easier
-            # and the path is 'hardcoded' anyway
-            stan_file = os.path.join(log_dir, "model.stan")
+
+        comm.Barrier()
 
         if output_dir is not None:
             output_dir_rank = os.path.join(output_dir, "rank_%03d" % rank)
@@ -687,14 +735,9 @@ class SccalaSCM:
             model.data["calib_sn_idx"] = len(self.calib_sn)
             model.data["calib_obs"] = np.array([calib_obs[i] for i in inds])
             model.data["calib_errors"] = np.array([calib_errors[i] for i in inds])
-            model.data["calib_mag_sys"] = np.array(
-                [self.calib_mag_sys[i] for i in inds]
-            )
-            model.data["calib_vel_sys"] = np.array([self.calib_v_sys[i] for i in inds])
-            model.data["calib_col_sys"] = np.array([self.calib_c_sys[i] for i in inds])
-            model.data["calib_dist_mod"] = np.array(
-                [self.calib_dist_mod[i] for i in inds]
-            )
+            model.data["calib_dist_mod"] = np.array([
+                self.calib_dist_mod[i] for i in inds
+            ])
 
             # Convert differnet datasets to dataset indices
             active_datasets = [self.calib_datasets[i] for i in inds]
@@ -712,7 +755,7 @@ class SccalaSCM:
             with nullify_output(suppress_stdout=True, suppress_stderr=True):
                 data_file = model.write_json(f"data_{rank}.json", path=log_dir)
 
-                mdl = CmdStanModel(stan_file=stan_file)
+                mdl = CmdStanModel(stan_file=model.file)
 
                 fit = mdl.sample(
                     data=data_file,
@@ -775,27 +818,175 @@ class SccalaSCM:
 
         return h0_vals
 
-    def __save_samples__(self, df, log_dir="log_dir", norm=None):
+    def __save_samples__(self, df, log_dir="log_dir", norm=None, store_chains=True):
         """Exports sample data"""
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
-        savename = "chains_1.csv"
-        if os.path.exists(os.path.join(log_dir, savename)):
+        chains_dir = "chains_1"
+        if os.path.exists(os.path.join(log_dir, chains_dir)):
             i = 1
             while os.path.exists(
-                os.path.join(log_dir, savename.replace("1", str(i + 1)))
+                os.path.join(log_dir, chains_dir.replace("1", str(i + 1)))
             ):
                 i += 1
-            savename = savename.replace("1", str(i + 1))
+            chains_dir = chains_dir.replace("1", str(i + 1))
+        chains_dir = os.path.join(log_dir, chains_dir)
+        os.makedirs(chains_dir)
 
-        df.to_csv(os.path.join(log_dir, savename))
+        if store_chains:
+            savename = os.path.basename(chains_dir) + ".csv"
+            df.to_csv(os.path.join(chains_dir, savename))
 
-        if norm is not None:
-            normsave = savename.replace(".csv", ".key")
-            np.savetxt(os.path.join(log_dir, normsave), [norm], fmt="%s")
+            if norm is not None:
+                normsave = savename.replace(".csv", ".key")
+                np.savetxt(os.path.join(chains_dir, normsave), [norm], fmt="%s")
 
-        return os.path.join(log_dir, savename)
+        print("[WARNING]", chains_dir)
+
+        return chains_dir
+
+    def hubble_diagram(self, save=None, classic=False):
+        """
+        Plots a Hubble diagram of the posterior
+
+        Parameters
+        ----------
+        save : str
+            Specified where the generated Hubble diagram will be saved.
+        classic : bool
+            Switches classic mode on if True. In classic mode, a/e input is
+            ignored.
+
+        Returns
+        -------
+        None
+
+        Note: Only plots redshift vs. apparent magnitude to work for all
+        models, i.e. H0 and H0-free models.
+        """
+
+        if self.posterior is None:
+            warnings.warn("Please run sampling before generating Hubble diagram")
+            return
+
+        mi = self.posterior["Mi"].to_numpy().mean()
+        alpha = self.posterior["alpha"].to_numpy().mean()
+        beta = self.posterior["beta"].to_numpy().mean()
+        try:
+            h0 = self.posterior["H0"].to_numpy().mean()
+            hubble = True
+        except KeyError:
+            h0 = None
+            hubble = False
+
+        m_corr = (
+            self.mag
+            + alpha * np.log10(self.vel / np.mean(self.vel))
+            - beta * (self.col - np.mean(self.col))
+        )
+        if hubble:
+            calib_m_corr = (
+                self.calib_mag
+                + alpha * np.log10(self.calib_vel / np.mean(self.vel))
+                - beta * (self.calib_col - np.mean(self.col))
+            )
+        if not classic:
+            gamma = self.posterior["gamma"].to_numpy().mean()
+            m_corr -= gamma * (self.ae - np.mean(self.ae))
+            if hubble:
+                calib_m_corr -= gamma * (self.calib_ae - np.mean(self.ae))
+
+        res = 5 * np.log10(distmod_kin(self.red)) + mi - self.mag
+        res_corr = 5 * np.log10(distmod_kin(self.red)) + mi - m_corr
+        if hubble:
+            res -= 5 * np.log10(h0) - 25
+            res_corr -= 5 * np.log10(h0) - 25
+            res_calib = (
+                mi
+                - self.calib_mag
+                + 5 * np.log10(distmod_kin(self.calib_red))
+                - 5 * np.log10(h0)
+                + 25
+            )
+            res_calib_corr = (
+                mi
+                - calib_m_corr
+                + 5 * np.log10(distmod_kin(self.calib_red))
+                - 5 * np.log10(h0)
+                + 25
+            )
+
+        fig, ax = plt.subplots()
+        fig = plt.figure(figsize=[10.2, 7.2])
+        ax = fig.add_axes((0.1, 0.3, 0.8, 0.6))
+        ax.scatter(
+            self.red, self.mag, color="tab:blue", alpha=0.5, label=r"$m_\mathrm{obs}$"
+        )
+        ax.errorbar(
+            self.red,
+            m_corr,
+            yerr=self.mag_err,
+            fmt="o",
+            color="tab:blue",
+            label=r"$m_\mathrm{corr}$",
+        )
+        if hubble:
+            red_min = np.min(np.concatenate([self.red, self.calib_red]))
+            red_max = np.max(np.concatenate([self.red, self.calib_red]))
+        else:
+            red_min = np.min(self.red)
+            red_max = np.max(self.red)
+        x = np.linspace(red_min, red_max, 100)
+        cosmo = 5 * np.log10(distmod_kin(x)) + mi
+        if hubble:
+            cosmo -= 5 * np.log10(h0) - 25
+            ax.scatter(
+                self.calib_red,
+                self.calib_mag,
+                color="tab:orange",
+                alpha=0.5,
+                label=r"$m_\mathrm{calib}$",
+            )
+            ax.errorbar(
+                self.calib_red,
+                calib_m_corr,
+                yerr=self.calib_mag_err,
+                fmt="o",
+                color="tab:orange",
+                label=r"$m_\mathrm{calib, corr}$",
+            )
+        ax.plot(x, cosmo, color="k", ls="--", label="Cosmology")
+
+        ax.set_ylabel(r"$m$ (mag)")
+        ax.legend()
+
+        ax2 = fig.add_axes((0.1, 0.1, 0.8, 0.2))
+        ax2.scatter(self.red, res, color="tab:blue", alpha=0.5)
+        ax2.errorbar(
+            self.red,
+            res_corr,
+            fmt="o",
+            color="tab:blue",
+            linewidth=2,
+        )
+        if hubble:
+            ax2.scatter(self.calib_red, res_calib, color="tab:orange", alpha=0.5)
+            ax2.errorbar(
+                self.calib_red,
+                res_calib_corr,
+                fmt="o",
+                color="tab:orange",
+                linewidth=2,
+            )
+
+        plt.hlines(0, red_min, red_max, linestyles="--", color="k")
+
+        ax2.set_xlabel(r"$z_\mathrm{CMB}$")
+        ax2.set_ylabel("Residuals")
+        plt.grid()
+
+        fig.savefig(save, bbox_inches="tight", dpi=300)
 
     def cornerplot(self, save=None, classic=False):
         """
@@ -847,6 +1038,16 @@ class SccalaSCM:
 
             # Get relevant parameters
             keys = ["Mi", "alpha", "beta", "sigma_int"]
+
+        all_keys = list(self.posterior.keys())
+        if "mag_cut" in all_keys:
+            paramnames.append(r"$m_\mathrm{cut}$")
+            keys.append("mag_cut")
+            ndim += 1
+        if "sigma_cut" in all_keys:
+            paramnames.append(r"$\sigma_\mathrm{cut}$")
+            keys.append("sigma_cut")
+            ndim += 1
 
         posterior = self.posterior[keys].to_numpy()
 
