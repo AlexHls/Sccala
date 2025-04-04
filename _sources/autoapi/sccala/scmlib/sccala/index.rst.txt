@@ -75,6 +75,12 @@ Module Contents
    .. py:attribute:: epoch
 
 
+   .. py:attribute:: m_cut_nom
+
+
+   .. py:attribute:: sig_cut_nom
+
+
    .. py:attribute:: datasets
 
 
@@ -89,7 +95,7 @@ Module Contents
    .. py:method:: get_error_matrix(classic=False, rho=1.0, rho_calib=0.0)
 
 
-   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, quiet=False, init=None, classic=False, output_dir=None)
+   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, quiet=False, init=None, classic=False, output_dir=None, test_data=False, selection_effects=True, store_chains=True)
 
       Samples the posterior for the given data and model using
       the cmdstanpy interface.
@@ -121,6 +127,15 @@ Module Contents
           ignored.
       output_dir : str
           Directory where temporary STAN files will be stored. Default: None
+      test_data : bool
+          If True, the normalisation of the data will be overwritten to account
+          for the test data. For now the values can't be adjusted and are
+          hardcoded to the defaults of the `gen_testdata` script.
+          Default: False
+      selection_effects : bool
+          If True, selection effects are included in the model. Default: True
+      store_chains : bool
+          If True, sampling chains will be stored. Default: True
 
       Returns
       -------
@@ -129,7 +144,7 @@ Module Contents
 
 
 
-   .. py:method:: bootstrap(model, output, log_dir='log_dir', chains=2, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True, restart=True, walltime=24.0, output_dir=None)
+   .. py:method:: bootstrap(model, output, log_dir='log_dir', chains=2, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, save_chains=False, init=None, classic=False, replacement=True, restart=True, walltime=24.0, output_dir=None, selection_effects=True)
 
       Samples the posterior for the given data and model
 
@@ -169,6 +184,8 @@ Module Contents
           cleanly. Should be used with restart set to True. Default 24.0
       output_dir : str
           Directory where temporary STAN files will be stored. Default: None
+      selection_effects : bool
+          If True, selection effects are included in the model. Default: True
 
       Returns
       -------
@@ -177,9 +194,30 @@ Module Contents
 
 
 
-   .. py:method:: __save_samples__(df, log_dir='log_dir', norm=None)
+   .. py:method:: __save_samples__(df, log_dir='log_dir', norm=None, store_chains=True)
 
       Exports sample data
+
+
+
+   .. py:method:: hubble_diagram(save=None, classic=False)
+
+      Plots a Hubble diagram of the posterior
+
+      Parameters
+      ----------
+      save : str
+          Specified where the generated Hubble diagram will be saved.
+      classic : bool
+          Switches classic mode on if True. In classic mode, a/e input is
+          ignored.
+
+      Returns
+      -------
+      None
+
+      Note: Only plots redshift vs. apparent magnitude to work for all
+      models, i.e. H0 and H0-free models.
 
 
 

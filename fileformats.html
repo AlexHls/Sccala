@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>File Formats &mdash; Sccala 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
 
@@ -155,12 +155,12 @@
 </pre></div>
 </div>
 <p>In case you only have the ToE date without any probability, you can manually create the KDE using e.g. the following function:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">cloudpickle</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cloudpickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
 
-<span class="k">def</span> <span class="nf">manual_toe</span><span class="p">(</span><span class="n">snname</span><span class="p">,</span> <span class="n">toe</span><span class="p">,</span> <span class="n">toeerr</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">manual_toe</span><span class="p">(</span><span class="n">snname</span><span class="p">,</span> <span class="n">toe</span><span class="p">,</span> <span class="n">toeerr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to manually create *TimeKDE.pkl if e.g. phase matching fails</span>
 
 <span class="sd">    Parameters</span>
@@ -194,7 +194,7 @@
 <section id="spectra">
 <h2>Spectra<a class="headerlink" href="#spectra" title="Link to this heading"></a></h2>
 <p>Spectra are should be stored as plain text files (ending with <cite>.dat</cite>), consisting of two columns separated by two white spaces. The first column corresponds to the <strong>wavelength</strong> and the second column to the <strong>flux</strong>. The flux units do not matter, unless you intend to do synthetic photometry, in which case the flux needs to be given in <cite>cgs</cite> units. The spectral file must not contain any header. Generally speaking, any file which is readable by</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">wavelength</span><span class="p">,</span> <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s2">&quot;&lt;fluxfile&gt;.dat&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
@@ -202,7 +202,7 @@
 <p>is acceptable.</p>
 <p>The flux uncertainty needs to be stored in a separate file, which has the same filename as the corresponding spectral flux file but appended by <cite>_error</cite> (e.g.: <cite>fluxfile.dat</cite> <cite>-&gt;</cite> <cite>fluxfile_error.dat</cite>). It should have the same format as the flux file, i.e. to columns containing <strong>wavelength</strong> and <strong>flux_uncertainty</strong>, respectively.</p>
 <p>In case there does not exist a <cite>&lt;fluxfile&gt;_error.dat</cite> file, Sccala will automatically calculate a standard deviation spectrum. It is also possible to manually generate the error spectrum by running</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sccala.speclib</span> <span class="kn">import</span> <span class="n">spectools</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sccala.speclib</span><span class="w"> </span><span class="kn">import</span> <span class="n">spectools</span>
 
 <span class="n">spectools</span><span class="o">.</span><span class="n">calculate_flux_error</span><span class="p">(</span><span class="s2">&quot;&lt;fluxfile&gt;.dat&quot;</span><span class="p">)</span>
 </pre></div>

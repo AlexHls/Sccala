@@ -121,13 +121,13 @@ Module Contents
 
 
 
-   .. py:method:: diagnostic_plot(diagnostic, target, flux_interp=False)
+   .. py:method:: diagnostic_plot(diagnostic, target, flux_interp=False, interactive=False)
 
       Plots the output of the interpolation
 
 
 
-   .. py:method:: data_interp(target, step=0.1, date_low=None, date_high=None, diagnostic=None, no_reject=False, flux_interp=False)
+   .. py:method:: data_interp(target, step=0.1, date_low=None, date_high=None, diagnostic=None, no_reject=False, flux_interp=False, interactive=False)
 
       Interpolate dataocities using Gaussian Process regression
 
@@ -152,6 +152,8 @@ Module Contents
           If True, data is converted to flux before interpolating.
           Exported values will be converted back to magnitudes.
           Only works with 'phot' in target. Default: False
+      interactive : bool
+          If True, diagnostic plots will be shown interactively.
 
       Returns
       -------

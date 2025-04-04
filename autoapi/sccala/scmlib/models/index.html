@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>sccala.scmlib.models &mdash; Sccala 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
 
@@ -155,13 +155,8 @@
 <dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">SCM_Model</span></span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model" title="Link to this definition"></a></dt>
 <dd><dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.model" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.model" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -170,8 +165,28 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model.hubble">
 <span class="sig-name descname"><span class="pre">hubble</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.hubble" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model.file">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file</span></span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model.file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sccala.scmlib.models.SCM_Model._load_model_from_file">
+<span class="sig-name descname"><span class="pre">_load_model_from_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sccala.scmlib.models.SCM_Model._load_model_from_file" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -216,68 +231,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">NHHubbleFreeSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleFreeSCM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleFreeSCM.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleFreeSCM.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleFreeSCM.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.NHHubbleFreeSCM.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[4] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[4,4] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[sn_idx] real ae_sys; // Systematic ae uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constans</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                real ae_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real gamma; // a/e correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                array[sn_idx] real sigma_tot;</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    sigma_tot[i] = sqrt((errors[i][1,1] + mag_sys[i]) + (alpha / log(10) /obs[i][2])^2 * (errors[i][2,2] + vel_sys[i])+ beta^2 * (errors[i][3,3] + col_sys[i]) + gamma^2 *  (errors[i][4,4] + ae_sys[i]));</span>
-<span class="sd">                    mag_true[i] = Mi - alpha * log10(obs[i][2] / vel_avg) + beta * (obs[i][3] - col_avg) + gamma * (obs[i][4] - ae_avg) + 5 * log_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                gamma ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(obs[i][1] | mag_true[i], sqrt(sigma_tot[i]^2 + sigma_int^2 ));</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleFreeSCM.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleFreeSCM.init" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleFreeSCM.hubble">
-<span class="sig-name descname"><span class="pre">hubble</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#sccala.scmlib.models.NHHubbleFreeSCM.hubble" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleFreeSCM.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nh-hubble-free-scm'</span></em><a class="headerlink" href="#sccala.scmlib.models.NHHubbleFreeSCM.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -292,92 +247,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">NHHubbleSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCM.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCM.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCM.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCM.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[4] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[4,4] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[sn_idx] real ae_sys; // Systematic ae uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constants</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                real ae_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod;</span>
-<span class="sd">                int&lt;lower=0&gt; calib_sn_idx;</span>
-<span class="sd">                array[calib_sn_idx] vector[4] calib_obs; // Observed SN properties</span>
-<span class="sd">                array[calib_sn_idx] vector[4] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_ae_sys; // Systematic ae uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators</span>
-<span class="sd">                array[calib_sn_idx] int&lt;lower=0&gt; calib_dset_idx; // Index of the calibrator dataset</span>
-<span class="sd">                int&lt;lower=0&gt; num_calib_dset; // Number of calibrator datasets</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real H0; // Hubble constant</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real gamma; // a/e correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=-3,upper=0&gt; calib_log_sigma; // Unexplained calibrator intrinsic scatter</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                array[sn_idx] real sigma_tot;</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_true;</span>
-<span class="sd">                array[num_calib_dset] real calib_sigma_int;</span>
-<span class="sd">                array[calib_sn_idx] real calib_sigma_tot;</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    sigma_tot[i] = sqrt((errors[i][1,1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2,2] + vel_sys[i])+ beta^2 * (errors[i][3,3] + col_sys[i]) + gamma^2 *  (errors[i][4,4] + ae_sys[i]));</span>
-<span class="sd">                    mag_true[i] = obs[i][1] + alpha * log10(obs[i][2] / vel_avg) - beta * (obs[i][3] - col_avg) - gamma * (obs[i][4] - ae_avg) - 5 * log_dist_mod[i] + 5 * log10(H0) - 25;</span>
-<span class="sd">                }</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    calib_sigma_tot[i] = sqrt((calib_errors[i][1] + calib_mag_sys[i]) + (alpha / log(10) / calib_obs[i][2])^2 * (calib_errors[i][2] + calib_vel_sys[i])+ beta^2 * (calib_errors[i][3] + calib_col_sys[i]) + gamma^2 *  (calib_errors[i][4] + calib_ae_sys[i]));</span>
-<span class="sd">                    calib_mag_true[i] = calib_obs[i][1] + alpha * log10(calib_obs[i][2] / vel_avg) - beta * (calib_obs[i][3] - col_avg) - gamma * (calib_obs[i][4] - ae_avg) - calib_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_sigma_int[i] = 10 ^ calib_log_sigma[i];</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                H0 ~ uniform(0,200);</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                gamma ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_log_sigma[i] ~ uniform(-3,0);</span>
-<span class="sd">                }</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(mag_true[i] | Mi, sqrt(sigma_tot[i]^2 + sigma_int^2));</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(calib_mag_true[i] | Mi, sqrt(calib_sigma_tot[i]^2 + calib_sigma_int[calib_dset_idx[i]]^2));</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCM.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCM.init" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCM.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nh-hubble-scm'</span></em><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCM.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -397,85 +268,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">NHHubbleSCMSimple</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCMSimple" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCMSimple.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCMSimple.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCMSimple.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCMSimple.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[4] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[4,4] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[sn_idx] real ae_sys; // Systematic ae uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constants</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                real ae_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod;</span>
-<span class="sd">                int&lt;lower=0&gt; calib_sn_idx;</span>
-<span class="sd">                array[calib_sn_idx] vector[4] calib_obs; // Observed SN properties</span>
-<span class="sd">                array[calib_sn_idx] vector[4] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_ae_sys; // Systematic ae uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators</span>
-<span class="sd">                array[calib_sn_idx] int&lt;lower=0&gt; calib_dset_idx; // Index of the calibrator dataset</span>
-<span class="sd">                int&lt;lower=0&gt; num_calib_dset; // Number of calibrator datasets</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real H0; // Hubble constant</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real gamma; // a/e correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                array[sn_idx] real sigma_tot;</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_true;</span>
-<span class="sd">                array[num_calib_dset]real calib_sigma_int;</span>
-<span class="sd">                array[calib_sn_idx]real calib_sigma_tot;</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    sigma_tot[i] = sqrt((errors[i][1,1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2,2] + vel_sys[i])+ beta^2 * (errors[i][3,3] + col_sys[i]) + gamma^2 *  (errors[i][4,4] + ae_sys[i]));</span>
-<span class="sd">                    mag_true[i] = obs[i][1] + alpha * log10(obs[i][2] / vel_avg) - beta * (obs[i][3] - col_avg) - gamma * (obs[i][4] - ae_avg) - 5 * log_dist_mod[i] + 5 * log10(H0) - 25;</span>
-<span class="sd">                }</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    calib_sigma_tot[i] = sqrt((calib_errors[i][1] + calib_mag_sys[i]) + (alpha / log(10) / calib_obs[i][2])^2 * (calib_errors[i][2] + calib_vel_sys[i])+ beta^2 * (calib_errors[i][3] + calib_col_sys[i]) + gamma^2 *  (calib_errors[i][4] + calib_ae_sys[i]));</span>
-<span class="sd">                    calib_mag_true[i] = calib_obs[i][1] + alpha * log10(calib_obs[i][2] / vel_avg) - beta * (calib_obs[i][3] - col_avg) - gamma * (calib_obs[i][4] - ae_avg) - calib_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                H0 ~ uniform(0,200);</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                gamma ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(mag_true[i] | Mi, sqrt(sigma_tot[i]^2 + sigma_int^2));</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(calib_mag_true[i] | Mi, sqrt(calib_sigma_tot[i]^2 + sigma_int^2));</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCMSimple.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCMSimple.init" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.NHHubbleSCMSimple.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nh-hubble-scm-simple'</span></em><a class="headerlink" href="#sccala.scmlib.models.NHHubbleSCMSimple.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -495,87 +289,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">HubbleFreeSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.HubbleFreeSCM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleFreeSCM.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.HubbleFreeSCM.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleFreeSCM.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.HubbleFreeSCM.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[4] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[4,4] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[sn_idx] real ae_sys; // Systematic ae uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constans</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                real ae_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real gamma; // a/e correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">                real&lt;lower=0&gt; vs; // Mean of latent velocity</span>
-<span class="sd">                real cs; // Mean of latent color</span>
-<span class="sd">                real&lt;lower=0&gt; as; // Mean of latent a/e</span>
-<span class="sd">                real&lt;lower=0&gt; rv; // Dispersion of latent velocity</span>
-<span class="sd">                real&lt;lower=0&gt; rc; // Dispersion of latent color</span>
-<span class="sd">                real&lt;lower=0&gt; ra; // Dispersion of latent a/e</span>
-<span class="sd">                array[sn_idx] real &lt;lower=0&gt; v_true; // Modeled latent velocities (cannot be negative)</span>
-<span class="sd">                array[sn_idx] real c_true; // Modeled latent color</span>
-<span class="sd">                array[sn_idx] real &lt;lower=0&gt; a_true; // Modeled latent a/e (cannot be negative)</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    mag_true[i] = Mi - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + gamma * (a_true[i] - ae_avg) + 5 * log_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                gamma ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-
-<span class="sd">                vs ~ cauchy(7500e3,1500e3);</span>
-<span class="sd">                cs ~ cauchy(0,0.5);</span>
-<span class="sd">                as ~ cauchy(0.5,0.5);</span>
-
-<span class="sd">                rv ~ normal(0,1500e3);</span>
-<span class="sd">                rc ~ normal(0,0.05);</span>
-<span class="sd">                ra ~ normal(0,0.05);</span>
-
-<span class="sd">                v_true ~ normal(vs,rv);</span>
-<span class="sd">                c_true ~ normal(cs,rc);</span>
-<span class="sd">                a_true ~ normal(as,ra);</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]&#39;, errors[i] +[[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleFreeSCM.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.HubbleFreeSCM.init" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleFreeSCM.hubble">
-<span class="sig-name descname"><span class="pre">hubble</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#sccala.scmlib.models.HubbleFreeSCM.hubble" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleFreeSCM.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hubble-free-scm'</span></em><a class="headerlink" href="#sccala.scmlib.models.HubbleFreeSCM.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -595,134 +310,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">HubbleSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.HubbleSCM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleSCM.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.HubbleSCM.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleSCM.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.HubbleSCM.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[4] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[4,4] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[sn_idx] real ae_sys; // Systematic ae uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constans</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                real ae_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli</span>
-<span class="sd">                int&lt;lower=0&gt; calib_sn_idx;</span>
-<span class="sd">                array[calib_sn_idx] vector[4] calib_obs; // Observed SN properties</span>
-<span class="sd">                array[calib_sn_idx] vector[4] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_ae_sys; // Systematic ae uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators</span>
-<span class="sd">                array[calib_sn_idx] int&lt;lower=0&gt; calib_dset_idx; // Index of the calibrator dataset</span>
-<span class="sd">                int&lt;lower=0&gt; num_calib_dset; // Number of calibrator datasets</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real H0; // Hubble constant</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real gamma; // a/e correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=-3,upper=0&gt; calib_log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">                real&lt;lower=0&gt; vs; // Mean of latent velocity</span>
-<span class="sd">                real cs; // Mean of latent color</span>
-<span class="sd">                real&lt;lower=0&gt; as; // Mean of latent a/e</span>
-<span class="sd">                real&lt;lower=0&gt; rv; // Dispersion of latent velocity</span>
-<span class="sd">                real&lt;lower=0&gt; rc; // Dispersion of latent color</span>
-<span class="sd">                real&lt;lower=0&gt; ra; // Dispersion of latent a/e</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=0&gt; calib_vs; // Mean of latent velocity</span>
-<span class="sd">                array[num_calib_dset] real calib_cs; // Mean of latent color</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=0&gt; calib_as; // Mean of latent a/e</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=0&gt; calib_rv; // Dispersion of latent velocity</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=0&gt; calib_rc; // Dispersion of latent color</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=0&gt; calib_ra; // Dispersion of latent a/e</span>
-<span class="sd">                array[sn_idx] real&lt;lower=0&gt; v_true; // Modeled latent velocities (cannot be negative)</span>
-<span class="sd">                array[sn_idx] real c_true; // Modeled latent color</span>
-<span class="sd">                array[sn_idx] real&lt;lower=0&gt; a_true; // Modeled latent a/e (cannot be negative)</span>
-<span class="sd">                array[calib_sn_idx] real&lt;lower=0&gt; calib_v_true; // Modeled latent velocities (cannot be negative)</span>
-<span class="sd">                array[calib_sn_idx] real calib_c_true; // Modeled latent color</span>
-<span class="sd">                array[calib_sn_idx] real&lt;lower=0&gt; calib_a_true; // Modeled latent a/e (cannot be negative)</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                array[num_calib_dset] real calib_sigma_int;</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_sigma_int[i] = 10 ^ calib_log_sigma[i];</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    mag_true[i] = Mi - 5 * log10(H0) + 25 - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + gamma * (a_true[i] - ae_avg) + 5 * log_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    calib_mag_true[i] = Mi - alpha * log10(calib_v_true[i] / vel_avg) + beta * (calib_c_true[i] - col_avg) + gamma * (calib_a_true[i] - ae_avg) + calib_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                H0 ~ uniform(0,200);</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                gamma ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_log_sigma[i] ~ uniform(-3,0);</span>
-<span class="sd">                }</span>
-
-<span class="sd">                vs ~ cauchy(7500e3,1500e3);</span>
-<span class="sd">                cs ~ cauchy(0,0.5);</span>
-<span class="sd">                as ~ cauchy(0.5,0.5);</span>
-
-<span class="sd">                rv ~ normal(0,1500e3);</span>
-<span class="sd">                rc ~ normal(0,0.05);</span>
-<span class="sd">                ra ~ normal(0,0.05);</span>
-
-<span class="sd">                v_true ~ normal(vs,rv);</span>
-<span class="sd">                c_true ~ normal(cs,rc);</span>
-<span class="sd">                a_true ~ normal(as,ra);</span>
-
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_vs[i] ~ cauchy(7500e3,1500e3);</span>
-<span class="sd">                    calib_cs[i] ~ cauchy(0,0.5);</span>
-<span class="sd">                    calib_as[i] ~ cauchy(0.5,0.5);</span>
-
-<span class="sd">                    calib_rv[i] ~ normal(0,1500e3);</span>
-<span class="sd">                    calib_rc[i] ~ normal(0,0.05);</span>
-<span class="sd">                    calib_ra[i] ~ normal(0,0.05);</span>
-<span class="sd">                }</span>
-
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    calib_v_true[i] ~ normal(calib_vs[calib_dset_idx[i]],calib_rv[calib_dset_idx[i]]);</span>
-<span class="sd">                    calib_c_true[i] ~ normal(calib_cs[calib_dset_idx[i]],calib_rc[calib_dset_idx[i]]);</span>
-<span class="sd">                    calib_a_true[i] ~ normal(calib_as[calib_dset_idx[i]],calib_ra[calib_dset_idx[i]]);</span>
-<span class="sd">                }</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i], a_true[i] + ae_sys[i]]&#39;, errors[i] + [[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i] + calib_mag_sys[i], calib_v_true[i] + calib_vel_sys[i], calib_c_true[i] + calib_col_sys[i], calib_a_true[i] + calib_ae_sys[i]]&#39;, sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0, 0]&#39;));</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleSCM.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.HubbleSCM.init" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.HubbleSCM.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hubble-scm'</span></em><a class="headerlink" href="#sccala.scmlib.models.HubbleSCM.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -747,64 +336,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">ClassicNHHubbleFreeSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleFreeSCM.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleFreeSCM.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[3] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[3,3] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constans</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                array[sn_idx] real sigma_tot;</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    sigma_tot[i] = sqrt((errors[i][1,1] + mag_sys[i]) + (alpha / log(10) /obs[i][2])^2 * (errors[i][2,2] + vel_sys[i])+ beta^2 * (errors[i][3,3] + col_sys[i]));</span>
-<span class="sd">                    mag_true[i] = Mi - alpha * log10(obs[i][2] / vel_avg) + beta * (obs[i][3] - col_avg) + 5 * log_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(obs[i][1] | mag_true[i], sqrt(sigma_tot[i]^2 + sigma_int^2 ));</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleFreeSCM.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM.init" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleFreeSCM.hubble">
-<span class="sig-name descname"><span class="pre">hubble</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM.hubble" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleFreeSCM.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'classic-nh-hubble-free-scm'</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleFreeSCM.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -819,87 +352,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">ClassicNHHubbleSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCM.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCM.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCM.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCM.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[3] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[3,3] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constants</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod;</span>
-<span class="sd">                int&lt;lower=0&gt; calib_sn_idx;</span>
-<span class="sd">                array[calib_sn_idx] vector[3] calib_obs; // Observed SN properties</span>
-<span class="sd">                array[calib_sn_idx] vector[3] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators</span>
-<span class="sd">                array[calib_sn_idx] int&lt;lower=0&gt; calib_dset_idx; // Index of the calibrator dataset</span>
-<span class="sd">                int&lt;lower=0&gt; num_calib_dset; // Number of calibrator datasets</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real H0; // Hubble constant</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=-3,upper=0&gt; calib_log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                array[sn_idx] real sigma_tot;</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_true;</span>
-<span class="sd">                array[num_calib_dset] real calib_sigma_int;</span>
-<span class="sd">                array[calib_sn_idx] real calib_sigma_tot;</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    sigma_tot[i] = sqrt((errors[i][1,1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2,2] + vel_sys[i])+ beta^2 * (errors[i][3,3] + col_sys[i]));</span>
-<span class="sd">                    mag_true[i] = obs[i][1] + alpha * log10(obs[i][2] / vel_avg) - beta * (obs[i][3] - col_avg) - 5 * log_dist_mod[i] + 5 * log10(H0) - 25;</span>
-<span class="sd">                }</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    calib_sigma_tot[i] = sqrt((calib_errors[i][1] + calib_mag_sys[i]) + (alpha / log(10) / calib_obs[i][2])^2 * (calib_errors[i][2] + calib_vel_sys[i])+ beta^2 * (calib_errors[i][3] + calib_col_sys[i]));</span>
-<span class="sd">                    calib_mag_true[i] = calib_obs[i][1] + alpha * log10(calib_obs[i][2] / vel_avg) - beta * (calib_obs[i][3] - col_avg) - calib_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_sigma_int[i] = 10 ^ calib_log_sigma[i];</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                H0 ~ uniform(0,200);</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_log_sigma[i] ~ uniform(-3,0);</span>
-<span class="sd">                }</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(mag_true[i] | Mi, sqrt(sigma_tot[i]^2 + sigma_int^2));</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(calib_mag_true[i] | Mi, sqrt(calib_sigma_tot[i]^2 + calib_sigma_int[calib_dset_idx[i]]^2));</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCM.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCM.init" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCM.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'classic-nh-hubble-scm'</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCM.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -919,80 +373,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">ClassicNHHubbleSCMSimple</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCMSimple" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCMSimple.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCMSimple.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCMSimple.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCMSimple.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[3] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[3,3] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constants</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod;</span>
-<span class="sd">                int&lt;lower=0&gt; calib_sn_idx;</span>
-<span class="sd">                array[calib_sn_idx] vector[3] calib_obs; // Observed SN properties</span>
-<span class="sd">                array[calib_sn_idx] vector[3] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators</span>
-<span class="sd">                array[calib_sn_idx] int&lt;lower=0&gt; calib_dset_idx; // Index of the calibrator dataset</span>
-<span class="sd">                int&lt;lower=0&gt; num_calib_dset; // Number of calibrator datasets</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real H0; // Hubble constant</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                array[sn_idx] real sigma_tot;</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_true;</span>
-<span class="sd">                array[num_calib_dset] real calib_sigma_int;</span>
-<span class="sd">                array[calib_sn_idx] real calib_sigma_tot;</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    sigma_tot[i] = sqrt((errors[i][1,1] + mag_sys[i]) + (alpha / log(10) / obs[i][2])^2 * (errors[i][2,2] + vel_sys[i])+ beta^2 * (errors[i][3,3] + col_sys[i]));</span>
-<span class="sd">                    mag_true[i] = obs[i][1] + alpha * log10(obs[i][2] / vel_avg) - beta * (obs[i][3] - col_avg) - 5 * log_dist_mod[i] + 5 * log10(H0) - 25;</span>
-<span class="sd">                }</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    calib_sigma_tot[i] = sqrt((calib_errors[i][1] + calib_mag_sys[i]) + (alpha / log(10) / calib_obs[i][2])^2 * (calib_errors[i][2] + calib_vel_sys[i])+ beta^2 * (calib_errors[i][3] + calib_col_sys[i]));</span>
-<span class="sd">                    calib_mag_true[i] = calib_obs[i][1] + alpha * log10(calib_obs[i][2] / vel_avg) - beta * (calib_obs[i][3] - col_avg) - calib_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                H0 ~ uniform(0,200);</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(mag_true[i] | Mi, sqrt(sigma_tot[i]^2 + sigma_int^2));</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(calib_mag_true[i] | Mi, sqrt(calib_sigma_tot[i]^2 + sigma_int^2));</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCMSimple.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCMSimple.init" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicNHHubbleSCMSimple.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'classic-nh-hubble-scm-simple'</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicNHHubbleSCMSimple.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1012,77 +394,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">ClassicHubbleFreeSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleFreeSCM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleFreeSCM.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleFreeSCM.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleFreeSCM.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleFreeSCM.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[3] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[3,3] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constans</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">                real&lt;lower=0&gt; vs; // Mean of latent velocity</span>
-<span class="sd">                real cs; // Mean of latent color</span>
-<span class="sd">                real&lt;lower=0&gt; rv; // Dispersion of latent velocity</span>
-<span class="sd">                real&lt;lower=0&gt; rc; // Dispersion of latent color</span>
-<span class="sd">                array[sn_idx] real &lt;lower=0&gt; v_true; // Modeled latent velocities (cannot be negative)</span>
-<span class="sd">                array[sn_idx] real c_true; // Modeled latent color</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    mag_true[i] = Mi - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + 5 * log_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-
-<span class="sd">                vs ~ cauchy(7500e3,1500e3);</span>
-<span class="sd">                cs ~ cauchy(0,0.5);</span>
-
-<span class="sd">                rv ~ normal(0,1500e3);</span>
-<span class="sd">                rc ~ normal(0,0.05);</span>
-
-<span class="sd">                v_true ~ normal(vs,rv);</span>
-<span class="sd">                c_true ~ normal(cs,rc);</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i]]&#39;, errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0]]);</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleFreeSCM.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleFreeSCM.init" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleFreeSCM.hubble">
-<span class="sig-name descname"><span class="pre">hubble</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleFreeSCM.hubble" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleFreeSCM.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'classic-hubble-free-scm'</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleFreeSCM.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1102,120 +415,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sccala.scmlib.models.</span></span><span class="sig-name descname"><span class="pre">ClassicHubbleSCM</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleSCM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sccala.scmlib.models.SCM_Model" title="sccala.scmlib.models.SCM_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCM_Model</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleSCM.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleSCM.data" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleSCM.model">
-<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleSCM.model" title="Link to this definition"></a></dt>
-<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            data {</span>
-<span class="sd">                int&lt;lower=0&gt; sn_idx;</span>
-<span class="sd">                array[sn_idx] vector[3] obs; // Observed SN properties</span>
-<span class="sd">                array[sn_idx] matrix[3,3] errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[sn_idx] real mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[sn_idx] real vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[sn_idx] real col_sys; // Systematic color uncertainties</span>
-<span class="sd">                real vel_avg; // Normalisation constans</span>
-<span class="sd">                real col_avg;</span>
-<span class="sd">                array[sn_idx] real log_dist_mod; // Pre-computed, redshift dependent, Hubble-free distance moduli</span>
-<span class="sd">                int&lt;lower=0&gt; calib_sn_idx;</span>
-<span class="sd">                array[calib_sn_idx] vector[3] calib_obs; // Observed SN properties</span>
-<span class="sd">                array[calib_sn_idx] vector[3] calib_errors; // Associated uncertaintes (measurement, statistical, systematic)</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_sys; // Systematic magnitude uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_vel_sys; // Systematic velocity uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_col_sys; // Systematic color uncertainties</span>
-<span class="sd">                array[calib_sn_idx] real calib_dist_mod; // Distance moduli of calibrators</span>
-<span class="sd">                array[calib_sn_idx] int&lt;lower=0&gt; calib_dset_idx; // Index of the calibrator dataset</span>
-<span class="sd">                int&lt;lower=0&gt; num_calib_dset; // Number of calibrator datasets</span>
-<span class="sd">            }</span>
-<span class="sd">            parameters {</span>
-<span class="sd">                real H0; // Hubble constant</span>
-<span class="sd">                real Mi; // Absolute Hubble-free Magnitude</span>
-<span class="sd">                real alpha; // Velocity correction strength</span>
-<span class="sd">                real beta; // Color correction strength</span>
-<span class="sd">                real&lt;lower=-3,upper=0&gt; log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=-3,upper=0&gt; calib_log_sigma; // Unexplained intrinsic scatter</span>
-<span class="sd">                real&lt;lower=0&gt; vs; // Mean of latent velocity</span>
-<span class="sd">                real cs; // Mean of latent color</span>
-<span class="sd">                real&lt;lower=0&gt; rv; // Dispersion of latent velocity</span>
-<span class="sd">                real&lt;lower=0&gt; rc; // Dispersion of latent color</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=0&gt; calib_vs; // Mean of latent velocity</span>
-<span class="sd">                array[num_calib_dset] real calib_cs; // Mean of latent color</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=0&gt; calib_rv; // Dispersion of latent velocity</span>
-<span class="sd">                array[num_calib_dset] real&lt;lower=0&gt; calib_rc; // Dispersion of latent color</span>
-<span class="sd">                array[sn_idx] real&lt;lower=0&gt; v_true; // Modeled latent velocities (cannot be negative)</span>
-<span class="sd">                array[sn_idx] real c_true; // Modeled latent color</span>
-<span class="sd">                array[calib_sn_idx] real&lt;lower=0&gt; calib_v_true; // Modeled latent velocities (cannot be negative)</span>
-<span class="sd">                array[calib_sn_idx] real calib_c_true; // Modeled latent color</span>
-<span class="sd">            }</span>
-<span class="sd">            transformed parameters{</span>
-<span class="sd">                array[sn_idx] real mag_true;</span>
-<span class="sd">                array[calib_sn_idx] real calib_mag_true;</span>
-<span class="sd">                real sigma_int;</span>
-<span class="sd">                array[num_calib_dset] real calib_sigma_int;</span>
-<span class="sd">                sigma_int = 10 ^ log_sigma;</span>
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_sigma_int[i] = 10 ^ calib_log_sigma[i];</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    mag_true[i] = Mi - 5 * log10(H0) + 25 - alpha * log10(v_true[i] / vel_avg) + beta * (c_true[i] - col_avg) + 5 * log_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    calib_mag_true[i] = Mi - alpha * log10(calib_v_true[i] / vel_avg) + beta * (calib_c_true[i] - col_avg) + calib_dist_mod[i];</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            model {</span>
-<span class="sd">                H0 ~ uniform(0,200);</span>
-<span class="sd">                Mi ~ uniform(-30,0);</span>
-<span class="sd">                alpha ~ uniform(-20,20);</span>
-<span class="sd">                beta ~ uniform(-20,20);</span>
-<span class="sd">                log_sigma ~ uniform(-3,0);</span>
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_log_sigma[i] ~ uniform(-3,0);</span>
-<span class="sd">                }</span>
-
-<span class="sd">                vs ~ cauchy(7500e3,1500e3);</span>
-<span class="sd">                cs ~ cauchy(0,0.5);</span>
-
-<span class="sd">                rv ~ normal(0,1500e3);</span>
-<span class="sd">                rc ~ normal(0,0.05);</span>
-
-<span class="sd">                v_true ~ normal(vs,rv);</span>
-<span class="sd">                c_true ~ normal(cs,rc);</span>
-
-<span class="sd">                for (i in 1:num_calib_dset) {</span>
-<span class="sd">                    calib_vs[i] ~ cauchy(7500e3,1500e3);</span>
-<span class="sd">                    calib_cs[i] ~ cauchy(0,0.5);</span>
-
-<span class="sd">                    calib_rv[i] ~ normal(0,1500e3);</span>
-<span class="sd">                    calib_rc[i] ~ normal(0,0.05);</span>
-<span class="sd">                }</span>
-
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    calib_v_true[i] ~ normal(calib_vs[calib_dset_idx[i]],calib_rv[calib_dset_idx[i]]);</span>
-<span class="sd">                    calib_c_true[i] ~ normal(calib_cs[calib_dset_idx[i]],calib_rc[calib_dset_idx[i]]);</span>
-<span class="sd">                }</span>
-
-<span class="sd">                calib_v_true ~ normal(vs,rv);</span>
-<span class="sd">                calib_c_true ~ normal(cs,rc);</span>
-
-<span class="sd">                for (i in 1:sn_idx) {</span>
-<span class="sd">                    target +=  multi_normal_lpdf(obs[i] | [mag_true[i] + mag_sys[i], v_true[i] + vel_sys[i], c_true[i] + col_sys[i]]&#39;, errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0]]);</span>
-<span class="sd">                }</span>
-<span class="sd">                for (i in 1:calib_sn_idx) {</span>
-<span class="sd">                    target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i] + calib_mag_sys[i], calib_v_true[i] + calib_vel_sys[i], calib_c_true[i] + calib_col_sys[i]]&#39;, sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0]&#39;));</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-</pre></div>
-</div>
-</details></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleSCM.init">
-<span class="sig-name descname"><span class="pre">init</span></span><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleSCM.init" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="sccala.scmlib.models.ClassicHubbleSCM.__name__">
+<span class="sig-name descname"><span class="pre">__name__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'classic-hubble-scm'</span></em><a class="headerlink" href="#sccala.scmlib.models.ClassicHubbleSCM.__name__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

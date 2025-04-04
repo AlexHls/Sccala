@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>sccala.gen_testdata &mdash; Sccala 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
@@ -112,6 +112,12 @@
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sccala.gen_testdata.generate_observed_data" title="sccala.gen_testdata.generate_observed_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_observed_data</span></code></a>(zrange[, vel_range, col_range, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#sccala.gen_testdata.detection_probability" title="sccala.gen_testdata.detection_probability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detection_probability</span></code></a>(mag[, m_cut, sigma_cut])</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#sccala.gen_testdata.gen_testdata" title="sccala.gen_testdata.gen_testdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_testdata</span></code></a>(zrange, save[, size, plots, hubble, ...])</p></td>
 <td><p>Function generating simulated datasets for standardisation</p></td>
 </tr>
@@ -127,8 +133,18 @@
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="sccala.gen_testdata.generate_observed_data">
+<span class="sig-prename descclassname"><span class="pre">sccala.gen_testdata.</span></span><span class="sig-name descname"><span class="pre">generate_observed_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zrange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(7100000.0,</span> <span class="pre">725000.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">0.06)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ae_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.31,</span> <span class="pre">0.13)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.sqrt(200000.0**2</span> <span class="pre">+</span> <span class="pre">150000.0**2)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aeerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.013</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">70.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.gen_testdata.generate_observed_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sccala.gen_testdata.detection_probability">
+<span class="sig-prename descclassname"><span class="pre">sccala.gen_testdata.</span></span><span class="sig-name descname"><span class="pre">detection_probability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">21</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.gen_testdata.detection_probability" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="sccala.gen_testdata.gen_testdata">
-<span class="sig-prename descclassname"><span class="pre">sccala.gen_testdata.</span></span><span class="sig-name descname"><span class="pre">gen_testdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zrange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zrange_hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.001,</span> <span class="pre">0.005)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">70.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.gen_testdata.gen_testdata" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">sccala.gen_testdata.</span></span><span class="sig-name descname"><span class="pre">gen_testdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zrange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zrange_hubble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.001,</span> <span class="pre">0.005)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hubble_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">70.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(7100000.0,</span> <span class="pre">725000.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">0.06)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ae_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.31,</span> <span class="pre">0.13)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.sqrt(200000.0**2</span> <span class="pre">+</span> <span class="pre">150000.0**2)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aeerr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.013</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">21</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_m_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">21</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_sigma_cut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_cut_nom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sig_cut_nom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_m_cut_nom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_sig_cut_nom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sccala.gen_testdata.gen_testdata" title="Link to this definition"></a></dt>
 <dd><p>Function generating simulated datasets for standardisation</p>
 <section id="parameters">
 <h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
@@ -156,6 +172,41 @@ calibrator testdata is to be generated. Default: (0.001, 0.005)</p>
 Default: 70.0</p>
 </dd>
 </dl>
+<p>alpha : float
+beta : float
+gamma : float
+mi : float
+sint : float</p>
+<blockquote>
+<div><p>Parameters for the calculation of the magnitudes.</p>
+</div></blockquote>
+<p>vel_range : tuple
+col_range : tuple
+ae_range : tuple</p>
+<blockquote>
+<div><p>Parameters for the generation of the observed data.</p>
+</div></blockquote>
+<p>verr : float
+cerr : float
+aeerr : float
+r_err : float</p>
+<blockquote>
+<div><p>Parameters for the calculation of the magnitude errors.</p>
+</div></blockquote>
+<p>m_cut : float
+sigma_cut : float
+calib_m_cut : float
+calib_sigma_cut : float</p>
+<blockquote>
+<div><p>Parameters for the detection probability.</p>
+</div></blockquote>
+<p>m_cut_nom : float
+sig_cut_nom : float
+calib_m_cut_nom : float
+calib_sig_cut_nom : float</p>
+<blockquote>
+<div><p>Parameters for the nominal detection values exported to the data.</p>
+</div></blockquote>
 </section>
 <section id="returns">
 <h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>

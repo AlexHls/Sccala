@@ -12,6 +12,7 @@ Attributes
    sccala.utillib.const.C_LIGHT
    sccala.utillib.const.H_ERG
    sccala.utillib.const.C_AA
+   sccala.utillib.const.PV_UNCERTAINTY
 
 
 Module Contents
@@ -27,5 +28,9 @@ Module Contents
 
 .. py:data:: C_AA
    :value: 2.99792458e+18
+
+
+.. py:data:: PV_UNCERTAINTY
+   :value: 150.0
 
 

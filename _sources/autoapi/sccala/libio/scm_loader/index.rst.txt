@@ -15,7 +15,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: load_data(sne_list, date, mag='I', col=('V', 'I'), calib_sne_list=None, calib_date=None, calib_mag='I', calib_col=('V', 'I'), instrument='Bessell12', export=False, mag_sys=None, vel_sys=None, col_sys=None, ae_sys=None, rho=1.0, rho_calib=0.0, error_mode='mean')
+.. py:function:: load_data(sne_list, date, mag='I', col=('V', 'I'), calib_sne_list=None, calib_date=None, calib_mag='I', calib_col=('V', 'I'), instrument='Bessell12', export=False, mag_sys=None, vel_sys=None, col_sys=None, ae_sys=None, rho=1.0, rho_calib=0.0, error_mode='mean', m_cut_nom=18.5, sig_cut_nom=0.5, pv_red_file=None)
 
    Loads all the necessary data for the scm and bundles it
    into a pandas DataFrame
@@ -65,6 +65,12 @@ Module Contents
        Correlation between the color and magnitude uncertainties for calibrator SNe. Default: 0.0
    error_mode : str
        Mode used to calculate single value error from asymmetric errors. Default: "mean"
+   m_cut_nom : float
+   sig_cut_nom : float
+       Nominal values for the magnitude cut and its uncertainty. Default: 18.5, 0.5
+   pv_red_file : str
+       Path to a file containing the peculiar velocity corrected redshifts of the SNe.
+       If None, redshifts are taken from the info file. Default: None
 
    Returns
    -------
