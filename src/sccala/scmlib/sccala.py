@@ -1048,6 +1048,10 @@ class SccalaSCM:
             paramnames.append(r"$\sigma_\mathrm{cut}$")
             keys.append("sigma_cut")
             ndim += 1
+        if "outl_frac" in all_keys:
+            paramnames.append(r"$f_\mathrm{outl}$")
+            keys.append("outl_frac")
+            ndim += 1
 
         posterior = self.posterior[keys].to_numpy()
 

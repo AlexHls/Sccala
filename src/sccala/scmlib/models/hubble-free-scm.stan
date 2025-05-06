@@ -27,9 +27,11 @@ parameters {
     array[sn_idx] real <lower=0> a_true; // Modeled latent a/e (cannot be negative)
     real <lower=14, upper=30> mag_cut; // Magnitude cut for selection effect calculation
     real <lower=0.1, upper=3> sigma_cut; // Uncertainty of the magnitude cut
+    real <lower = 0, upper = 1> outl_frac; // Fraction of outliers
 }
 transformed parameters{
     array[sn_idx] real mag_true;
+    array[sn_idx] real sn_log_like;
     array[sn_idx] real mean;
     array[sn_idx] real v_mi;
     real sigma_int;
@@ -39,6 +41,14 @@ transformed parameters{
         if (use_selection != 0) {
           mean[i] = Mi - alpha * log10(vs / vel_avg) + beta * (cs - col_avg) + gamma * (as - ae_avg) + 5 * log_dist_mod[i];
           v_mi[i] = (errors[i][1,1] + sigma_int^2) + sigma_cut^2 + (alpha * rv / (vs * log10()))^2 + (beta * rc)^2 + (gamma * ra)^2;
+        }
+    }
+
+    for (i in 1:sn_idx) {
+        sn_log_like[i] = multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', errors[i] + diag_matrix([sigma_int^2, 0, 0, 0]'));
+        if (use_selection != 0) {
+          sn_log_like[i] += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
+            - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
         }
     }
 }
@@ -64,11 +74,12 @@ model {
     mag_cut ~ normal(m_cut_nom,0.5);
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
+    outl_frac ~ lognormal(-3,0.25);
+
     for (i in 1:sn_idx) {
-        target +=  multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', errors[i] + [[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
-        if (use_selection != 0) {
-          target += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
-            - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
-        }
+      target += log_sum_exp(
+        (log(1 - outl_frac) + sn_log_like[i]),
+        (log(outl_frac) + multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', diag_matrix([1, 1, 1, 1]')))
+      );
     }
 }
