@@ -12,7 +12,7 @@ from cmdstanpy import CmdStanModel
 
 from sccala.scmlib.models import SCM_Model
 from sccala.utillib.aux import distmod_kin, quantile, split_list, nullify_output
-from sccala.utillib.const import C_LIGHT, PV_UNCERTAINTY
+from sccala.utillib.const import C_LIGHT, PV_UNCERTAINTY, VEL_NORM
 
 
 class SccalaSCM:
@@ -61,8 +61,8 @@ class SccalaSCM:
         self.col = df[df["dataset"].isin(datasets)]["col"].to_numpy()
         self.col_err = df[df["dataset"].isin(datasets)]["col_err"].to_numpy()
 
-        self.vel = df[df["dataset"].isin(datasets)]["vel"].to_numpy()
-        self.vel_err = df[df["dataset"].isin(datasets)]["vel_err"].to_numpy()
+        self.vel = df[df["dataset"].isin(datasets)]["vel"].to_numpy() / VEL_NORM
+        self.vel_err = df[df["dataset"].isin(datasets)]["vel_err"].to_numpy() / VEL_NORM
 
         self.ae = df[df["dataset"].isin(datasets)]["ae"].to_numpy()
         self.ae_err = df[df["dataset"].isin(datasets)]["ae_err"].to_numpy()
@@ -71,7 +71,7 @@ class SccalaSCM:
         self.red_err = df[df["dataset"].isin(datasets)]["red_err"].to_numpy()
 
         self.mag_sys = df[df["dataset"].isin(datasets)]["mag_sys"].to_numpy()
-        self.v_sys = df[df["dataset"].isin(datasets)]["vel_sys"].to_numpy()
+        self.v_sys = df[df["dataset"].isin(datasets)]["vel_sys"].to_numpy() / VEL_NORM
         self.c_sys = df[df["dataset"].isin(datasets)]["col_sys"].to_numpy()
         self.ae_sys = df[df["dataset"].isin(datasets)]["ae_sys"].to_numpy()
 
@@ -93,10 +93,12 @@ class SccalaSCM:
                 "col_err"
             ].to_numpy()
 
-            self.calib_vel = df[df["dataset"].isin(calib_datasets)]["vel"].to_numpy()
-            self.calib_vel_err = df[df["dataset"].isin(calib_datasets)][
-                "vel_err"
-            ].to_numpy()
+            self.calib_vel = (
+                df[df["dataset"].isin(calib_datasets)]["vel"].to_numpy() / VEL_NORM
+            )
+            self.calib_vel_err = (
+                df[df["dataset"].isin(calib_datasets)]["vel_err"].to_numpy() / VEL_NORM
+            )
 
             self.calib_ae = df[df["dataset"].isin(calib_datasets)]["ae"].to_numpy()
             self.calib_ae_err = df[df["dataset"].isin(calib_datasets)][
@@ -111,9 +113,9 @@ class SccalaSCM:
             self.calib_mag_sys = df[df["dataset"].isin(calib_datasets)][
                 "mag_sys"
             ].to_numpy()
-            self.calib_v_sys = df[df["dataset"].isin(calib_datasets)][
-                "vel_sys"
-            ].to_numpy()
+            self.calib_v_sys = (
+                df[df["dataset"].isin(calib_datasets)]["vel_sys"].to_numpy() / VEL_NORM
+            )
             self.calib_c_sys = df[df["dataset"].isin(calib_datasets)][
                 "col_sys"
             ].to_numpy()
@@ -348,7 +350,7 @@ class SccalaSCM:
             model.data["use_selection"] = 0
 
         if test_data:
-            model.data["vel_avg"] = 7100e3
+            model.data["vel_avg"] = 7.1
             model.data["col_avg"] = 0.5
             if not classic:
                 model.data["ae_avg"] = 0.31

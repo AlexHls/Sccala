@@ -110,11 +110,11 @@ model {
         calib_log_sigma[i] ~ uniform(-3,0);
     }
 
-    vs ~ cauchy(7500e3,1500e3);
+    vs ~ cauchy(7.5,1.5);
     cs ~ cauchy(0,0.5);
     as ~ cauchy(0.5,0.5);
 
-    rv ~ normal(0,1500e3);
+    rv ~ normal(0,1.5);
     rc ~ normal(0,0.5);
     ra ~ normal(0,0.5);
 
@@ -123,11 +123,11 @@ model {
     a_true ~ normal(as,ra);
 
     //for (i in 1:num_calib_dset) {
-    //    calib_vs[i] ~ cauchy(7500e3,1500e3);
+    //    calib_vs[i] ~ cauchy(7.5,1.5);
     //    calib_cs[i] ~ cauchy(0,0.5);
     //    calib_as[i] ~ cauchy(0.5,0.5);
 
-    //    calib_rv[i] ~ normal(0,1500e3);
+    //    calib_rv[i] ~ normal(0,1.5);
     //    calib_rc[i] ~ normal(0,0.5);
     //    calib_ra[i] ~ normal(0,0.5);
     //}

@@ -59,11 +59,11 @@ model {
     gamma ~ uniform(-20,20);
     log_sigma ~ uniform(-3,0);
 
-    vs ~ cauchy(7500e3,1500e3);
+    vs ~ cauchy(7.5,1.5);
     cs ~ cauchy(0,0.5);
     as ~ cauchy(0.5,0.5);
 
-    rv ~ normal(0,1500e3);
+    rv ~ normal(0,1.5);
     rc ~ normal(0,0.5);
     ra ~ normal(0,0.5);
 
