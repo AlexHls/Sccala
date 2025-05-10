@@ -53,10 +53,12 @@ parameters {
 transformed parameters{
     array[sn_idx] real mag_true;
     array[sn_idx] real sn_log_like;
+    array[sn_idx] real outl_log_like;
     array[sn_idx] real mean;
     array[sn_idx] real v_mi;
     array[calib_sn_idx] real calib_mag_true;
     array[calib_sn_idx] real calib_sn_log_like;
+    array[calib_sn_idx] real calib_outl_log_like;
     // array[calib_sn_idx] real calib_mean;
     // array[calib_sn_idx] real calib_v_mi;
     real sigma_int;
@@ -86,6 +88,7 @@ transformed parameters{
           sn_log_like[i] += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
             - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
         }
+        outl_log_like[i] = log(1 - outl_frac) + sn_log_like[i] - (log(outl_frac) + multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', diag_matrix([1, 1, 1, 1]')));
     }
     for (i in 1:calib_sn_idx) {
         calib_sn_log_like[i] = normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i], calib_a_true[i]]', sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0, 0]'));
@@ -93,6 +96,7 @@ transformed parameters{
         //   calib_sn_log_like[i] += normal_lcdf(calib_mag_cut[calib_dset_idx[i]] | calib_obs[i][1], calib_sigma_cut[calib_dset_idx[i]]) 
         //     - log(normal_cdf(calib_mag_cut[calib_dset_idx[i]] | calib_mean[i], sqrt(calib_v_mi[i])) + 0.0001);
         // }
+        calib_outl_log_like[i] = log(1 - outl_frac) + calib_sn_log_like[i] - (log(outl_frac) + multi_normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i], calib_a_true[i]]', diag_matrix([1, 1, 1, 1]')));
     }
 }
 model {
