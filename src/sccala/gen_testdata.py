@@ -27,6 +27,7 @@ def generate_observed_data(
     hubble=False,
     calib=False,
     h0=70.0,
+    outl_frac=0.0,
 ):
     if rng is None:
         rng = np.random.default_rng()
@@ -36,6 +37,11 @@ def generate_observed_data(
     col = rng.normal(loc=col_range[0], scale=col_range[1])
     ae = np.absolute(rng.normal(loc=ae_range[0], scale=ae_range[1]))
 
+    # Optional outlier generation
+    if outl_frac > 0 and rng.uniform() < outl_frac:
+        vel = np.absolute(rng.normal(loc=vel_range[0], scale=5000e3))
+        col = rng.normal(loc=col_range[0], scale=0.5)
+        ae = np.absolute(rng.normal(loc=ae_range[0], scale=0.5))
     vel_obs = rng.normal(loc=vel, scale=verr)
     col_obs = rng.normal(loc=col, scale=cerr)
     ae_obs = rng.normal(loc=ae, scale=aeerr)
@@ -120,6 +126,7 @@ def gen_testdata(
     sig_cut_nom=None,
     calib_m_cut_nom=None,
     calib_sig_cut_nom=None,
+    outl_frac=0.0,
 ):
     """
     Function generating simulated datasets for standardisation
@@ -173,6 +180,8 @@ def gen_testdata(
     calib_m_cut_nom : float
     calib_sig_cut_nom : float
         Parameters for the nominal detection values exported to the data.
+    outl_frac : float
+        Fraction of outliers to be generated. Default: 0.0
 
     Returns
     -------
@@ -214,6 +223,7 @@ def gen_testdata(
             rng=rng,
             hubble=hubble,
             h0=h0,
+            outl_frac=outl_frac,
         )
         detection_prob = detection_probability(mag, m_cut=m_cut, sigma_cut=sigma_cut)
         detected = rng.uniform() < detection_prob
@@ -302,6 +312,7 @@ def gen_testdata(
                 hubble=hubble,
                 calib=True,
                 h0=h0,
+                outl_frac=outl_frac,
             )
             detection_prob = detection_probability(
                 mag, m_cut=calib_m_cut, sigma_cut=calib_sigma_cut
@@ -463,6 +474,7 @@ def main(args):
         calib_sigma_cut=args.calib_sigma_cut,
         calib_m_cut_nom=args.calib_m_cut_nom,
         calib_sig_cut_nom=args.calib_sig_cut_nom,
+        outl_frac=args.outl_frac,
     )
 
     return data
@@ -563,6 +575,12 @@ def cli():
         "--calib_sig_cut_nom",
         type=float,
         help="Nominal sigma cut for the exported calibrator data. Default: 0.5",
+    )
+    parser.add_argument(
+        "--outl_frac",
+        type=float,
+        help="Fraction of outliers to be generated. Default: 0.0",
+        default=0.0,
     )
 
     args = parser.parse_args()
