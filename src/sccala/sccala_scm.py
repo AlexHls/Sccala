@@ -12,13 +12,19 @@ def main(args):
         blind=args.unblind,
         blindkey=args.blindkey,
     )
+    if args.outlier and args.classic:
+        raise ValueError("Outlier model is not available for classic SCM")
 
     model = args.model
     if not args.classic:
         if model == "hubble":
-            model = models.HubbleSCM()
+            model = models.HubbleSCMOutlier() if args.outlier else models.HubbleSCM()
         elif model == "hubble-free":
-            model = models.HubbleFreeSCM()
+            model = (
+                models.HubbleFreeSCMOutlier()
+                if args.outlier
+                else models.HubbleFreeSCM()
+            )
         elif model == "hubble-nh":
             model = models.NHHubbleSCM()
         elif model == "hubble-nh-simple":
@@ -52,6 +58,7 @@ def main(args):
         save_warmup=args.save_warmup,
         quiet=False,
         classic=args.classic,
+        outlier=args.outlier,
         output_dir=args.output_dir,
         test_data=args.test_data,
         selection_effects=args.selection_effects,
@@ -143,6 +150,11 @@ def cli():
         "--classic",
         action="store_true",
         help="If flag is given, classical SCM is used instead of extended SCM",
+    )
+    parser.add_argument(
+        "--outlier",
+        action="store_true",
+        help="If flag is given, outlier model will be used.",
     )
     parser.add_argument(
         "--unblind",

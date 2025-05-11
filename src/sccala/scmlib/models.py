@@ -5,6 +5,7 @@ import numpy as np
 
 
 from sccala.utillib.aux import NumpyEncoder
+from sccala.utillib.const import VS_INIT, RV_INIT, VTRUE_INIT
 
 
 class SCM_Model:
@@ -141,9 +142,9 @@ class HubbleFreeSCM(SCM_Model):
     def set_initial_conditions(self, init=None):
         if init is None:
             self.init = {
-                "vs": 7500e3,
-                "rv": 1000e3,
-                "v_true": [7500e3] * self.data["sn_idx"],
+                "vs": VS_INIT,
+                "rv": RV_INIT,
+                "v_true": [VTRUE_INIT] * self.data["sn_idx"],
             }
         else:
             self.init = init
@@ -151,6 +152,29 @@ class HubbleFreeSCM(SCM_Model):
 
     def print_results(self, df, blind=True):
         keys = ["alpha", "beta", "gamma", "sigma_int", "Mi"]
+        for key in keys:
+            print("%s = %.2g +/- %.2g" % (key, np.mean(df[key]), np.std(df[key])))
+        return
+
+
+class HubbleFreeSCMOutlier(SCM_Model):
+    def __init__(self):
+        self.__name__ = "hubble-free-scm-outlier"
+        super().__init__()
+
+    def set_initial_conditions(self, init=None):
+        if init is None:
+            self.init = {
+                "vs": VS_INIT,
+                "rv": RV_INIT,
+                "v_true": [VTRUE_INIT] * self.data["sn_idx"],
+            }
+        else:
+            self.init = init
+        return
+
+    def print_results(self, df, blind=True):
+        keys = ["alpha", "beta", "gamma", "sigma_int", "Mi", "outl_frac"]
         for key in keys:
             print("%s = %.2g +/- %.2g" % (key, np.mean(df[key]), np.std(df[key])))
         return
@@ -165,14 +189,14 @@ class HubbleSCM(SCM_Model):
     def set_initial_conditions(self, init=None):
         if init is None:
             self.init = {
-                "vs": 7500e3,
-                "rv": 1000e3,
-                "v_true": [7500e3] * self.data["sn_idx"],
-                "calib_v_true": [7500e3] * self.data["calib_sn_idx"],
+                "vs": VS_INIT,
+                "rv": RV_INIT,
+                "v_true": [VTRUE_INIT] * self.data["sn_idx"],
+                "calib_v_true": [VTRUE_INIT] * self.data["calib_sn_idx"],
             }
             for i in range(self.data["num_calib_dset"]):
-                self.init["calib_vs.%d" % (i + 1)] = 7500e3
-                self.init["calib_rv.%d" % (i + 1)] = 1000e3
+                self.init["calib_vs.%d" % (i + 1)] = VS_INIT
+                self.init["calib_rv.%d" % (i + 1)] = RV_INIT
         else:
             self.init = init
         return
@@ -182,6 +206,37 @@ class HubbleSCM(SCM_Model):
             keys = ["alpha", "beta", "gamma", "sigma_int", "Mi"]
         else:
             keys = ["alpha", "beta", "gamma", "sigma_int", "Mi", "H0"]
+        for key in keys:
+            print("%s = %.4g +/- %.4g" % (key, np.mean(df[key]), np.std(df[key])))
+        return
+
+
+class HubbleSCMOutlier(SCM_Model):
+    def __init__(self):
+        self.__name__ = "hubble-scm-outlier"
+        super().__init__()
+        self.hubble = True
+
+    def set_initial_conditions(self, init=None):
+        if init is None:
+            self.init = {
+                "vs": VS_INIT,
+                "rv": RV_INIT,
+                "v_true": [VTRUE_INIT] * self.data["sn_idx"],
+                "calib_v_true": [VTRUE_INIT] * self.data["calib_sn_idx"],
+            }
+            for i in range(self.data["num_calib_dset"]):
+                self.init["calib_vs.%d" % (i + 1)] = VS_INIT
+                self.init["calib_rv.%d" % (i + 1)] = RV_INIT
+        else:
+            self.init = init
+        return
+
+    def print_results(self, df, blind=True):
+        if blind:
+            keys = ["alpha", "beta", "gamma", "sigma_int", "Mi", "outl_frac"]
+        else:
+            keys = ["alpha", "beta", "gamma", "sigma_int", "Mi", "H0", "outl_frac"]
         for key in keys:
             print("%s = %.4g +/- %.4g" % (key, np.mean(df[key]), np.std(df[key])))
         return
@@ -240,9 +295,9 @@ class ClassicHubbleFreeSCM(SCM_Model):
     def set_initial_conditions(self, init=None):
         if init is None:
             self.init = {
-                "vs": 7500e3,
-                "rv": 1000e3,
-                "v_true": [7500e3] * self.data["sn_idx"],
+                "vs": VS_INIT,
+                "rv": RV_INIT,
+                "v_true": [VTRUE_INIT] * self.data["sn_idx"],
             }
         else:
             self.init = init
@@ -264,14 +319,14 @@ class ClassicHubbleSCM(SCM_Model):
     def set_initial_conditions(self, init=None):
         if init is None:
             self.init = {
-                "vs": 7500e3,
-                "rv": 1000e3,
-                "v_true": [7500e3] * self.data["sn_idx"],
-                "calib_v_true": [7500e3] * self.data["calib_sn_idx"],
+                "vs": VS_INIT,
+                "rv": RV_INIT,
+                "v_true": [VTRUE_INIT] * self.data["sn_idx"],
+                "calib_v_true": [VTRUE_INIT] * self.data["calib_sn_idx"],
             }
             for i in range(self.data["num_calib_dset"]):
-                self.init["calib_vs.%d" % (i + 1)] = 7500e3
-                self.init["calib_rv.%d" % (i + 1)] = 1000e3
+                self.init["calib_vs.%d" % (i + 1)] = VS_INIT
+                self.init["calib_rv.%d" % (i + 1)] = RV_INIT
         else:
             self.init = init
         return

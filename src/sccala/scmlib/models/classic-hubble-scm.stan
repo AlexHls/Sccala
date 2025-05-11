@@ -40,7 +40,6 @@ parameters {
     real <lower=0.1, upper=3> sigma_cut; // Uncertainty of the magnitude cut
     // array[num_calib_dset] real <lower=14, upper=30> calib_mag_cut; // Magnitude cut for selection effect calculation
     // array[num_calib_dset] real <lower=0.1, upper=3> calib_sigma_cut; // Uncertainty of the magnitude cut
-    real <lower = 0, upper = 1> outl_frac; // Fraction of outliers
 }
 transformed parameters{
     array[sn_idx] real mag_true;
@@ -97,20 +96,20 @@ model {
         calib_log_sigma[i] ~ uniform(-3,0);
     }
 
-    vs ~ cauchy(7.5,1.5);
+    vs ~ cauchy(0.75,0.15);
     cs ~ cauchy(0,0.5);
 
-    rv ~ normal(0,1.5);
+    rv ~ normal(0,0.15);
     rc ~ normal(0,0.5);
 
     v_true ~ normal(vs,rv);
     c_true ~ normal(cs,rc);
 
     //for (i in 1:num_calib_dset) {
-    //    calib_vs[i] ~ cauchy(7500e3,1500e3);
+    //    calib_vs[i] ~ cauchy(0.75,0.15);
     //    calib_cs[i] ~ cauchy(0,0.5);
 
-    //    calib_rv[i] ~ normal(0,1500e3);
+    //    calib_rv[i] ~ normal(0,0.15);
     //    calib_rc[i] ~ normal(0,0.5);
     //}
     
@@ -124,23 +123,15 @@ model {
     mag_cut ~ normal(m_cut_nom,0.5);
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
-    outl_frac ~ lognormal(-3,0.25);
-
     // for (i in 1:calib_sn_idx) {
     //     calib_mag_cut[calib_dset_idx[i]] ~ normal(calib_m_cut_nom[calib_dset_idx[i]],0.5);
     //     calib_sigma_cut[calib_dset_idx[i]] ~ normal(calib_sig_cut_nom[calib_dset_idx[i]],0.25);
     // }
 
     for (i in 1:sn_idx) {
-      target += log_sum_exp(
-        (log(1 - outl_frac) + sn_log_like[i]),
-        (log(outl_frac) + multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i]]', diag_matrix([1, 1, 1]')))
-      );
+      target += sn_log_like[i];
     }
     for (i in 1:calib_sn_idx) {
-      target += log_sum_exp( 
-        (log(1 - outl_frac) + calib_sn_log_like[i]),
-        (log(outl_frac) + multi_normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i]]', diag_matrix([1, 1, 1]')))
-      );
+      target += calib_sn_log_like[i];
     }
 }

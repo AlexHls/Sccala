@@ -265,6 +265,8 @@ class SccalaSCM:
         quiet=False,
         init=None,
         classic=False,
+        outlier=False,
+        outl_width=[1.0, 1.0, 1.0, 1.0],
         output_dir=None,
         test_data=False,
         selection_effects=True,
@@ -299,6 +301,11 @@ class SccalaSCM:
         classic : bool
             Switches classic mode on if True. In classic mode, a/e input is
             ignored.
+        outlier : bool
+            If True, outlier detection is enabled. Incompatible with
+            classic mode. Default: False
+        outl_width : list
+            Width of the outlier detection. Default: [1.0, 1.0, 1.0, 1.0]
         output_dir : str
             Directory where temporary STAN files will be stored. Default: None
         test_data : bool
@@ -350,7 +357,7 @@ class SccalaSCM:
             model.data["use_selection"] = 0
 
         if test_data:
-            model.data["vel_avg"] = 7.1
+            model.data["vel_avg"] = 7100e3 / VEL_NORM
             model.data["col_avg"] = 0.5
             if not classic:
                 model.data["ae_avg"] = 0.31
@@ -415,6 +422,14 @@ class SccalaSCM:
             # else:
             #     model.data["calib_m_cut_nom"] = np.zeros(n_calib_dset)
             #     model.data["calib_sig_cut_nom"] = np.zeros(n_calib_dset)
+
+            model.data["vel_avg"] = np.mean(np.concatenate([self.vel, self.calib_vel]))
+            model.data["col_avg"] = np.mean(np.concatenate([self.col, self.calib_col]))
+            if not classic:
+                model.data["ae_avg"] = np.mean(np.concatenate([self.ae, self.calib_ae]))
+
+        if outlier:
+            model.data["outl_width"] = np.array(outl_width)
 
         model.set_initial_conditions(init)
 

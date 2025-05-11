@@ -27,7 +27,6 @@ parameters {
     array[sn_idx] real <lower=0> a_true; // Modeled latent a/e (cannot be negative)
     real <lower=14, upper=30> mag_cut; // Magnitude cut for selection effect calculation
     real <lower=0.1, upper=3> sigma_cut; // Uncertainty of the magnitude cut
-    real <lower = 0, upper = 1> outl_frac; // Fraction of outliers
 }
 transformed parameters{
     array[sn_idx] real mag_true;
@@ -59,11 +58,11 @@ model {
     gamma ~ uniform(-20,20);
     log_sigma ~ uniform(-3,0);
 
-    vs ~ cauchy(7.5,1.5);
+    vs ~ cauchy(0.75,0.15);
     cs ~ cauchy(0,0.5);
     as ~ cauchy(0.5,0.5);
 
-    rv ~ normal(0,1.5);
+    rv ~ normal(0,0.15);
     rc ~ normal(0,0.5);
     ra ~ normal(0,0.5);
 
@@ -74,12 +73,7 @@ model {
     mag_cut ~ normal(m_cut_nom,0.5);
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
-    outl_frac ~ lognormal(-3,0.25);
-
     for (i in 1:sn_idx) {
-      target += log_sum_exp(
-        (log(1 - outl_frac) + sn_log_like[i]),
-        (log(outl_frac) + multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', diag_matrix([1, 1, 1, 1]')))
-      );
+      target += sn_log_like[i];
     }
 }
