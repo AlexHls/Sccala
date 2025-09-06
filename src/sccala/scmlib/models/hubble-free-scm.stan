@@ -30,6 +30,7 @@ parameters {
 }
 transformed parameters{
     array[sn_idx] real mag_true;
+    array[sn_idx] real sn_log_like;
     array[sn_idx] real mean;
     array[sn_idx] real v_mi;
     real sigma_int;
@@ -41,6 +42,14 @@ transformed parameters{
           v_mi[i] = (errors[i][1,1] + sigma_int^2) + sigma_cut^2 + (alpha * rv / (vs * log10()))^2 + (beta * rc)^2 + (gamma * ra)^2;
         }
     }
+
+    for (i in 1:sn_idx) {
+        sn_log_like[i] = multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', errors[i] + diag_matrix([sigma_int^2, 0, 0, 0]'));
+        if (use_selection != 0) {
+          sn_log_like[i] += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
+            - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
+        }
+    }
 }
 model {
     Mi ~ uniform(-30,0);
@@ -49,11 +58,11 @@ model {
     gamma ~ uniform(-20,20);
     log_sigma ~ uniform(-3,0);
 
-    vs ~ cauchy(7500e3,1500e3);
+    vs ~ cauchy(0.75,0.15);
     cs ~ cauchy(0,0.5);
     as ~ cauchy(0.5,0.5);
 
-    rv ~ normal(0,1500e3);
+    rv ~ normal(0,0.15);
     rc ~ normal(0,0.5);
     ra ~ normal(0,0.5);
 
@@ -65,10 +74,6 @@ model {
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
     for (i in 1:sn_idx) {
-        target +=  multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', errors[i] + [[sigma_int^2, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
-        if (use_selection != 0) {
-          target += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
-            - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
-        }
+      target += sn_log_like[i];
     }
 }

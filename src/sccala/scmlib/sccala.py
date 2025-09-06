@@ -12,7 +12,7 @@ from cmdstanpy import CmdStanModel
 
 from sccala.scmlib.models import SCM_Model
 from sccala.utillib.aux import distmod_kin, quantile, split_list, nullify_output
-from sccala.utillib.const import C_LIGHT, PV_UNCERTAINTY
+from sccala.utillib.const import C_LIGHT, PV_UNCERTAINTY, VEL_NORM
 
 
 class SccalaSCM:
@@ -61,8 +61,8 @@ class SccalaSCM:
         self.col = df[df["dataset"].isin(datasets)]["col"].to_numpy()
         self.col_err = df[df["dataset"].isin(datasets)]["col_err"].to_numpy()
 
-        self.vel = df[df["dataset"].isin(datasets)]["vel"].to_numpy()
-        self.vel_err = df[df["dataset"].isin(datasets)]["vel_err"].to_numpy()
+        self.vel = df[df["dataset"].isin(datasets)]["vel"].to_numpy() / VEL_NORM
+        self.vel_err = df[df["dataset"].isin(datasets)]["vel_err"].to_numpy() / VEL_NORM
 
         self.ae = df[df["dataset"].isin(datasets)]["ae"].to_numpy()
         self.ae_err = df[df["dataset"].isin(datasets)]["ae_err"].to_numpy()
@@ -71,7 +71,7 @@ class SccalaSCM:
         self.red_err = df[df["dataset"].isin(datasets)]["red_err"].to_numpy()
 
         self.mag_sys = df[df["dataset"].isin(datasets)]["mag_sys"].to_numpy()
-        self.v_sys = df[df["dataset"].isin(datasets)]["vel_sys"].to_numpy()
+        self.v_sys = df[df["dataset"].isin(datasets)]["vel_sys"].to_numpy() / VEL_NORM
         self.c_sys = df[df["dataset"].isin(datasets)]["col_sys"].to_numpy()
         self.ae_sys = df[df["dataset"].isin(datasets)]["ae_sys"].to_numpy()
 
@@ -93,10 +93,12 @@ class SccalaSCM:
                 "col_err"
             ].to_numpy()
 
-            self.calib_vel = df[df["dataset"].isin(calib_datasets)]["vel"].to_numpy()
-            self.calib_vel_err = df[df["dataset"].isin(calib_datasets)][
-                "vel_err"
-            ].to_numpy()
+            self.calib_vel = (
+                df[df["dataset"].isin(calib_datasets)]["vel"].to_numpy() / VEL_NORM
+            )
+            self.calib_vel_err = (
+                df[df["dataset"].isin(calib_datasets)]["vel_err"].to_numpy() / VEL_NORM
+            )
 
             self.calib_ae = df[df["dataset"].isin(calib_datasets)]["ae"].to_numpy()
             self.calib_ae_err = df[df["dataset"].isin(calib_datasets)][
@@ -111,9 +113,9 @@ class SccalaSCM:
             self.calib_mag_sys = df[df["dataset"].isin(calib_datasets)][
                 "mag_sys"
             ].to_numpy()
-            self.calib_v_sys = df[df["dataset"].isin(calib_datasets)][
-                "vel_sys"
-            ].to_numpy()
+            self.calib_v_sys = (
+                df[df["dataset"].isin(calib_datasets)]["vel_sys"].to_numpy() / VEL_NORM
+            )
             self.calib_c_sys = df[df["dataset"].isin(calib_datasets)][
                 "col_sys"
             ].to_numpy()
@@ -263,6 +265,8 @@ class SccalaSCM:
         quiet=False,
         init=None,
         classic=False,
+        outlier=False,
+        outl_width=[1.0, 1.0, 1.0, 1.0],
         output_dir=None,
         test_data=False,
         selection_effects=True,
@@ -297,6 +301,11 @@ class SccalaSCM:
         classic : bool
             Switches classic mode on if True. In classic mode, a/e input is
             ignored.
+        outlier : bool
+            If True, outlier detection is enabled. Incompatible with
+            classic mode. Default: False
+        outl_width : list
+            Width of the outlier detection. Default: [1.0, 1.0, 1.0, 1.0]
         output_dir : str
             Directory where temporary STAN files will be stored. Default: None
         test_data : bool
@@ -348,7 +357,7 @@ class SccalaSCM:
             model.data["use_selection"] = 0
 
         if test_data:
-            model.data["vel_avg"] = 7100e3
+            model.data["vel_avg"] = 7100e3 / VEL_NORM
             model.data["col_avg"] = 0.5
             if not classic:
                 model.data["ae_avg"] = 0.31
@@ -413,6 +422,14 @@ class SccalaSCM:
             # else:
             #     model.data["calib_m_cut_nom"] = np.zeros(n_calib_dset)
             #     model.data["calib_sig_cut_nom"] = np.zeros(n_calib_dset)
+
+            model.data["vel_avg"] = np.mean(np.concatenate([self.vel, self.calib_vel]))
+            model.data["col_avg"] = np.mean(np.concatenate([self.col, self.calib_col]))
+            if not classic:
+                model.data["ae_avg"] = np.mean(np.concatenate([self.ae, self.calib_ae]))
+
+        if outlier:
+            model.data["outl_width"] = np.array(outl_width)
 
         model.set_initial_conditions(init)
 
@@ -1047,6 +1064,10 @@ class SccalaSCM:
         if "sigma_cut" in all_keys:
             paramnames.append(r"$\sigma_\mathrm{cut}$")
             keys.append("sigma_cut")
+            ndim += 1
+        if "outl_frac" in all_keys:
+            paramnames.append(r"$f_\mathrm{outl}$")
+            keys.append("outl_frac")
             ndim += 1
 
         posterior = self.posterior[keys].to_numpy()

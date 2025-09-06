@@ -17,6 +17,7 @@ data {
     // array[num_calib_dset] real calib_m_cut_nom; // Nominal magnitude cut for selection effect calculation
     // array[num_calib_dset] real calib_sig_cut_nom; // Nominal uncertainty of the magnitude cut
     int use_selection; // Flag to use selection effect. If 0, the selection effect is not used
+    vector[4] outl_width; // Width of the outlier distribution
 }
 parameters {
     real H0; // Hubble constant
@@ -48,6 +49,7 @@ parameters {
     real <lower=0.1, upper=3> sigma_cut; // Uncertainty of the magnitude cut
     // array[num_calib_dset] real <lower=14, upper=30> calib_mag_cut; // Magnitude cut for selection effect calculation
     // array[num_calib_dset] real <lower=0.1, upper=3> calib_sigma_cut; // Uncertainty of the magnitude cut
+    real <lower=-5, upper=-0.2> log_outl_frac;
 }
 transformed parameters{
     array[sn_idx] real mag_true;
@@ -60,6 +62,7 @@ transformed parameters{
     // array[calib_sn_idx] real calib_v_mi;
     real sigma_int;
     array[num_calib_dset] real calib_sigma_int;
+    real outl_frac;
     sigma_int = 10 ^ log_sigma;
     for (i in 1:num_calib_dset) {
         calib_sigma_int[i] = 10 ^ calib_log_sigma[i];
@@ -93,6 +96,7 @@ transformed parameters{
         //     - log(normal_cdf(calib_mag_cut[calib_dset_idx[i]] | calib_mean[i], sqrt(calib_v_mi[i])) + 0.0001);
         // }
     }
+    outl_frac = 10 ^ log_outl_frac;
 }
 model {
     H0 ~ uniform(0,200);
@@ -122,7 +126,7 @@ model {
     //    calib_cs[i] ~ cauchy(0,0.5);
     //    calib_as[i] ~ cauchy(0.5,0.5);
 
-    //    calib_rv[i] ~ normal(0,0.15);
+    //    calib_rv[i] ~ normal(0,1.5);
     //    calib_rc[i] ~ normal(0,0.5);
     //    calib_ra[i] ~ normal(0,0.5);
     //}
@@ -139,15 +143,33 @@ model {
     mag_cut ~ normal(m_cut_nom,0.5);
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
+    log_outl_frac ~ uniform(-5,-0.2);
+
     // for (i in 1:calib_sn_idx) {
     //     calib_mag_cut[calib_dset_idx[i]] ~ normal(calib_m_cut_nom[calib_dset_idx[i]],0.5);
     //     calib_sigma_cut[calib_dset_idx[i]] ~ normal(calib_sig_cut_nom[calib_dset_idx[i]],0.25);
     // }
 
     for (i in 1:sn_idx) {
-      target += sn_log_like[i];
+      target += log_sum_exp(
+        (log(1 - outl_frac) + sn_log_like[i]),
+        (log(outl_frac) + multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', diag_matrix(outl_width)))
+      );
     }
     for (i in 1:calib_sn_idx) {
-      target += calib_sn_log_like[i];
+      target += log_sum_exp( 
+        (log(1 - outl_frac) + calib_sn_log_like[i]),
+        (log(outl_frac) + multi_normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i], calib_a_true[i]]', diag_matrix(outl_width)))
+      );
     }
+}
+generated quantities {
+  array[sn_idx] real outl_log_like;
+  array[calib_sn_idx] real calib_outl_log_like;
+  for (i in 1:sn_idx) {
+    outl_log_like[i] = log(1 - outl_frac) + sn_log_like[i] - (log(outl_frac) + multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i], a_true[i]]', diag_matrix(outl_width)));
+  }
+  for (i in 1:calib_sn_idx) {
+    calib_outl_log_like[i] = log(1 - outl_frac) + calib_sn_log_like[i] - (log(outl_frac) + multi_normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i], calib_a_true[i]]', diag_matrix(outl_width)));
+  }
 }

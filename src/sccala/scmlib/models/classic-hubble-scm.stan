@@ -28,10 +28,10 @@ parameters {
     real cs; // Mean of latent color
     real<lower=0> rv; // Dispersion of latent velocity
     real<lower=0> rc; // Dispersion of latent color
-    array[num_calib_dset] real<lower=0> calib_vs; // Mean of latent velocity
-    array[num_calib_dset] real calib_cs; // Mean of latent color
-    array[num_calib_dset] real<lower=0> calib_rv; // Dispersion of latent velocity
-    array[num_calib_dset] real<lower=0> calib_rc; // Dispersion of latent color
+    //array[num_calib_dset] real<lower=0> calib_vs; // Mean of latent velocity
+    //array[num_calib_dset] real calib_cs; // Mean of latent color
+    //array[num_calib_dset] real<lower=0> calib_rv; // Dispersion of latent velocity
+    //array[num_calib_dset] real<lower=0> calib_rc; // Dispersion of latent color
     array[sn_idx] real<lower=0> v_true; // Modeled latent velocities (cannot be negative)
     array[sn_idx] real c_true; // Modeled latent color
     array[calib_sn_idx] real<lower=0> calib_v_true; // Modeled latent velocities (cannot be negative)
@@ -43,9 +43,11 @@ parameters {
 }
 transformed parameters{
     array[sn_idx] real mag_true;
+    array[sn_idx] real sn_log_like;
     array[sn_idx] real mean;
     array[sn_idx] real v_mi;
     array[calib_sn_idx] real calib_mag_true;
+    array[calib_sn_idx] real calib_sn_log_like;
     // array[calib_sn_idx] real calib_mean;
     // array[calib_sn_idx] real calib_v_mi;
     real sigma_int;
@@ -68,6 +70,21 @@ transformed parameters{
     //       calib_v_mi[i] = (calib_errors[i][1] + calib_sigma_int[calib_dset_idx[i]]^2) + calib_sigma_cut[calib_dset_idx[i]]^2 + (alpha * calib_rv[calib_dset_idx[i]] / (calib_vs[calib_dset_idx[i]] * log10()))^2 + (beta * calib_rc[calib_dset_idx[i]])^2;
     //     }
     }
+
+    for (i in 1:sn_idx) {
+        sn_log_like[i] = multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i]]', errors[i] + diag_matrix([sigma_int^2, 0, 0]'));
+        if (use_selection != 0) {
+          sn_log_like[i] += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
+            - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
+        }
+    }
+    for (i in 1:calib_sn_idx) {
+        calib_sn_log_like[i] = normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i]]', sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0]'));
+        // if (use_selection != 0) {
+        //   calib_sn_log_like[i] += normal_lcdf(calib_mag_cut[calib_dset_idx[i]] | calib_obs[i][1], calib_sigma_cut[calib_dset_idx[i]]) 
+        //     - log(normal_cdf(calib_mag_cut[calib_dset_idx[i]] | calib_mean[i], sqrt(calib_v_mi[i])) + 0.0001);
+        // }
+    }
 }
 model {
     H0 ~ uniform(0,200);
@@ -79,26 +96,28 @@ model {
         calib_log_sigma[i] ~ uniform(-3,0);
     }
 
-    vs ~ cauchy(7500e3,1500e3);
+    vs ~ cauchy(0.75,0.15);
     cs ~ cauchy(0,0.5);
 
-    rv ~ normal(0,1500e3);
+    rv ~ normal(0,0.15);
     rc ~ normal(0,0.5);
 
     v_true ~ normal(vs,rv);
     c_true ~ normal(cs,rc);
 
-    for (i in 1:num_calib_dset) {
-        calib_vs[i] ~ cauchy(7500e3,1500e3);
-        calib_cs[i] ~ cauchy(0,0.5);
+    //for (i in 1:num_calib_dset) {
+    //    calib_vs[i] ~ cauchy(0.75,0.15);
+    //    calib_cs[i] ~ cauchy(0,0.5);
 
-        calib_rv[i] ~ normal(0,1500e3);
-        calib_rc[i] ~ normal(0,0.5);
-    }
+    //    calib_rv[i] ~ normal(0,0.15);
+    //    calib_rc[i] ~ normal(0,0.5);
+    //}
     
     for (i in 1:calib_sn_idx) {
-        calib_v_true[i] ~ normal(calib_vs[calib_dset_idx[i]],calib_rv[calib_dset_idx[i]]);
-        calib_c_true[i] ~ normal(calib_cs[calib_dset_idx[i]],calib_rc[calib_dset_idx[i]]);
+        //calib_v_true[i] ~ normal(calib_vs[calib_dset_idx[i]],calib_rv[calib_dset_idx[i]]);
+        //calib_c_true[i] ~ normal(calib_cs[calib_dset_idx[i]],calib_rc[calib_dset_idx[i]]);
+        calib_v_true[i] ~ normal(vs,rv);
+        calib_c_true[i] ~ normal(cs,rc);
     }
 
     mag_cut ~ normal(m_cut_nom,0.5);
@@ -110,17 +129,9 @@ model {
     // }
 
     for (i in 1:sn_idx) {
-        target +=  multi_normal_lpdf(obs[i] | [mag_true[i], v_true[i], c_true[i]]', errors[i] + [[sigma_int^2, 0, 0], [0, 0, 0], [0, 0, 0]]);
-        if (use_selection != 0) {
-          target += normal_lcdf(mag_cut | obs[i][1], sigma_cut) 
-            - log(normal_cdf(mag_cut | mean[i], sqrt(v_mi[i])) + 0.0001);
-        }
+      target += sn_log_like[i];
     }
     for (i in 1:calib_sn_idx) {
-        target +=  normal_lpdf(calib_obs[i] | [calib_mag_true[i], calib_v_true[i], calib_c_true[i]]', sqrt(calib_errors[i] + [calib_sigma_int[calib_dset_idx[i]]^2, 0, 0]'));
-        // if (use_selection != 0) {
-        //   target += normal_lcdf(calib_mag_cut[calib_dset_idx[i]] | calib_obs[i][1], calib_sigma_cut[calib_dset_idx[i]]) 
-        //     - log(normal_cdf(calib_mag_cut[calib_dset_idx[i]] | calib_mean[i], sqrt(calib_v_mi[i])) + 0.0001);
-        // }
+      target += calib_sn_log_like[i];
     }
 }
