@@ -14,7 +14,9 @@ Classes
    sccala.scmlib.models.NHHubbleSCM
    sccala.scmlib.models.NHHubbleSCMSimple
    sccala.scmlib.models.HubbleFreeSCM
+   sccala.scmlib.models.HubbleFreeSCMOutlier
    sccala.scmlib.models.HubbleSCM
+   sccala.scmlib.models.HubbleSCMOutlier
    sccala.scmlib.models.ClassicNHHubbleFreeSCM
    sccala.scmlib.models.ClassicNHHubbleSCM
    sccala.scmlib.models.ClassicNHHubbleSCMSimple
@@ -136,6 +138,22 @@ Module Contents
    .. py:method:: print_results(df, blind=True)
 
 
+.. py:class:: HubbleFreeSCMOutlier
+
+   Bases: :py:obj:`SCM_Model`
+
+
+   .. py:attribute:: __name__
+      :value: 'hubble-free-scm-outlier'
+
+
+
+   .. py:method:: set_initial_conditions(init=None)
+
+
+   .. py:method:: print_results(df, blind=True)
+
+
 .. py:class:: HubbleSCM
 
    Bases: :py:obj:`SCM_Model`
@@ -143,6 +161,27 @@ Module Contents
 
    .. py:attribute:: __name__
       :value: 'hubble-scm'
+
+
+
+   .. py:attribute:: hubble
+      :value: True
+
+
+
+   .. py:method:: set_initial_conditions(init=None)
+
+
+   .. py:method:: print_results(df, blind=True)
+
+
+.. py:class:: HubbleSCMOutlier
+
+   Bases: :py:obj:`SCM_Model`
+
+
+   .. py:attribute:: __name__
+      :value: 'hubble-scm-outlier'
 
 
 

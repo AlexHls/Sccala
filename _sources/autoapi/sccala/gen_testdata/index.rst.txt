@@ -19,11 +19,11 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: generate_observed_data(zrange, vel_range=(7100000.0, 725000.0), col_range=(0.5, 0.06), ae_range=(0.31, 0.13), verr=np.sqrt(200000.0**2 + 150000.0**2), cerr=0.05, aeerr=0.013, r_err=0.0001, alpha=3.4, beta=1.8, gamma=-1.5, mi=-1.6, sint=0.25, rng=None, hubble=False, calib=False, h0=70.0)
+.. py:function:: generate_observed_data(zrange, vel_range=(7100000.0, 725000.0), col_range=(0.5, 0.06), ae_range=(0.31, 0.13), verr=np.sqrt(200000.0**2 + 150000.0**2), cerr=0.05, aeerr=0.013, r_err=0.0001, alpha=3.4, beta=1.8, gamma=-1.5, mi=-1.6, sint=0.25, rng=None, hubble=False, calib=False, h0=70.0, outl_frac=0.0)
 
 .. py:function:: detection_probability(mag, m_cut=21, sigma_cut=0.5)
 
-.. py:function:: gen_testdata(zrange, save, size=250, plots=False, hubble=False, zrange_hubble=(0.001, 0.005), hubble_size=25, h0=70.0, alpha=3.4, beta=1.8, gamma=-1.5, mi=-1.6, sint=0.25, vel_range=(7100000.0, 725000.0), col_range=(0.5, 0.06), ae_range=(0.31, 0.13), verr=np.sqrt(200000.0**2 + 150000.0**2), cerr=0.05, aeerr=0.013, r_err=0.0001, m_cut=21, sigma_cut=0.5, calib_m_cut=21, calib_sigma_cut=0.5, m_cut_nom=None, sig_cut_nom=None, calib_m_cut_nom=None, calib_sig_cut_nom=None)
+.. py:function:: gen_testdata(zrange, save, size=250, plots=False, hubble=False, zrange_hubble=(0.001, 0.005), hubble_size=25, h0=70.0, alpha=3.4, beta=1.8, gamma=-1.5, mi=-1.6, sint=0.25, vel_range=(7100000.0, 725000.0), col_range=(0.5, 0.06), ae_range=(0.31, 0.13), verr=np.sqrt(200000.0**2 + 150000.0**2), cerr=0.05, aeerr=0.013, r_err=0.0001, m_cut=21, sigma_cut=0.5, calib_m_cut=21, calib_sigma_cut=0.5, m_cut_nom=None, sig_cut_nom=None, calib_m_cut_nom=None, calib_sig_cut_nom=None, outl_frac=0.0)
 
    Function generating simulated datasets for standardisation
 
@@ -76,6 +76,8 @@ Module Contents
    calib_m_cut_nom : float
    calib_sig_cut_nom : float
        Parameters for the nominal detection values exported to the data.
+   outl_frac : float
+       Fraction of outliers to be generated. Default: 0.0
 
    Returns
    -------

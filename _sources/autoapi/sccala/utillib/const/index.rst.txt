@@ -13,6 +13,10 @@ Attributes
    sccala.utillib.const.H_ERG
    sccala.utillib.const.C_AA
    sccala.utillib.const.PV_UNCERTAINTY
+   sccala.utillib.const.VEL_NORM
+   sccala.utillib.const.VS_INIT
+   sccala.utillib.const.RV_INIT
+   sccala.utillib.const.VTRUE_INIT
 
 
 Module Contents
@@ -32,5 +36,21 @@ Module Contents
 
 .. py:data:: PV_UNCERTAINTY
    :value: 150.0
+
+
+.. py:data:: VEL_NORM
+   :value: 10000000.0
+
+
+.. py:data:: VS_INIT
+   :value: 0.75
+
+
+.. py:data:: RV_INIT
+   :value: 0.1
+
+
+.. py:data:: VTRUE_INIT
+   :value: 0.75
 
 

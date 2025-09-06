@@ -95,7 +95,7 @@ Module Contents
    .. py:method:: get_error_matrix(classic=False, rho=1.0, rho_calib=0.0)
 
 
-   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, quiet=False, init=None, classic=False, output_dir=None, test_data=False, selection_effects=True, store_chains=True)
+   .. py:method:: sample(model, log_dir='log_dir', chains=4, iters=1000, warmup=1000, rho=1.0, rho_calib=0.0, save_warmup=False, quiet=False, init=None, classic=False, outlier=False, outl_width=[1.0, 1.0, 1.0, 1.0], output_dir=None, test_data=False, selection_effects=True, store_chains=True)
 
       Samples the posterior for the given data and model using
       the cmdstanpy interface.
@@ -125,6 +125,11 @@ Module Contents
       classic : bool
           Switches classic mode on if True. In classic mode, a/e input is
           ignored.
+      outlier : bool
+          If True, outlier detection is enabled. Incompatible with
+          classic mode. Default: False
+      outl_width : list
+          Width of the outlier detection. Default: [1.0, 1.0, 1.0, 1.0]
       output_dir : str
           Directory where temporary STAN files will be stored. Default: None
       test_data : bool
