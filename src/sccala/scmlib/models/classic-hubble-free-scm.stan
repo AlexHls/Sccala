@@ -64,8 +64,6 @@ model {
     mag_cut ~ normal(m_cut_nom,0.5);
     sigma_cut ~ normal(sig_cut_nom,0.25);
 
-    outl_frac ~ lognormal(-3,0.25);
-
     for (i in 1:sn_idx) {
       target += sn_log_like[i];
     }
